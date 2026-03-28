@@ -157,7 +157,7 @@ const Landing = () => {
           </h2>
           <div className="grid gap-8 md:grid-cols-3">
             <PersonaCard num="01" title="Product Managers" description="Stop rewriting the same idea 17 times. Get engineering feedback before it's too late." />
-            <PersonaCard num="02" title="Engineers" description="Influence scope on day zero instead of week three. No more "this is impossible" surprises." />
+            <PersonaCard num="02" title="Engineers" description={'Influence scope on day zero instead of week three. No more "this is impossible" surprises.'} />
             <PersonaCard num="03" title="Leadership" description="See alignment scores and confidence metrics across every feature in one place." />
           </div>
         </div>
