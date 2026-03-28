@@ -1,66 +1,46 @@
-# SpecMirror MVP — Implementation Plan
 
-## 1. Design System & Dark Theme
 
-- Override CSS variables for pure dark mode: zinc-950 background, indigo-500/emerald-400 accents
-- Set Inter as the default font via Google Fonts
-- No light mode toggle — dark class always applied
+# Landing Page Visual Polish
 
-## 2. Landing Page
+## What changes
 
-Convert the HTML mockup into a polished React page with these sections:
+### 1. Black glass background effect
+- Add a subtle radial gradient overlay on the root `<div>` — dark center fading to slightly lighter edges — simulating polished black glass
+- Add a fine-grain noise texture via CSS (pseudo-element with a tiny SVG noise pattern at very low opacity) for that premium matte-glass feel
+- Cards and nav get `backdrop-blur-xl` + semi-transparent backgrounds (`bg-white/[0.03]`) creating a frosted glass layering effect
+- Subtle border glow on cards using `border-white/[0.06]` to catch "light" like real glass edges
 
-- **Nav** — Logo, section links, Login/Sign Up buttons (linked to auth pages)
-- **Hero** — Beta badge, headline, tagline, dual CTA buttons, trust logos
-- **Mission statement** — Full-width text block
-- **Features grid** — 3  staggeredcards: Mirror View, AI Generation, Collaboration
-- **Preview section** — Mock split-screen screenshot/visual
-- **How it helps** — 3 persona cards (PM, Engineer, Leadership)
-- **FAQ** — Accordion-style expandable questions
-- **Footer** — Logo, social links, copyright
+### 2. Generous spacing
+- Increase section padding from `py-20/py-24` to `py-32` / `py-40`
+- Hero section gets more vertical breathing room — `min-h-screen` with larger gaps between headline, tagline, and CTAs
+- Feature grid and persona cards get `gap-8` instead of `gap-6`
+- Mission section gets `py-32` with larger text size
 
-## 3. Authentication (Supabase)
+### 3. Card redesign (glassmorphism)
+- **Feature cards**: Semi-transparent glass background (`bg-white/[0.03]`), soft `backdrop-blur-md`, `border-white/[0.08]`, larger padding (`p-10`), rounded-2xl. On hover: border brightens to primary glow + subtle scale-up
+- **Persona cards**: Redesigned as full glass cards (not just text with a number). Number becomes a large translucent watermark behind the card content. Hover lifts with shadow
+- Both card types get smooth `transition-all duration-300`
 
-- Enable Lovable Cloud for Supabase backend
-- Create **Login** and **Sign Up** pages with email/password
-- Password reset flow with dedicated `/reset-password` page
-- Create `profiles` table (id, user_id, full_name, avatar_url) with RLS
-- Auto-create profile on signup via DB trigger
-- Protected routes: redirect unauthenticated users away from the app
+### 4. Animated mirror demo
+Replace the static skeleton wireframe in the "See it in action" section with an animated visual:
+- Two side-by-side glass panels (Brief / Spec) with typing animation on the left panel (simulated brief text appearing line by line)
+- After a short delay, the right panel "generates" with a shimmer sweep animation — lines appear with a staggered fade-in + green/emerald highlight pulse
+- A small animated confidence ring fills from 0% to 94% as the right panel populates
+- Uses pure CSS animations + `@keyframes` — no JS libraries needed
+- Loops every ~8 seconds with a pause in-between
 
-## 4. Dashboard / Projects List
+### 5. Typography refinements
+- Hero headline: `text-6xl md:text-8xl` with tighter `tracking-tighter`
+- Section headings: `text-4xl md:text-5xl`
+- Body text in cards: `text-base` with `leading-relaxed`
 
-- After login, show a minimal Linear-style project list
-- Create/delete brief projects
-- Each project links to the Mirror View
+## Files changed
+- `src/index.css` — Add glass background utilities, noise texture, animation keyframes
+- `src/pages/Landing.tsx` — All spacing, card, and animation changes
+- `tailwind.config.ts` — Add custom animation keyframes for typing/shimmer/fill
 
-## 5. Mirror View (Core Feature)
+## Technical approach
+- All effects are pure CSS (gradients, backdrop-blur, keyframes) — no new dependencies
+- Animations use `@keyframes` defined in tailwind config and applied via utility classes
+- Glass effect layered: root gradient background → section-level noise overlay → card-level blur + transparency
 
-- **Split-screen layout**: left = rich text product brief editor, right = AI-generated technical spec
-- Resizable panels with drag handle
-- Rich text editing using Tiptap or similar
-- Placeholder for AI-generated content on the right panel
-- **Confidence meter** — progress ring in the top-right corner
-- Mobile responsive: panels stack vertically on small screens
-
-## 6. AI Spec Generation
-
-- "Generate Mirror" button with sparkle animation + skeleton loader
-- Connect to an AI API (via Supabase Edge Function) to generate tech specs from brief text
-- Output: architecture notes, effort estimates, acceptance criteria, risks
-- Store generated specs in Supabase
-
-## 7. Version History
-
-- Auto-save every edit to a versions table
-- Timeline sidebar showing change history
-- Basic visual diff between versions
-
-## 8. Routing Structure
-
-- `/` — Landing page
-- `/login` — Login
-- `/signup` — Sign up
-- `/reset-password` — Password reset
-- `/dashboard` — Projects list (protected)
-- `/project/:id` — Mirror View (protected)
