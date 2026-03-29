@@ -316,7 +316,7 @@ const Landing = () => {
               label="For every team"
               title="How SpecMirror helps"
               highlight="your workflow"
-              description="Whether you ship product, write code, or set direction — SpecMirror meets you where you are."
+              description="Whether you ship product, write code, or set direction, SpecMirror meets you where you are."
             />
           </FadeSection>
 
