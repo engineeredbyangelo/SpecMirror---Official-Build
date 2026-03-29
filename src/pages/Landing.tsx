@@ -1,7 +1,11 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Sparkles, Users, Layers, ArrowRight, Play, Search, FileText, Zap, Lock, GitBranch, X, Check } from "lucide-react";
+import { Sparkles, Users, Layers, ArrowRight, Play, Search, FileText, Zap, Lock, GitBranch, X, Check, Loader2 } from "lucide-react";
+import { useAuth, STRIPE_TIERS } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import { motion } from "framer-motion";
 
 /* ── Scroll-triggered section wrapper ── */
@@ -32,6 +36,29 @@ const SectionHeader = ({ label, title, highlight, description }: { label: string
 );
 
 const Landing = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+
+  const handleProClick = async () => {
+    if (!user) {
+      navigate("/signup");
+      return;
+    }
+    setCheckoutLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-checkout", {
+        body: { priceId: STRIPE_TIERS.pro.price_id },
+      });
+      if (error) throw error;
+      if (data?.url) window.location.href = data.url;
+    } catch (e: any) {
+      toast.error("Could not start checkout. Please try again.");
+    } finally {
+      setCheckoutLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen glass-bg noise-overlay text-foreground relative">
       {/* Nav */}
@@ -517,11 +544,8 @@ const Landing = () => {
                     </li>
                   ))}
                 </ul>
-                <Button size="lg" className="w-full gap-2" asChild>
-                  <Link to="/signup">
-                    Start Pro trial
-                    <ArrowRight className="h-4 w-4" />
-                  </Link>
+                <Button size="lg" className="w-full gap-2" onClick={handleProClick} disabled={checkoutLoading}>
+                  {checkoutLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Start Pro trial <ArrowRight className="h-4 w-4" /></>}
                 </Button>
               </div>
             </FadeSection>
