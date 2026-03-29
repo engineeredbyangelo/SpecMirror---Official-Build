@@ -170,8 +170,8 @@ const Landing = () => {
                 <StepRow
                   step="02"
                   icon={<Zap className="h-5 w-5" />}
-                  title="AI mirrors your intent perfectly"
-                  description="Trained on thousands of technical docs, our AI doesn't guess. It reads your brief, understands context, and generates a production-grade spec: architecture, data models, APIs, effort estimates, and acceptance criteria. All in seconds."
+                  title="AI mirrors your intent"
+                  description="Trained on thousands of technical docs, our AI generates production-grade specs with architecture, APIs, and acceptance criteria in seconds."
                   visual={
                     <div className="glass-card rounded-xl p-5 border-primary/20">
                       <div className="mb-3 flex items-center justify-between">
@@ -629,7 +629,7 @@ const StepRow = ({
   align: "left" | "right";
 }) => (
   <div className={`flex flex-col gap-6 md:flex-row md:items-center ${align === "right" ? "md:flex-row-reverse" : ""}`}>
-    <div className={`flex-1 space-y-3 ${align === "right" ? "md:pl-10" : "md:pr-10"}`}>
+    <div className={`flex-1 space-y-3 ${align === "right" ? "md:pl-16" : "md:pr-16"}`}>
       <div className="inline-flex items-center gap-3">
         <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
           {icon}
@@ -639,7 +639,7 @@ const StepRow = ({
       <h3 className="text-xl font-bold tracking-tight md:text-2xl">{title}</h3>
       <p className="text-sm leading-relaxed text-muted-foreground max-w-md md:text-base">{description}</p>
     </div>
-    <div className={`flex-1 max-w-sm ${align === "right" ? "md:pr-10" : "md:pl-10"}`}>{visual}</div>
+    <div className={`flex-1 max-w-sm ${align === "right" ? "md:pr-16" : "md:pl-16"}`}>{visual}</div>
   </div>
 );
 
