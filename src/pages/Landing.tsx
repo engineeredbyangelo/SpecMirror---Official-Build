@@ -96,7 +96,7 @@ const Landing = () => {
               </Button>
             </div>
             <p className="mt-10 text-xs text-muted-foreground/50">
-              Trusted by teams at Linear, Vercel, and 200+ more
+              Trusted by 200+ product and engineering teams
             </p>
           </FadeSection>
         </div>
