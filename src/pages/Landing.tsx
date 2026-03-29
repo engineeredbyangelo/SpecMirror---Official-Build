@@ -403,10 +403,10 @@ const Landing = () => {
                   Yes. We believe beautiful dark interfaces make deep work feel better. No light mode in v0.1.
                 </AccordionContent>
               </AccordionItem>
-              <AccordionItem value="linear" className="border-white/[0.06]">
-                <AccordionTrigger className="text-left text-base">Does it integrate with Linear?</AccordionTrigger>
+              <AccordionItem value="integrations" className="border-white/[0.06]">
+                <AccordionTrigger className="text-left text-base">Does it integrate with project management tools?</AccordionTrigger>
                 <AccordionContent className="text-muted-foreground leading-relaxed">
-                  Yes — one-click sync turns an approved spec into a Linear issue with full context.
+                  Yes. One-click sync turns an approved spec into a trackable issue in your favorite PM tool with full context.
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="ai" className="border-white/[0.06]">
