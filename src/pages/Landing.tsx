@@ -124,7 +124,7 @@ const Landing = () => {
                   step="01"
                   icon={<FileText className="h-5 w-5" />}
                   title="Write your brief naturally"
-                  description="Describe what you want to build in plain language — no templates, no jargon. Just your product thinking."
+                  description="Describe what you want to build in plain language. No templates, no jargon. Just your product thinking."
                   visual={
                     <div className="glass-card rounded-xl p-5">
                       <div className="mb-3 text-xs font-medium uppercase tracking-widest text-muted-foreground">Product Brief</div>
