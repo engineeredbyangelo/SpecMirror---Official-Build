@@ -1,6 +1,7 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Search, Plus, FileText } from "lucide-react";
+import { Search, Plus, FileText, Loader2 } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const mockProjects = [
   { id: "1", title: "User Onboarding Flow", updatedAt: "2 hours ago", confidence: 78 },
@@ -9,6 +10,14 @@ const mockProjects = [
 ];
 
 const Dashboard = () => {
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <nav className="border-b border-border/50">
@@ -17,7 +26,10 @@ const Dashboard = () => {
             <Search className="h-5 w-5 text-primary" />
             <span className="text-lg font-semibold">SpecMirror</span>
           </div>
-          <Button variant="ghost" size="sm">Log out</Button>
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-muted-foreground">{user?.user_metadata?.full_name || user?.email}</span>
+            <Button variant="ghost" size="sm" onClick={handleSignOut}>Log out</Button>
+          </div>
         </div>
       </nav>
       <main className="mx-auto max-w-5xl px-6 py-12">
