@@ -44,7 +44,7 @@ const Landing = () => {
           <div className="hidden items-center gap-10 text-sm text-muted-foreground md:flex">
             <a href="#features" className="transition-colors hover:text-foreground">Features</a>
             <a href="#how-it-works" className="transition-colors hover:text-foreground">How it works</a>
-            <a href="#preview" className="transition-colors hover:text-foreground">See it in action</a>
+            <a href="#pricing" className="transition-colors hover:text-foreground">Pricing</a>
             <a href="#faq" className="transition-colors hover:text-foreground">FAQ</a>
           </div>
           <div className="flex items-center gap-3">
@@ -453,6 +453,78 @@ const Landing = () => {
                 </div>
               </FadeSection>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing */}
+      <section id="pricing" className="border-t border-white/[0.06] py-20 md:py-28">
+        <div className="mx-auto max-w-5xl px-6">
+          <FadeSection>
+            <SectionHeader
+              label="Pricing"
+              title="Simple, transparent"
+              highlight="pricing"
+              description="Start free. Upgrade when you need unlimited power."
+            />
+          </FadeSection>
+
+          <div className="mx-auto grid max-w-3xl gap-6 md:grid-cols-2">
+            {/* Free tier */}
+            <FadeSection>
+              <div className="flex h-full flex-col rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8 backdrop-blur-xl">
+                <div className="mb-6">
+                  <h3 className="text-lg font-bold">Free</h3>
+                  <div className="mt-3 flex items-baseline gap-1">
+                    <span className="text-4xl font-bold tracking-tight">$0</span>
+                    <span className="text-sm text-muted-foreground">/month</span>
+                  </div>
+                  <p className="mt-3 text-sm text-muted-foreground leading-relaxed">Perfect for trying SpecMirror on personal projects.</p>
+                </div>
+                <ul className="mb-8 flex-1 space-y-3 text-sm text-muted-foreground">
+                  {["5 specs per month", "Basic AI generation", "Encrypted sharing", "Single user"].map((f) => (
+                    <li key={f} className="flex items-center gap-2.5">
+                      <Check className="h-4 w-4 shrink-0 text-accent" />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                <Button variant="outline" size="lg" className="w-full border-white/[0.1] bg-white/[0.03] hover:bg-white/[0.06]" asChild>
+                  <Link to="/signup">Get started free</Link>
+                </Button>
+              </div>
+            </FadeSection>
+
+            {/* Pro tier */}
+            <FadeSection delay={0.1}>
+              <div className="relative flex h-full flex-col rounded-2xl border border-primary/30 bg-white/[0.02] p-8 backdrop-blur-xl">
+                <div className="absolute -top-3 left-6 rounded-full bg-primary px-3 py-0.5 text-xs font-medium text-primary-foreground">
+                  Most popular
+                </div>
+                <div className="mb-6">
+                  <h3 className="text-lg font-bold">Pro</h3>
+                  <div className="mt-3 flex items-baseline gap-1">
+                    <span className="text-4xl font-bold tracking-tight">$19</span>
+                    <span className="text-sm text-muted-foreground">/month</span>
+                  </div>
+                  <p className="mt-3 text-sm text-muted-foreground leading-relaxed">For teams that ship fast and need unlimited specs.</p>
+                </div>
+                <ul className="mb-8 flex-1 space-y-3 text-sm text-muted-foreground">
+                  {["Unlimited spec generations", "Priority AI processing", "Team sharing and collaboration", "Version history", "PM tool integrations", "Priority support"].map((f) => (
+                    <li key={f} className="flex items-center gap-2.5">
+                      <Check className="h-4 w-4 shrink-0 text-accent" />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                <Button size="lg" className="w-full gap-2" asChild>
+                  <Link to="/signup">
+                    Start Pro trial
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </Button>
+              </div>
+            </FadeSection>
           </div>
         </div>
       </section>
