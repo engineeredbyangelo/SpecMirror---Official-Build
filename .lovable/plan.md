@@ -1,106 +1,56 @@
 
 
-# Mirror View Editor + Encrypted Sharing
+# Add "Why Not ChatGPT?" Competitive Differentiation Section
 
-## Database Schema
+## What we're building
 
-### `projects` table
-Stores each user's briefs and generated specs.
+A new section placed **after the Features bento grid** that positions SpecMirror against generic conversational AI. The core message: SpecMirror's AI is purpose-built and trained on thousands of technical documentation sources, not a generic chatbot.
 
-```sql
-CREATE TABLE public.projects (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
-  title TEXT NOT NULL DEFAULT 'Untitled Brief',
-  brief TEXT DEFAULT '',
-  spec TEXT DEFAULT '',
-  confidence INTEGER DEFAULT 0,
-  created_at TIMESTAMPTZ DEFAULT now() NOT NULL,
-  updated_at TIMESTAMPTZ DEFAULT now() NOT NULL
-);
--- RLS: users only see/edit/delete their own projects
-```
+## Section design: "Built different"
 
-### `shared_specs` table
-Tracks share links with encrypted tokens.
+### Layout: Comparison table + training depth visual
 
-```sql
-CREATE TABLE public.shared_specs (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  project_id UUID REFERENCES public.projects(id) ON DELETE CASCADE NOT NULL,
-  shared_by UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
-  share_token TEXT UNIQUE NOT NULL,  -- crypto-random token
-  encrypted_spec TEXT NOT NULL,      -- AES-GCM encrypted spec content
-  encryption_iv TEXT NOT NULL,       -- IV for decryption (passed via URL fragment)
-  expires_at TIMESTAMPTZ,            -- optional expiry
-  created_at TIMESTAMPTZ DEFAULT now() NOT NULL
-);
--- RLS: only the creator can manage their shares
--- Public SELECT allowed via share_token (for the viewer)
-```
+**Top half: Side-by-side comparison strip**
+A two-column layout contrasting "Generic AI" (left, dimmed/muted) vs "SpecMirror" (right, highlighted with accent glow). Each row shows a capability:
 
-### RLS Policies
-- `projects`: Full CRUD restricted to `user_id = auth.uid()`
-- `shared_specs`: INSERT/DELETE/UPDATE restricted to `shared_by = auth.uid()`. SELECT allowed for authenticated + anon users (viewer needs to read by token)
+| Capability | Generic AI | SpecMirror |
+|---|---|---|
+| Output format | Freeform chat, copy-paste | Structured production spec |
+| Domain knowledge | General purpose | Trained on 10,000+ technical docs |
+| Consistency | Varies per prompt | Standardized every time |
+| Security | Data sent to third parties | End-to-end encrypted, zero-knowledge |
+| Integration | None | Syncs to your PM tools |
 
-## Encryption Approach
+Each row animates in on scroll. Generic AI side uses `text-muted-foreground` and a subtle red/gray X icon. SpecMirror side uses accent-colored check icons with a faint glow.
 
-Specs are encrypted **client-side** using the Web Crypto API (AES-GCM) before being stored in the database. The encryption key is never sent to the server.
+**Bottom half: "Training depth" visual**
+A horizontal bar or layered stack showing categories of documentation the AI was trained on: API references, RFC standards, infrastructure patterns, security best practices, database schemas, CI/CD pipelines. Each category is a small glass pill/chip that fades in staggered.
 
-```text
-Share flow:
-1. User clicks "Share" → generate random AES-256 key + IV
-2. Encrypt spec text with key → store ciphertext + IV in shared_specs
-3. Generate URL: /shared/{share_token}#{base64_key}
-   └─ The key is in the URL fragment (hash) — never sent to the server
-4. Recipient opens link → frontend reads key from hash → fetches ciphertext by token → decrypts client-side
-```
+Tagline above: **"Not another chatbot."** with accent gradient highlight on "chatbot."
 
-This means:
-- The server never sees the plaintext of shared specs
-- Without the full URL (including the `#` fragment), the spec cannot be decrypted
-- Revoking a share just deletes the row
+Subtext: *"SpecMirror's AI is hyper-trained on thousands of real-world technical documents, architecture patterns, and production specs. It doesn't guess. It knows."*
 
-## Frontend Changes
+### Styling
+- Same `FadeSection` wrapper for scroll animations
+- Same `SectionHeader` component for consistent branding
+- Glass card with `border-white/[0.06] bg-white/[0.02] backdrop-blur-xl`
+- Comparison uses a subtle divider line between columns
+- No em dashes in any copy
 
-### Updated `ProjectMirror.tsx`
-- Load project from database on mount (by `id` param)
-- Auto-save brief/spec on change (debounced 1s)
-- "Generate Mirror" still uses mock for now (AI integration is a separate task)
-- Add **Share** button in the top bar → opens share dialog
-- Show project title (editable inline)
+## Files changed
 
-### New `ShareDialog.tsx` component
-- Glass-styled dialog matching the design system
-- "Create share link" button → runs encryption + inserts into `shared_specs`
-- Shows the generated URL with a copy button
-- Lists existing share links with ability to revoke (delete)
-- Optional expiry selector (1h, 24h, 7d, never)
-
-### New `/shared/:token` route (`SharedSpec.tsx`)
-- Public page (no auth required, no `ProtectedRoute` wrapper)
-- Reads `share_token` from URL params, encryption key from `window.location.hash`
-- Fetches encrypted spec from database by token
-- Decrypts client-side and renders as read-only markdown-styled view
-- If token invalid or expired → show "Link expired or not found"
-- If key missing from URL → show "Invalid share link"
-
-### Updated `Dashboard.tsx`
-- Replace mock projects with real data from `projects` table
-- "New Brief" button creates a new project row and navigates to it
-
-### Updated `App.tsx`
-- Add route: `/shared/:token` → `<SharedSpec />`
-
-## Files Changed
-
-| File | Action |
+| File | Change |
 |---|---|
-| Migration SQL | Create `projects` + `shared_specs` tables with RLS |
-| `src/pages/ProjectMirror.tsx` | Wire to DB, add share button, auto-save |
-| `src/components/ShareDialog.tsx` | New — share link creation/management |
-| `src/pages/SharedSpec.tsx` | New — public encrypted spec viewer |
-| `src/pages/Dashboard.tsx` | Wire to real projects data |
-| `src/App.tsx` | Add `/shared/:token` route |
-| `src/lib/crypto.ts` | New — AES-GCM encrypt/decrypt helpers |
+| `src/pages/Landing.tsx` | Add new section after Features bento grid (~80 lines) |
+
+## Section order after change
+1. Nav
+2. Hero
+3. How it works
+4. Features (bento grid)
+5. **Why not ChatGPT? (NEW)**
+6. Live preview / Mirror demo
+7. For every team
+8. FAQ
+9. Footer CTA
 
