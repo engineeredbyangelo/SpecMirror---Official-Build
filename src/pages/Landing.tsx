@@ -276,7 +276,7 @@ const Landing = () => {
                   </div>
                   <h3 className="mb-1.5 text-lg font-bold tracking-tight">Seamless Collaboration</h3>
                   <p className="text-sm leading-relaxed text-muted-foreground">
-                    Encrypted sharing, version history, and team presence — all built in.
+                    Encrypted sharing, version history, and team presence. All built in.
                   </p>
                   <div className="mt-4 flex gap-1">
                     {[...Array(3)].map((_, i) => (
