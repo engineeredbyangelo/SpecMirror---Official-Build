@@ -496,7 +496,7 @@ const MirrorDemo = () => {
     { text: "JWT + httpOnly cookies, bcrypt hashing", width: "80%" },
     { text: "OAuth2 flow for Google/GitHub providers", width: "78%" },
     { text: "Effort Estimate", width: "45%", isSection: true },
-    { text: "~3 sprint points — 2 days implementation", width: "82%" },
+    { text: "~3 sprint points, 2 days implementation", width: "82%" },
     { text: "Acceptance Criteria", width: "50%", isSection: true },
     { text: "✓ Email signup with verification flow", width: "72%" },
     { text: "✓ Social login creates linked profile", width: "70%" },
