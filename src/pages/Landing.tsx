@@ -170,7 +170,7 @@ const Landing = () => {
                   step="03"
                   icon={<GitBranch className="h-5 w-5" />}
                   title="Collaborate and ship"
-                  description="Share encrypted specs with your team. Track versions, review diffs, and sync approved specs directly to Linear or Jira."
+                  description="Share encrypted specs with your team. Track versions, review diffs, and sync approved specs to your favorite project management tools."
                   visual={
                     <div className="glass-card rounded-xl p-5">
                       <div className="mb-3 text-xs font-medium uppercase tracking-widest text-muted-foreground">Share & Sync</div>
