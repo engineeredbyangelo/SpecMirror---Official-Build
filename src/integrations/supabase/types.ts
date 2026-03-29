@@ -41,6 +41,80 @@ export type Database = {
         }
         Relationships: []
       }
+      projects: {
+        Row: {
+          brief: string | null
+          confidence: number | null
+          created_at: string
+          id: string
+          spec: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          brief?: string | null
+          confidence?: number | null
+          created_at?: string
+          id?: string
+          spec?: string | null
+          title?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          brief?: string | null
+          confidence?: number | null
+          created_at?: string
+          id?: string
+          spec?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      shared_specs: {
+        Row: {
+          created_at: string
+          encrypted_spec: string
+          encryption_iv: string
+          expires_at: string | null
+          id: string
+          project_id: string
+          share_token: string
+          shared_by: string
+        }
+        Insert: {
+          created_at?: string
+          encrypted_spec: string
+          encryption_iv: string
+          expires_at?: string | null
+          id?: string
+          project_id: string
+          share_token: string
+          shared_by: string
+        }
+        Update: {
+          created_at?: string
+          encrypted_spec?: string
+          encryption_iv?: string
+          expires_at?: string | null
+          id?: string
+          project_id?: string
+          share_token?: string
+          shared_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shared_specs_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

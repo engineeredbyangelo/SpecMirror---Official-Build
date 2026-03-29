@@ -11,6 +11,7 @@ import Signup from "./pages/Signup";
 import ResetPassword from "./pages/ResetPassword";
 import Dashboard from "./pages/Dashboard";
 import ProjectMirror from "./pages/ProjectMirror";
+import SharedSpec from "./pages/SharedSpec";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,6 +30,7 @@ const App = () => (
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/project/:id" element={<ProtectedRoute><ProjectMirror /></ProtectedRoute>} />
+            <Route path="/shared/:token" element={<SharedSpec />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>

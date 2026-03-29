@@ -1,24 +1,99 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
-import { Search, ArrowLeft, Sparkles, Check } from "lucide-react";
-import { useState } from "react";
+import { Search, ArrowLeft, Sparkles, Check, Loader2 } from "lucide-react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
+import ShareDialog from "@/components/ShareDialog";
 
 const ProjectMirror = () => {
   const { id } = useParams();
-  const [brief, setBrief] = useState("## User Onboarding Flow\n\nWe need a smooth onboarding experience that guides new users through setting up their workspace, inviting team members, and creating their first project.\n\n### Key Goals\n- Reduce time-to-value under 3 minutes\n- Support both individual and team signups\n- Progressive disclosure — don't overwhelm");
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { toast } = useToast();
+
+  const [title, setTitle] = useState("Untitled Brief");
+  const [brief, setBrief] = useState("");
   const [spec, setSpec] = useState("");
+  const [confidence, setConfidence] = useState(0);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout>>();
+
+  // Load project
+  useEffect(() => {
+    if (!id) return;
+    const load = async () => {
+      const { data, error } = await supabase
+        .from("projects")
+        .select("*")
+        .eq("id", id)
+        .maybeSingle();
+      if (error || !data) {
+        toast({ variant: "destructive", title: "Project not found" });
+        navigate("/dashboard", { replace: true });
+        return;
+      }
+      setTitle(data.title);
+      setBrief(data.brief || "");
+      setSpec(data.spec || "");
+      setConfidence(data.confidence || 0);
+      setLoading(false);
+    };
+    load();
+  }, [id]);
+
+  // Debounced auto-save
+  const saveToDb = useCallback(
+    async (fields: { title?: string; brief?: string; spec?: string; confidence?: number }) => {
+      if (!id) return;
+      setSaving(true);
+      await supabase
+        .from("projects")
+        .update({ ...fields, updated_at: new Date().toISOString() })
+        .eq("id", id);
+      setSaving(false);
+    },
+    [id]
+  );
+
+  const debouncedSave = useCallback(
+    (fields: { title?: string; brief?: string; spec?: string; confidence?: number }) => {
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+      saveTimerRef.current = setTimeout(() => saveToDb(fields), 1000);
+    },
+    [saveToDb]
+  );
+
+  const handleTitleChange = (val: string) => {
+    setTitle(val);
+    debouncedSave({ title: val });
+  };
+
+  const handleBriefChange = (val: string) => {
+    setBrief(val);
+    debouncedSave({ brief: val });
+  };
+
+  const handleSpecChange = (val: string) => {
+    setSpec(val);
+    debouncedSave({ spec: val });
+  };
 
   const handleGenerate = () => {
     setIsGenerating(true);
+    // Mock generation — AI integration is a separate task
     setTimeout(() => {
-      setSpec(`## Technical Specification: User Onboarding Flow
+      const generated = `## Technical Specification: ${title}
 
 ### Architecture
 - Multi-step wizard component with progress indicator
 - State management via React context + URL params for resumability
-- Backend: Supabase Edge Function for workspace provisioning
+- Backend: Edge Function for workspace provisioning
 
 ### Data Model
 \`\`\`
@@ -28,23 +103,33 @@ onboarding_state: user_id, current_step, completed_steps[], started_at
 \`\`\`
 
 ### Effort Estimate
-- Frontend wizard: 3 days
-- Backend provisioning: 2 days
-- Email invitations: 1 day
+- Frontend: 3 days
+- Backend: 2 days
+- Integration: 1 day
 - **Total: ~6 days (1 engineer)**
 
 ### Acceptance Criteria
-- [ ] User completes onboarding in < 3 minutes
-- [ ] Team invitations send email with magic link
+- [ ] Core flow completes in < 3 minutes
+- [ ] All edge cases handled gracefully
 - [ ] Progress persists across sessions
-- [ ] Skip option available at every step
 
 ### Risks
-- Email deliverability for invitations (medium)
-- Complex state if user navigates away mid-flow (low)`);
+- Email deliverability (medium)
+- Complex state management (low)`;
+      setSpec(generated);
+      setConfidence(78);
+      saveToDb({ spec: generated, confidence: 78 });
       setIsGenerating(false);
     }, 2000);
   };
+
+  if (loading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-background">
+        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen flex-col bg-background">
@@ -56,8 +141,14 @@ onboarding_state: user_id, current_step, completed_steps[], started_at
           </Link>
           <div className="flex items-center gap-2">
             <Search className="h-4 w-4 text-primary" />
-            <span className="text-sm font-medium">Project #{id}</span>
+            <input
+              className="bg-transparent text-sm font-medium outline-none placeholder:text-muted-foreground/40"
+              value={title}
+              onChange={(e) => handleTitleChange(e.target.value)}
+              placeholder="Project title…"
+            />
           </div>
+          {saving && <span className="text-[10px] text-muted-foreground/50">Saving…</span>}
         </div>
         <div className="flex items-center gap-2">
           {/* Confidence meter */}
@@ -76,11 +167,12 @@ onboarding_state: user_id, current_step, completed_steps[], started_at
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="3"
-                strokeDasharray={`${spec ? 78 : 0}, 100`}
+                strokeDasharray={`${confidence}, 100`}
               />
             </svg>
-            <span className="text-xs text-muted-foreground">{spec ? "78%" : "—"}</span>
+            <span className="text-xs text-muted-foreground">{confidence ? `${confidence}%` : "—"}</span>
           </div>
+          <ShareDialog projectId={id!} specContent={spec} />
           <Button size="sm" variant="outline" className="gap-2" onClick={handleGenerate} disabled={isGenerating}>
             <Sparkles className="h-3.5 w-3.5" />
             {isGenerating ? "Generating…" : "Generate Mirror"}
@@ -102,7 +194,7 @@ onboarding_state: user_id, current_step, completed_steps[], started_at
             <textarea
               className="flex-1 resize-none bg-transparent p-4 text-sm leading-relaxed text-foreground outline-none placeholder:text-muted-foreground/40 font-mono"
               value={brief}
-              onChange={(e) => setBrief(e.target.value)}
+              onChange={(e) => handleBriefChange(e.target.value)}
               placeholder="Write your product brief here…"
             />
           </div>
@@ -123,7 +215,7 @@ onboarding_state: user_id, current_step, completed_steps[], started_at
               <textarea
                 className="flex-1 resize-none bg-transparent p-4 text-sm leading-relaxed text-foreground outline-none font-mono"
                 value={spec}
-                onChange={(e) => setSpec(e.target.value)}
+                onChange={(e) => handleSpecChange(e.target.value)}
               />
             ) : (
               <div className="flex flex-1 items-center justify-center">
