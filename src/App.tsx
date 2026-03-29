@@ -11,6 +11,7 @@ import Signup from "./pages/Signup";
 import ResetPassword from "./pages/ResetPassword";
 import Dashboard from "./pages/Dashboard";
 import ProjectMirror from "./pages/ProjectMirror";
+import SharedSpec from "./pages/SharedSpec";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
