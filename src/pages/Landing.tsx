@@ -79,7 +79,7 @@ const Landing = () => {
           </FadeSection>
           <FadeSection delay={0.2}>
             <p className="mx-auto mb-10 max-w-xl text-base leading-relaxed text-muted-foreground md:text-lg">
-              The Linear-style app that instantly translates product ideas into precise engineering specs — with live collaboration and AI superpowers.
+              Turn rough product ideas into production-ready technical specs in seconds. AI-powered, encrypted, and built for teams that ship fast.
             </p>
           </FadeSection>
           <FadeSection delay={0.3}>
