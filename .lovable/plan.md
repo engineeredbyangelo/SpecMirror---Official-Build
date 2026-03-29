@@ -1,142 +1,106 @@
 
 
-# Authentication Implementation Plan
+# Mirror View Editor + Encrypted Sharing
 
-## Database (Migration)
+## Database Schema
 
-### `profiles` table
+### `projects` table
+Stores each user's briefs and generated specs.
+
 ```sql
-CREATE TABLE public.profiles (
+CREATE TABLE public.projects (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL UNIQUE,
-  full_name TEXT,
-  avatar_url TEXT,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+  title TEXT NOT NULL DEFAULT 'Untitled Brief',
+  brief TEXT DEFAULT '',
+  spec TEXT DEFAULT '',
+  confidence INTEGER DEFAULT 0,
   created_at TIMESTAMPTZ DEFAULT now() NOT NULL,
   updated_at TIMESTAMPTZ DEFAULT now() NOT NULL
 );
-
-ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+-- RLS: users only see/edit/delete their own projects
 ```
 
-### RLS Policies — strict user-only access
+### `shared_specs` table
+Tracks share links with encrypted tokens.
+
 ```sql
--- Users can only read their own profile
-CREATE POLICY "Users read own profile"
-  ON public.profiles FOR SELECT
-  TO authenticated
-  USING (user_id = auth.uid());
-
--- Users can only update their own profile
-CREATE POLICY "Users update own profile"
-  ON public.profiles FOR UPDATE
-  TO authenticated
-  USING (user_id = auth.uid())
-  WITH CHECK (user_id = auth.uid());
-
--- Users can insert their own profile (for trigger fallback)
-CREATE POLICY "Users insert own profile"
-  ON public.profiles FOR INSERT
-  TO authenticated
-  WITH CHECK (user_id = auth.uid());
+CREATE TABLE public.shared_specs (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  project_id UUID REFERENCES public.projects(id) ON DELETE CASCADE NOT NULL,
+  shared_by UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+  share_token TEXT UNIQUE NOT NULL,  -- crypto-random token
+  encrypted_spec TEXT NOT NULL,      -- AES-GCM encrypted spec content
+  encryption_iv TEXT NOT NULL,       -- IV for decryption (passed via URL fragment)
+  expires_at TIMESTAMPTZ,            -- optional expiry
+  created_at TIMESTAMPTZ DEFAULT now() NOT NULL
+);
+-- RLS: only the creator can manage their shares
+-- Public SELECT allowed via share_token (for the viewer)
 ```
 
-### Auto-create trigger
-```sql
-CREATE OR REPLACE FUNCTION public.handle_new_user()
-RETURNS trigger
-LANGUAGE plpgsql
-SECURITY DEFINER
-SET search_path = public
-AS $$
-BEGIN
-  INSERT INTO public.profiles (user_id, full_name)
-  VALUES (NEW.id, NEW.raw_user_meta_data->>'full_name');
-  RETURN NEW;
-END;
-$$;
+### RLS Policies
+- `projects`: Full CRUD restricted to `user_id = auth.uid()`
+- `shared_specs`: INSERT/DELETE/UPDATE restricted to `shared_by = auth.uid()`. SELECT allowed for authenticated + anon users (viewer needs to read by token)
 
-CREATE TRIGGER on_auth_user_created
-  AFTER INSERT ON auth.users
-  FOR EACH ROW
-  EXECUTE FUNCTION public.handle_new_user();
+## Encryption Approach
+
+Specs are encrypted **client-side** using the Web Crypto API (AES-GCM) before being stored in the database. The encryption key is never sent to the server.
+
+```text
+Share flow:
+1. User clicks "Share" → generate random AES-256 key + IV
+2. Encrypt spec text with key → store ciphertext + IV in shared_specs
+3. Generate URL: /shared/{share_token}#{base64_key}
+   └─ The key is in the URL fragment (hash) — never sent to the server
+4. Recipient opens link → frontend reads key from hash → fetches ciphertext by token → decrypts client-side
 ```
 
-## Frontend — Auth Provider
+This means:
+- The server never sees the plaintext of shared specs
+- Without the full URL (including the `#` fragment), the spec cannot be decrypted
+- Revoking a share just deletes the row
 
-### `src/contexts/AuthContext.tsx`
-- React context wrapping the app with `user`, `session`, `loading`, `signOut`
-- Uses `supabase.auth.onAuthStateChange` listener (set up BEFORE `getSession()`)
-- No secrets or API logic exposed — only calls `supabase.auth.signInWithPassword`, `signUp`, `resetPasswordForEmail`, `updateUser`
+## Frontend Changes
 
-### `src/components/ProtectedRoute.tsx`
-- Wraps `/dashboard` and `/project/:id`
-- If no session + not loading → redirect to `/login`
-- Shows skeleton while loading
+### Updated `ProjectMirror.tsx`
+- Load project from database on mount (by `id` param)
+- Auto-save brief/spec on change (debounced 1s)
+- "Generate Mirror" still uses mock for now (AI integration is a separate task)
+- Add **Share** button in the top bar → opens share dialog
+- Show project title (editable inline)
 
-## Auth Pages — Wiring
+### New `ShareDialog.tsx` component
+- Glass-styled dialog matching the design system
+- "Create share link" button → runs encryption + inserts into `shared_specs`
+- Shows the generated URL with a copy button
+- Lists existing share links with ability to revoke (delete)
+- Optional expiry selector (1h, 24h, 7d, never)
 
-### Login (`src/pages/Login.tsx`)
-- Form state with `useState` for email/password
-- Calls `supabase.auth.signInWithPassword({ email, password })`
-- On success → navigate to `/dashboard`
-- Error display below form
+### New `/shared/:token` route (`SharedSpec.tsx`)
+- Public page (no auth required, no `ProtectedRoute` wrapper)
+- Reads `share_token` from URL params, encryption key from `window.location.hash`
+- Fetches encrypted spec from database by token
+- Decrypts client-side and renders as read-only markdown-styled view
+- If token invalid or expired → show "Link expired or not found"
+- If key missing from URL → show "Invalid share link"
 
-### Signup (`src/pages/Signup.tsx`)
-- Form state for name, email, password
-- Calls `supabase.auth.signUp({ email, password, options: { data: { full_name } } })`
-- Email confirmation required (no auto-confirm)
-- On success → show "Check your email" message
+### Updated `Dashboard.tsx`
+- Replace mock projects with real data from `projects` table
+- "New Brief" button creates a new project row and navigates to it
 
-### Reset Password (`src/pages/ResetPassword.tsx`)
-- Two modes: (1) request reset link, (2) set new password
-- Mode 1: `supabase.auth.resetPasswordForEmail(email, { redirectTo: origin + '/reset-password' })`
-- Mode 2: Detects `type=recovery` in URL hash, shows new password form, calls `supabase.auth.updateUser({ password })`
-
-### Dashboard — Logout
-- Log out button calls `supabase.auth.signOut()` → redirect to `/`
-
-## Edge Cases & Validation
-
-All handled client-side on the forms (no secrets exposed):
-
-| Edge case | Handling |
-|---|---|
-| Empty fields | Disable submit, inline "Required" error |
-| Invalid email format | Regex check before submit |
-| Password too short | Minimum 8 chars, show strength hint |
-| Duplicate email signup | Display backend error ("User already registered") |
-| Wrong credentials login | Display "Invalid email or password" |
-| Network failure | Generic "Something went wrong, try again" toast |
-| Already logged in visiting /login | Redirect to /dashboard |
-| Session expired | AuthProvider detects, redirects to /login |
-
-## Rate Limiting
-
-Client-side throttle on auth forms (no API keys exposed):
-- Track failed attempts in component state
-- After 5 failed attempts within 60 seconds → disable form for 30 seconds with countdown
-- Show "Too many attempts. Try again in X seconds."
-- Reset counter on success or after cooldown
-- Server-side rate limiting handled automatically by Lovable Cloud's built-in auth rate limits
-
-## Security Principles
-
-- All Supabase calls use the publishable anon key only (already in client.ts)
-- No service role key, no API secrets in frontend code
-- RLS ensures users can only access their own data — even if someone crafts a direct API call
-- `SECURITY DEFINER` on the trigger function with `SET search_path = public` to prevent search path injection
-- Password reset uses Lovable Cloud's built-in email (no third-party keys needed for now)
+### Updated `App.tsx`
+- Add route: `/shared/:token` → `<SharedSpec />`
 
 ## Files Changed
 
 | File | Action |
 |---|---|
-| Migration SQL | Create profiles table, RLS, trigger |
-| `src/contexts/AuthContext.tsx` | New — auth state provider |
-| `src/components/ProtectedRoute.tsx` | New — route guard |
-| `src/pages/Login.tsx` | Wire to Supabase auth |
-| `src/pages/Signup.tsx` | Wire to Supabase auth |
-| `src/pages/ResetPassword.tsx` | Wire to Supabase auth (dual mode) |
-| `src/pages/Dashboard.tsx` | Add logout, use auth context |
-| `src/App.tsx` | Wrap with AuthProvider, protect routes |
+| Migration SQL | Create `projects` + `shared_specs` tables with RLS |
+| `src/pages/ProjectMirror.tsx` | Wire to DB, add share button, auto-save |
+| `src/components/ShareDialog.tsx` | New — share link creation/management |
+| `src/pages/SharedSpec.tsx` | New — public encrypted spec viewer |
+| `src/pages/Dashboard.tsx` | Wire to real projects data |
+| `src/App.tsx` | Add `/shared/:token` route |
+| `src/lib/crypto.ts` | New — AES-GCM encrypt/decrypt helpers |
 
