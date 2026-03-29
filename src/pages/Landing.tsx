@@ -206,7 +206,7 @@ const Landing = () => {
           <FadeSection>
             <SectionHeader
               label="Features"
-              title="Built exactly like Linear."
+              title="Precision-crafted."
               highlight="Feels like magic."
               description="Every detail obsessed over. Every interaction considered."
             />
