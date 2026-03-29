@@ -79,7 +79,7 @@ const Landing = () => {
           </FadeSection>
           <FadeSection delay={0.2}>
             <p className="mx-auto mb-10 max-w-xl text-base leading-relaxed text-muted-foreground md:text-lg">
-              The Linear-style app that instantly translates product ideas into precise engineering specs — with live collaboration and AI superpowers.
+              Turn rough product ideas into production-ready technical specs in seconds. AI-powered, encrypted, and built for teams that ship fast.
             </p>
           </FadeSection>
           <FadeSection delay={0.3}>
@@ -96,7 +96,7 @@ const Landing = () => {
               </Button>
             </div>
             <p className="mt-10 text-xs text-muted-foreground/50">
-              Trusted by teams at Linear, Vercel, and 200+ more
+              Trusted by 200+ product and engineering teams
             </p>
           </FadeSection>
         </div>
@@ -124,7 +124,7 @@ const Landing = () => {
                   step="01"
                   icon={<FileText className="h-5 w-5" />}
                   title="Write your brief naturally"
-                  description="Describe what you want to build in plain language — no templates, no jargon. Just your product thinking."
+                  description="Describe what you want to build in plain language. No templates, no jargon. Just your product thinking."
                   visual={
                     <div className="glass-card rounded-xl p-5">
                       <div className="mb-3 text-xs font-medium uppercase tracking-widest text-muted-foreground">Product Brief</div>
@@ -144,7 +144,7 @@ const Landing = () => {
                   step="02"
                   icon={<Zap className="h-5 w-5" />}
                   title="AI mirrors your intent"
-                  description="Our AI reads your brief and generates a comprehensive technical spec — architecture, data models, APIs, effort estimates, and acceptance criteria."
+                  description="Our AI reads your brief and generates a comprehensive technical spec: architecture, data models, APIs, effort estimates, and acceptance criteria."
                   visual={
                     <div className="glass-card rounded-xl p-5 border-primary/20">
                       <div className="mb-3 flex items-center justify-between">
@@ -170,7 +170,7 @@ const Landing = () => {
                   step="03"
                   icon={<GitBranch className="h-5 w-5" />}
                   title="Collaborate and ship"
-                  description="Share encrypted specs with your team. Track versions, review diffs, and sync approved specs directly to Linear or Jira."
+                  description="Share encrypted specs with your team. Track versions, review diffs, and sync approved specs to your favorite project management tools."
                   visual={
                     <div className="glass-card rounded-xl p-5">
                       <div className="mb-3 text-xs font-medium uppercase tracking-widest text-muted-foreground">Share & Sync</div>
@@ -206,7 +206,7 @@ const Landing = () => {
           <FadeSection>
             <SectionHeader
               label="Features"
-              title="Built exactly like Linear."
+              title="Precision-crafted."
               highlight="Feels like magic."
               description="Every detail obsessed over. Every interaction considered."
             />
@@ -276,7 +276,7 @@ const Landing = () => {
                   </div>
                   <h3 className="mb-1.5 text-lg font-bold tracking-tight">Seamless Collaboration</h3>
                   <p className="text-sm leading-relaxed text-muted-foreground">
-                    Encrypted sharing, version history, and team presence — all built in.
+                    Encrypted sharing, version history, and team presence. All built in.
                   </p>
                   <div className="mt-4 flex gap-1">
                     {[...Array(3)].map((_, i) => (
@@ -299,7 +299,7 @@ const Landing = () => {
               label="Live preview"
               title="See SpecMirror"
               highlight="in action"
-              description="Dark mode. Linear speed. Zero friction."
+              description="Dark mode. Instant generation. Zero friction."
             />
           </FadeSection>
           <FadeSection delay={0.15}>
@@ -316,7 +316,7 @@ const Landing = () => {
               label="For every team"
               title="How SpecMirror helps"
               highlight="your workflow"
-              description="Whether you ship product, write code, or set direction — SpecMirror meets you where you are."
+              description="Whether you ship product, write code, or set direction, SpecMirror meets you where you are."
             />
           </FadeSection>
 
@@ -403,10 +403,10 @@ const Landing = () => {
                   Yes. We believe beautiful dark interfaces make deep work feel better. No light mode in v0.1.
                 </AccordionContent>
               </AccordionItem>
-              <AccordionItem value="linear" className="border-white/[0.06]">
-                <AccordionTrigger className="text-left text-base">Does it integrate with Linear?</AccordionTrigger>
+              <AccordionItem value="integrations" className="border-white/[0.06]">
+                <AccordionTrigger className="text-left text-base">Does it integrate with project management tools?</AccordionTrigger>
                 <AccordionContent className="text-muted-foreground leading-relaxed">
-                  Yes — one-click sync turns an approved spec into a Linear issue with full context.
+                  Yes. One-click sync turns an approved spec into a trackable issue in your favorite PM tool with full context.
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="ai" className="border-white/[0.06]">
@@ -496,7 +496,7 @@ const MirrorDemo = () => {
     { text: "JWT + httpOnly cookies, bcrypt hashing", width: "80%" },
     { text: "OAuth2 flow for Google/GitHub providers", width: "78%" },
     { text: "Effort Estimate", width: "45%", isSection: true },
-    { text: "~3 sprint points — 2 days implementation", width: "82%" },
+    { text: "~3 sprint points, 2 days implementation", width: "82%" },
     { text: "Acceptance Criteria", width: "50%", isSection: true },
     { text: "✓ Email signup with verification flow", width: "72%" },
     { text: "✓ Social login creates linked profile", width: "70%" },
