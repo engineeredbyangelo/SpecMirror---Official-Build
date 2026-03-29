@@ -299,7 +299,7 @@ const Landing = () => {
               label="Live preview"
               title="See SpecMirror"
               highlight="in action"
-              description="Dark mode. Linear speed. Zero friction."
+              description="Dark mode. Instant generation. Zero friction."
             />
           </FadeSection>
           <FadeSection delay={0.15}>
