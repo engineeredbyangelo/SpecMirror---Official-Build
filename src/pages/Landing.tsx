@@ -200,9 +200,9 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Features */}
+      {/* Features — Bento Grid */}
       <section id="features" className="py-20 md:py-28">
-        <div className="mx-auto max-w-5xl px-6">
+        <div className="mx-auto max-w-6xl px-6">
           <FadeSection>
             <SectionHeader
               label="Features"
@@ -212,88 +212,81 @@ const Landing = () => {
             />
           </FadeSection>
 
-          <div className="relative">
-            <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-primary/40 via-accent/30 to-transparent hidden md:block" />
+          <div className="grid gap-4 md:grid-cols-3 md:grid-rows-2">
+            {/* Large feature — spans 2 cols */}
+            <FadeSection className="md:col-span-2 md:row-span-2">
+              <div className="group relative h-full overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8 backdrop-blur-xl transition-all duration-500 hover:border-primary/30 hover:bg-white/[0.04]">
+                <div className="absolute -top-24 -right-24 h-48 w-48 rounded-full bg-primary/[0.06] blur-3xl transition-opacity duration-500 group-hover:opacity-100 opacity-0" />
+                <div className="relative z-10">
+                  <div className="mb-5 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                    <Layers className="h-5 w-5" />
+                  </div>
+                  <h3 className="mb-2 text-xl font-bold tracking-tight md:text-2xl">Live Mirror View</h3>
+                  <p className="mb-8 max-w-md text-sm leading-relaxed text-muted-foreground md:text-base">
+                    Side-by-side product brief + technical spec with real-time streaming and confidence scoring.
+                  </p>
+                  {/* Mini split-screen visual */}
+                  <div className="grid grid-cols-2 gap-3 rounded-xl border border-white/[0.06] bg-background/40 p-4">
+                    <div className="space-y-2">
+                      <div className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground/60">Brief</div>
+                      <div className="h-2 rounded-sm bg-primary/20 w-2/3" />
+                      <div className="h-2 rounded-sm bg-white/[0.06] w-full" />
+                      <div className="h-2 rounded-sm bg-white/[0.06] w-4/5" />
+                      <div className="h-2 rounded-sm bg-white/[0.06] w-3/5" />
+                    </div>
+                    <div className="space-y-2 border-l border-white/[0.06] pl-3">
+                      <div className="text-[10px] font-medium uppercase tracking-widest text-primary/60">Spec</div>
+                      <div className="h-2 rounded-sm bg-accent/25 w-1/2" />
+                      <div className="h-2 rounded-sm bg-white/[0.06] w-full" />
+                      <div className="h-2 rounded-sm bg-white/[0.06] w-3/4" />
+                      <div className="h-2 rounded-sm bg-accent/25 w-2/5" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </FadeSection>
 
-            <div className="space-y-12 md:space-y-20">
-              <FadeSection>
-                <StepRow
-                  step="01"
-                  icon={<Layers className="h-5 w-5" />}
-                  title="Live Mirror View"
-                  description="Side-by-side product brief + technical spec with real-time diffs and confidence meter."
-                  visual={
-                    <div className="glass-card rounded-xl p-5">
-                      <div className="grid grid-cols-2 gap-2">
-                        <div className="space-y-1.5 rounded-lg bg-white/[0.03] p-3 border border-white/[0.06]">
-                          <div className="h-2 rounded-sm bg-primary/20 w-2/3" />
-                          <div className="h-2 rounded-sm bg-white/[0.06] w-full" />
-                          <div className="h-2 rounded-sm bg-white/[0.06] w-4/5" />
-                        </div>
-                        <div className="space-y-1.5 rounded-lg bg-white/[0.03] p-3 border border-primary/20">
-                          <div className="h-2 rounded-sm bg-accent/25 w-1/2" />
-                          <div className="h-2 rounded-sm bg-white/[0.06] w-full" />
-                          <div className="h-2 rounded-sm bg-white/[0.06] w-3/4" />
-                        </div>
-                      </div>
-                    </div>
-                  }
-                  align="left"
-                />
-              </FadeSection>
-              <FadeSection>
-                <StepRow
-                  step="02"
-                  icon={<Sparkles className="h-5 w-5" />}
-                  title="Instant AI Generation"
-                  description="One click turns any brief into architecture notes, effort estimates, and acceptance criteria."
-                  visual={
-                    <div className="glass-card rounded-xl p-5 border-accent/20">
-                      <div className="mb-2 flex items-center gap-2">
-                        <div className="h-2 w-2 rounded-full bg-accent animate-pulse" />
-                        <span className="text-[10px] font-medium uppercase tracking-widest text-accent">AI Processing</span>
-                      </div>
-                      <div className="shimmer rounded-lg p-0.5">
-                        <div className="space-y-1.5 rounded-lg bg-background/80 p-3">
-                          <div className="spec-line h-2 rounded-sm" style={{ width: "40%", animationDelay: "0.3s", background: "hsl(160 84% 39% / 0.3)" }} />
-                          <div className="spec-line h-2 rounded-sm" style={{ width: "85%", animationDelay: "0.6s", background: "hsl(0 0% 100% / 0.08)" }} />
-                          <div className="spec-line h-2 rounded-sm" style={{ width: "60%", animationDelay: "0.9s", background: "hsl(0 0% 100% / 0.08)" }} />
-                        </div>
-                      </div>
-                    </div>
-                  }
-                  align="right"
-                />
-              </FadeSection>
-              <FadeSection>
-                <StepRow
-                  step="03"
-                  icon={<Users className="h-5 w-5" />}
-                  title="Seamless Collaboration"
-                  description="Comments, presence, version history — everything you love about Linear, but for specs."
-                  visual={
-                    <div className="glass-card rounded-xl p-5">
-                      <div className="space-y-2">
-                        <div className="flex items-center gap-2">
-                          <div className="h-5 w-5 rounded-full bg-primary/30 border border-primary/40" />
-                          <div className="h-2 rounded-sm bg-white/[0.08] w-3/5" />
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <div className="h-5 w-5 rounded-full bg-accent/30 border border-accent/40" />
-                          <div className="h-2 rounded-sm bg-white/[0.08] w-2/5" />
-                        </div>
-                        <div className="mt-2 flex gap-1.5">
-                          <div className="h-1.5 rounded-full bg-accent/40 w-1/4" />
-                          <div className="h-1.5 rounded-full bg-primary/30 w-1/3" />
-                          <div className="h-1.5 rounded-full bg-white/[0.06] w-1/5" />
-                        </div>
-                      </div>
-                    </div>
-                  }
-                  align="left"
-                />
-              </FadeSection>
-            </div>
+            {/* Top-right small card */}
+            <FadeSection delay={0.1}>
+              <div className="group relative overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 backdrop-blur-xl transition-all duration-500 hover:border-accent/30 hover:bg-white/[0.04] h-full">
+                <div className="absolute -bottom-12 -left-12 h-32 w-32 rounded-full bg-accent/[0.06] blur-2xl transition-opacity duration-500 group-hover:opacity-100 opacity-0" />
+                <div className="relative z-10">
+                  <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent">
+                    <Sparkles className="h-5 w-5" />
+                  </div>
+                  <h3 className="mb-1.5 text-lg font-bold tracking-tight">Instant AI Generation</h3>
+                  <p className="text-sm leading-relaxed text-muted-foreground">
+                    One click transforms any brief into architecture, effort estimates, and acceptance criteria.
+                  </p>
+                  <div className="mt-4 flex items-center gap-2">
+                    <div className="h-2 w-2 rounded-full bg-accent animate-pulse" />
+                    <span className="text-[10px] font-medium uppercase tracking-widest text-accent/70">Streaming</span>
+                  </div>
+                </div>
+              </div>
+            </FadeSection>
+
+            {/* Bottom-right small card */}
+            <FadeSection delay={0.2}>
+              <div className="group relative overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 backdrop-blur-xl transition-all duration-500 hover:border-primary/30 hover:bg-white/[0.04] h-full">
+                <div className="absolute -top-12 -right-12 h-32 w-32 rounded-full bg-primary/[0.06] blur-2xl transition-opacity duration-500 group-hover:opacity-100 opacity-0" />
+                <div className="relative z-10">
+                  <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                    <Users className="h-5 w-5" />
+                  </div>
+                  <h3 className="mb-1.5 text-lg font-bold tracking-tight">Seamless Collaboration</h3>
+                  <p className="text-sm leading-relaxed text-muted-foreground">
+                    Encrypted sharing, version history, and team presence — all built in.
+                  </p>
+                  <div className="mt-4 flex gap-1">
+                    {[...Array(3)].map((_, i) => (
+                      <div key={i} className="h-6 w-6 rounded-full border-2 border-background bg-gradient-to-br from-primary/40 to-accent/30" style={{ marginLeft: i > 0 ? "-6px" : 0 }} />
+                    ))}
+                    <span className="ml-1 self-center text-[10px] text-muted-foreground/60">+4</span>
+                  </div>
+                </div>
+              </div>
+            </FadeSection>
           </div>
         </div>
       </section>
@@ -315,9 +308,9 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* How it helps every team */}
+      {/* For Every Team — Horizontal role cards */}
       <section id="how-it-helps" className="py-20 md:py-28">
-        <div className="mx-auto max-w-5xl px-6">
+        <div className="mx-auto max-w-6xl px-6">
           <FadeSection>
             <SectionHeader
               label="For every team"
@@ -327,75 +320,71 @@ const Landing = () => {
             />
           </FadeSection>
 
-          <div className="relative">
-            <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-primary/40 via-accent/30 to-transparent hidden md:block" />
+          <div className="space-y-4">
+            {[
+              {
+                role: "Product Managers",
+                quote: "Stop rewriting the same idea 17 times. Get engineering feedback before it's too late.",
+                icon: <FileText className="h-5 w-5" />,
+                accentColor: "primary" as const,
+                stat: "94%",
+                statLabel: "Spec confidence",
+              },
+              {
+                role: "Engineers",
+                quote: 'Influence scope on day zero instead of week three. No more "this is impossible" surprises.',
+                icon: <Zap className="h-5 w-5" />,
+                accentColor: "accent" as const,
+                stat: "3×",
+                statLabel: "Faster alignment",
+              },
+              {
+                role: "Leadership",
+                quote: "See alignment scores and confidence metrics across every feature in one place.",
+                icon: <Users className="h-5 w-5" />,
+                accentColor: "primary" as const,
+                stat: "100%",
+                statLabel: "Visibility",
+              },
+            ].map((item, i) => (
+              <FadeSection key={item.role} delay={i * 0.1}>
+                <div className={`group relative flex flex-col gap-6 overflow-hidden rounded-2xl border bg-white/[0.02] p-6 backdrop-blur-xl transition-all duration-500 hover:bg-white/[0.04] md:flex-row md:items-center md:p-8 ${
+                  item.accentColor === "accent"
+                    ? "border-accent/20 hover:border-accent/40"
+                    : "border-white/[0.06] hover:border-primary/30"
+                }`}>
+                  {/* Left accent bar */}
+                  <div className={`absolute left-0 top-0 bottom-0 w-[3px] rounded-full transition-all duration-500 ${
+                    item.accentColor === "accent"
+                      ? "bg-accent/40 group-hover:bg-accent"
+                      : "bg-primary/40 group-hover:bg-primary"
+                  }`} />
 
-            <div className="space-y-12 md:space-y-20">
-              <FadeSection>
-                <StepRow
-                  step="01"
-                  icon={<FileText className="h-5 w-5" />}
-                  title="Product Managers"
-                  description="Stop rewriting the same idea 17 times. Get engineering feedback before it's too late."
-                  visual={
-                    <div className="glass-card rounded-xl p-5">
-                      <div className="space-y-2">
-                        <div className="flex items-center gap-2">
-                          <div className="h-4 w-4 rounded bg-primary/20" />
-                          <div className="h-2 rounded-sm bg-white/[0.1] w-2/3" />
-                          <div className="ml-auto h-4 w-10 rounded bg-accent/20 flex items-center justify-center text-[9px] font-medium text-accent">94%</div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <div className="h-4 w-4 rounded bg-primary/20" />
-                          <div className="h-2 rounded-sm bg-white/[0.1] w-1/2" />
-                          <div className="ml-auto h-4 w-10 rounded bg-primary/20 flex items-center justify-center text-[9px] font-medium text-primary">78%</div>
-                        </div>
-                      </div>
+                  {/* Icon + role */}
+                  <div className="flex shrink-0 items-center gap-4 md:w-48">
+                    <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${
+                      item.accentColor === "accent" ? "bg-accent/10 text-accent" : "bg-primary/10 text-primary"
+                    }`}>
+                      {item.icon}
                     </div>
-                  }
-                  align="left"
-                />
+                    <h3 className="text-lg font-bold tracking-tight">{item.role}</h3>
+                  </div>
+
+                  {/* Quote */}
+                  <p className="flex-1 text-sm leading-relaxed text-muted-foreground md:text-base md:px-6 md:border-l md:border-white/[0.06]">
+                    "{item.quote}"
+                  </p>
+
+                  {/* Stat */}
+                  <div className="shrink-0 text-right md:w-32">
+                    <div className={`text-2xl font-bold tracking-tight ${
+                      item.accentColor === "accent" ? "text-accent" : "text-primary"
+                    }`}>{item.stat}</div>
+                    <div className="text-xs text-muted-foreground/60 uppercase tracking-widest">{item.statLabel}</div>
+                  </div>
+                </div>
               </FadeSection>
-              <FadeSection>
-                <StepRow
-                  step="02"
-                  icon={<Zap className="h-5 w-5" />}
-                  title="Engineers"
-                  description={'Influence scope on day zero instead of week three. No more "this is impossible" surprises.'}
-                  visual={
-                    <div className="glass-card rounded-xl p-5 border-accent/20">
-                      <div className="space-y-1.5">
-                        <div className="h-2 rounded-sm bg-accent/25 w-1/3" />
-                        <div className="h-2 rounded-sm bg-white/[0.06] w-4/5" />
-                        <div className="h-2 rounded-sm bg-white/[0.06] w-3/5" />
-                        <div className="mt-2 h-2 rounded-sm bg-accent/25 w-2/5" />
-                        <div className="h-2 rounded-sm bg-white/[0.06] w-full" />
-                      </div>
-                    </div>
-                  }
-                  align="right"
-                />
-              </FadeSection>
-              <FadeSection>
-                <StepRow
-                  step="03"
-                  icon={<Users className="h-5 w-5" />}
-                  title="Leadership"
-                  description="See alignment scores and confidence metrics across every feature in one place."
-                  visual={
-                    <div className="glass-card rounded-xl p-5">
-                      <div className="flex items-end gap-1.5 h-16">
-                        {[60, 80, 45, 90, 70, 85, 95].map((h, i) => (
-                          <div key={i} className="flex-1 rounded-t bg-gradient-to-t from-primary/40 to-accent/30" style={{ height: `${h}%` }} />
-                        ))}
-                      </div>
-                      <div className="mt-2 h-px bg-white/[0.06]" />
-                    </div>
-                  }
-                  align="left"
-                />
-              </FadeSection>
-            </div>
+            ))}
           </div>
         </div>
       </section>
