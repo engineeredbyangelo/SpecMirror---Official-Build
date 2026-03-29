@@ -144,7 +144,7 @@ const Landing = () => {
                   step="02"
                   icon={<Zap className="h-5 w-5" />}
                   title="AI mirrors your intent"
-                  description="Our AI reads your brief and generates a comprehensive technical spec — architecture, data models, APIs, effort estimates, and acceptance criteria."
+                  description="Our AI reads your brief and generates a comprehensive technical spec: architecture, data models, APIs, effort estimates, and acceptance criteria."
                   visual={
                     <div className="glass-card rounded-xl p-5 border-primary/20">
                       <div className="mb-3 flex items-center justify-between">
