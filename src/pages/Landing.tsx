@@ -36,6 +36,29 @@ const SectionHeader = ({ label, title, highlight, description }: { label: string
 );
 
 const Landing = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+
+  const handleProClick = async () => {
+    if (!user) {
+      navigate("/signup");
+      return;
+    }
+    setCheckoutLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-checkout", {
+        body: { priceId: STRIPE_TIERS.pro.price_id },
+      });
+      if (error) throw error;
+      if (data?.url) window.location.href = data.url;
+    } catch (e: any) {
+      toast.error("Could not start checkout. Please try again.");
+    } finally {
+      setCheckoutLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen glass-bg noise-overlay text-foreground relative">
       {/* Nav */}
