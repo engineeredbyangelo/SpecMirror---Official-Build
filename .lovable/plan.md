@@ -1,56 +1,28 @@
 
 
-# Add "Why Not ChatGPT?" Competitive Differentiation Section
+# Checkout Flow for Pro Button
 
-## What we're building
+## What changes
 
-A new section placed **after the Features bento grid** that positions SpecMirror against generic conversational AI. The core message: SpecMirror's AI is purpose-built and trained on thousands of technical documentation sources, not a generic chatbot.
-
-## Section design: "Built different"
-
-### Layout: Comparison table + training depth visual
-
-**Top half: Side-by-side comparison strip**
-A two-column layout contrasting "Generic AI" (left, dimmed/muted) vs "SpecMirror" (right, highlighted with accent glow). Each row shows a capability:
-
-| Capability | Generic AI | SpecMirror |
-|---|---|---|
-| Output format | Freeform chat, copy-paste | Structured production spec |
-| Domain knowledge | General purpose | Trained on 10,000+ technical docs |
-| Consistency | Varies per prompt | Standardized every time |
-| Security | Data sent to third parties | End-to-end encrypted, zero-knowledge |
-| Integration | None | Syncs to your PM tools |
-
-Each row animates in on scroll. Generic AI side uses `text-muted-foreground` and a subtle red/gray X icon. SpecMirror side uses accent-colored check icons with a faint glow.
-
-**Bottom half: "Training depth" visual**
-A horizontal bar or layered stack showing categories of documentation the AI was trained on: API references, RFC standards, infrastructure patterns, security best practices, database schemas, CI/CD pipelines. Each category is a small glass pill/chip that fades in staggered.
-
-Tagline above: **"Not another chatbot."** with accent gradient highlight on "chatbot."
-
-Subtext: *"SpecMirror's AI is hyper-trained on thousands of real-world technical documents, architecture patterns, and production specs. It doesn't guess. It knows."*
-
-### Styling
-- Same `FadeSection` wrapper for scroll animations
-- Same `SectionHeader` component for consistent branding
-- Glass card with `border-white/[0.06] bg-white/[0.02] backdrop-blur-xl`
-- Comparison uses a subtle divider line between columns
-- No em dashes in any copy
+Replace the static `<Link to="/signup">` on the Pro pricing card with a smart button that:
+- If user is **logged in**: calls `create-checkout` edge function with the Pro price ID, then redirects to Stripe Checkout
+- If user is **not logged in**: navigates to `/signup` (existing behavior)
 
 ## Files changed
 
 | File | Change |
 |---|---|
-| `src/pages/Landing.tsx` | Add new section after Features bento grid (~80 lines) |
+| `src/pages/Landing.tsx` | Import `useAuth`, replace Pro button with a component that checks auth state and either invokes checkout or links to signup |
 
-## Section order after change
-1. Nav
-2. Hero
-3. How it works
-4. Features (bento grid)
-5. **Why not ChatGPT? (NEW)**
-6. Live preview / Mirror demo
-7. For every team
-8. FAQ
-9. Footer CTA
+## Implementation detail
+
+In `Landing.tsx`:
+1. Import `useAuth` from `@/contexts/AuthContext` and `STRIPE_TIERS`
+2. Import `supabase` client
+3. Replace the Pro card's `<Button asChild><Link to="/signup">` with an `onClick` handler:
+   - If `user` exists: set loading state, call `supabase.functions.invoke("create-checkout", { body: { priceId: STRIPE_TIERS.pro.price_id } })`, open returned URL in current tab
+   - If no `user`: navigate to `/signup`
+4. Show a spinner/loading state on the button while checkout is being created
+
+No backend changes needed — `create-checkout` already accepts `priceId` in the request body and returns a session URL.
 
