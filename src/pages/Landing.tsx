@@ -544,11 +544,8 @@ const Landing = () => {
                     </li>
                   ))}
                 </ul>
-                <Button size="lg" className="w-full gap-2" asChild>
-                  <Link to="/signup">
-                    Start Pro trial
-                    <ArrowRight className="h-4 w-4" />
-                  </Link>
+                <Button size="lg" className="w-full gap-2" onClick={handleProClick} disabled={checkoutLoading}>
+                  {checkoutLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Start Pro trial <ArrowRight className="h-4 w-4" /></>}
                 </Button>
               </div>
             </FadeSection>
