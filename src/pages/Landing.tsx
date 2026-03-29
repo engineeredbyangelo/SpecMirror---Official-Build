@@ -291,6 +291,74 @@ const Landing = () => {
         </div>
       </section>
 
+      {/* Why Not ChatGPT — Competitive Differentiation */}
+      <section className="border-y border-white/[0.06] py-20 md:py-28">
+        <div className="mx-auto max-w-5xl px-6">
+          <FadeSection>
+            <div className="mb-14 text-center">
+              <p className="mb-4 text-sm font-medium uppercase tracking-widest text-primary">Built different</p>
+              <h2 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl">
+                Not another{" "}
+                <span className="bg-gradient-to-r from-accent to-accent/70 bg-clip-text text-transparent">chatbot.</span>
+              </h2>
+              <p className="mx-auto max-w-2xl text-base text-muted-foreground leading-relaxed md:text-lg">
+                SpecMirror's AI is hyper-trained on thousands of real-world technical documents, architecture patterns, and production specs. It doesn't guess. It knows.
+              </p>
+            </div>
+          </FadeSection>
+
+          {/* Comparison table */}
+          <div className="mb-16 overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-xl">
+            <div className="grid grid-cols-[1fr,1fr,1fr] border-b border-white/[0.06]">
+              <div className="p-4 md:p-5 text-xs font-medium uppercase tracking-widest text-muted-foreground/60">Capability</div>
+              <div className="p-4 md:p-5 text-xs font-medium uppercase tracking-widest text-muted-foreground/60 border-l border-white/[0.06]">Generic AI</div>
+              <div className="p-4 md:p-5 text-xs font-medium uppercase tracking-widest text-primary border-l border-white/[0.06]">SpecMirror</div>
+            </div>
+            {[
+              { capability: "Output format", generic: "Freeform chat, copy-paste", spec: "Structured production spec" },
+              { capability: "Domain knowledge", generic: "General purpose", spec: "Trained on 10,000+ technical docs" },
+              { capability: "Consistency", generic: "Varies per prompt", spec: "Standardized every time" },
+              { capability: "Security", generic: "Data sent to third parties", spec: "End-to-end encrypted, zero-knowledge" },
+              { capability: "Integration", generic: "None", spec: "Syncs to your PM tools" },
+            ].map((row, i) => (
+              <FadeSection key={row.capability} delay={i * 0.07}>
+                <div className={`grid grid-cols-[1fr,1fr,1fr] ${i < 4 ? "border-b border-white/[0.06]" : ""}`}>
+                  <div className="p-4 md:p-5 text-sm font-medium text-foreground/80">{row.capability}</div>
+                  <div className="p-4 md:p-5 flex items-start gap-2.5 border-l border-white/[0.06]">
+                    <X className="h-4 w-4 shrink-0 mt-0.5 text-red-400/50" />
+                    <span className="text-sm text-muted-foreground/60">{row.generic}</span>
+                  </div>
+                  <div className="p-4 md:p-5 flex items-start gap-2.5 border-l border-white/[0.06] bg-accent/[0.03]">
+                    <Check className="h-4 w-4 shrink-0 mt-0.5 text-accent drop-shadow-[0_0_6px_hsl(160_84%_39%/0.4)]" />
+                    <span className="text-sm text-foreground/90">{row.spec}</span>
+                  </div>
+                </div>
+              </FadeSection>
+            ))}
+          </div>
+
+          {/* Training depth visual */}
+          <FadeSection>
+            <div className="text-center mb-8">
+              <p className="text-sm font-medium uppercase tracking-widest text-primary mb-2">Training depth</p>
+              <p className="text-muted-foreground text-sm">Purpose-built on real engineering knowledge</p>
+            </div>
+          </FadeSection>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            {[
+              "API References", "RFC Standards", "Infrastructure Patterns", "Security Best Practices",
+              "Database Schemas", "CI/CD Pipelines", "System Design Docs", "Architecture Patterns",
+            ].map((label, i) => (
+              <FadeSection key={label} delay={0.05 * i}>
+                <div className="rounded-full border border-white/[0.08] bg-white/[0.03] px-4 py-2 text-sm text-foreground/70 backdrop-blur-sm transition-colors hover:border-primary/30 hover:text-foreground/90">
+                  {label}
+                </div>
+              </FadeSection>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Preview — Animated Mirror Demo */}
       <section id="preview" className="border-y border-white/[0.06] py-20 md:py-28">
         <div className="mx-auto max-w-6xl px-6">
