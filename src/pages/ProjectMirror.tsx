@@ -84,43 +84,82 @@ const ProjectMirror = () => {
     debouncedSave({ spec: val });
   };
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
+    if (brief.trim().length < 10) {
+      toast({ variant: "destructive", title: "Brief too short", description: "Write at least 10 characters before generating." });
+      return;
+    }
     setIsGenerating(true);
-    // Mock generation — AI integration is a separate task
-    setTimeout(() => {
-      const generated = `## Technical Specification: ${title}
+    setSpec("");
+    setConfidence(0);
 
-### Architecture
-- Multi-step wizard component with progress indicator
-- State management via React context + URL params for resumability
-- Backend: Edge Function for workspace provisioning
+    try {
+      const resp = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-spec`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({ brief, title }),
+        }
+      );
 
-### Data Model
-\`\`\`
-workspaces: id, name, owner_id, created_at
-workspace_members: workspace_id, user_id, role, invited_at
-onboarding_state: user_id, current_step, completed_steps[], started_at
-\`\`\`
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({ error: "Generation failed" }));
+        toast({ variant: "destructive", title: "Generation failed", description: err.error || "Please try again." });
+        setIsGenerating(false);
+        return;
+      }
 
-### Effort Estimate
-- Frontend: 3 days
-- Backend: 2 days
-- Integration: 1 day
-- **Total: ~6 days (1 engineer)**
+      if (!resp.body) throw new Error("No response body");
 
-### Acceptance Criteria
-- [ ] Core flow completes in < 3 minutes
-- [ ] All edge cases handled gracefully
-- [ ] Progress persists across sessions
+      const reader = resp.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+      let fullSpec = "";
 
-### Risks
-- Email deliverability (medium)
-- Complex state management (low)`;
-      setSpec(generated);
-      setConfidence(78);
-      saveToDb({ spec: generated, confidence: 78 });
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+
+        let newlineIdx: number;
+        while ((newlineIdx = buffer.indexOf("\n")) !== -1) {
+          let line = buffer.slice(0, newlineIdx);
+          buffer = buffer.slice(newlineIdx + 1);
+          if (line.endsWith("\r")) line = line.slice(0, -1);
+          if (line.startsWith(":") || line.trim() === "") continue;
+          if (!line.startsWith("data: ")) continue;
+          const jsonStr = line.slice(6).trim();
+          if (jsonStr === "[DONE]") break;
+          try {
+            const parsed = JSON.parse(jsonStr);
+            const content = parsed.choices?.[0]?.delta?.content;
+            if (content) {
+              fullSpec += content;
+              setSpec(fullSpec);
+            }
+          } catch {
+            buffer = line + "\n" + buffer;
+            break;
+          }
+        }
+      }
+
+      // Calculate confidence based on spec completeness
+      const sections = ["Architecture", "Data Model", "API Design", "Error Handling", "Security", "Testing", "Effort Estimate", "Acceptance Criteria", "Risks"];
+      const found = sections.filter(s => fullSpec.includes(s)).length;
+      const conf = Math.min(98, Math.round((found / sections.length) * 85 + 10));
+      setConfidence(conf);
+      saveToDb({ spec: fullSpec, confidence: conf });
+    } catch (e) {
+      console.error("Generation error:", e);
+      toast({ variant: "destructive", title: "Generation failed", description: "Something went wrong. Please try again." });
+    } finally {
       setIsGenerating(false);
-    }, 2000);
+    }
   };
 
   if (loading) {
