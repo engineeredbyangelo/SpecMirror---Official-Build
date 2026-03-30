@@ -43,6 +43,7 @@ export type Database = {
       }
       projects: {
         Row: {
+          approved: boolean
           brief: string | null
           confidence: number | null
           created_at: string
@@ -53,6 +54,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          approved?: boolean
           brief?: string | null
           confidence?: number | null
           created_at?: string
@@ -63,6 +65,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          approved?: boolean
           brief?: string | null
           confidence?: number | null
           created_at?: string
