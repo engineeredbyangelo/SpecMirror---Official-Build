@@ -21,6 +21,8 @@ const ProjectMirror = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [approved, setApproved] = useState(false);
+  const [approving, setApproving] = useState(false);
 
   const saveTimerRef = useRef<ReturnType<typeof setTimeout>>();
 
@@ -42,6 +44,7 @@ const ProjectMirror = () => {
       setBrief(data.brief || "");
       setSpec(data.spec || "");
       setConfidence(data.confidence || 0);
+      setApproved(data.approved || false);
       setLoading(false);
     };
     load();
@@ -216,9 +219,27 @@ const ProjectMirror = () => {
             <Sparkles className="h-3.5 w-3.5" />
             {isGenerating ? "Generating…" : "Generate Mirror"}
           </Button>
-          <Button size="sm" className="gap-2" disabled={!spec}>
-            <Check className="h-3.5 w-3.5" />
-            Approve
+          <Button
+            size="sm"
+            className={`gap-2 ${approved ? "bg-emerald-600 hover:bg-emerald-600 text-white" : ""}`}
+            disabled={!spec || approving || approved}
+            onClick={async () => {
+              setApproving(true);
+              const { error } = await supabase
+                .from("projects")
+                .update({ approved: true, updated_at: new Date().toISOString() })
+                .eq("id", id!);
+              setApproving(false);
+              if (error) {
+                toast({ variant: "destructive", title: "Failed to approve" });
+                return;
+              }
+              setApproved(true);
+              toast({ title: "Spec approved", description: "Your spec brief has been approved." });
+            }}
+          >
+            {approving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Check className="h-3.5 w-3.5" />}
+            {approved ? "Approved" : "Approve"}
           </Button>
         </div>
       </div>

@@ -1,16 +1,18 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Search, Plus, FileText, Loader2, Trash2 } from "lucide-react";
+import { Search, Plus, FileText, Loader2, Trash2, Share2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import ShareDialog from "@/components/ShareDialog";
 
 interface Project {
   id: string;
   title: string;
   confidence: number;
   updated_at: string;
+  approved: boolean;
 }
 
 const Dashboard = () => {
@@ -20,13 +22,14 @@ const Dashboard = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
+  const [shareProject, setShareProject] = useState<{ id: string; spec: string } | null>(null);
 
   const fetchProjects = async () => {
     const { data } = await supabase
       .from("projects")
-      .select("id, title, confidence, updated_at")
+      .select("id, title, confidence, updated_at, approved")
       .order("updated_at", { ascending: false });
-    if (data) setProjects(data);
+    if (data) setProjects(data as Project[]);
     setLoading(false);
   };
 
@@ -61,6 +64,17 @@ const Dashboard = () => {
     await supabase.from("projects").delete().eq("id", projectId);
     setProjects((prev) => prev.filter((p) => p.id !== projectId));
     toast({ title: "Project deleted" });
+  };
+
+  const handleShare = async (e: React.MouseEvent, projectId: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const { data } = await supabase
+      .from("projects")
+      .select("spec")
+      .eq("id", projectId)
+      .single();
+    setShareProject({ id: projectId, spec: data?.spec || "" });
   };
 
   const timeAgo = (dateStr: string) => {
@@ -120,7 +134,12 @@ const Dashboard = () => {
                 <div className="flex items-center gap-3">
                   <FileText className="h-4 w-4 text-muted-foreground" />
                   <div>
-                    <p className="font-medium">{project.title}</p>
+                    <div className="flex items-center gap-2">
+                      <p className="font-medium">{project.title}</p>
+                      {project.approved && (
+                        <span className="text-xs font-semibold text-emerald-400">Approved Spec Brief</span>
+                      )}
+                    </div>
                     <p className="text-xs text-muted-foreground">Updated {timeAgo(project.updated_at)}</p>
                   </div>
                 </div>
@@ -131,6 +150,16 @@ const Dashboard = () => {
                       <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${project.confidence}%` }} />
                     </div>
                   </div>
+                  {project.approved && (
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="h-7 w-7 text-muted-foreground hover:text-foreground"
+                      onClick={(e) => handleShare(e, project.id)}
+                    >
+                      <Share2 className="h-3.5 w-3.5" />
+                    </Button>
+                  )}
                   <Button
                     size="icon"
                     variant="ghost"
@@ -145,6 +174,16 @@ const Dashboard = () => {
           </div>
         )}
       </main>
+
+      {/* Share dialog triggered from dashboard */}
+      {shareProject && (
+        <ShareDialog
+          projectId={shareProject.id}
+          specContent={shareProject.spec}
+          defaultOpen
+          onOpenChange={(open) => { if (!open) setShareProject(null); }}
+        />
+      )}
     </div>
   );
 };

@@ -11,6 +11,8 @@ import { useToast } from "@/hooks/use-toast";
 interface ShareDialogProps {
   projectId: string;
   specContent: string;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 interface ShareLink {
@@ -20,8 +22,8 @@ interface ShareLink {
   created_at: string;
 }
 
-const ShareDialog = ({ projectId, specContent }: ShareDialogProps) => {
-  const [open, setOpen] = useState(false);
+const ShareDialog = ({ projectId, specContent, defaultOpen, onOpenChange }: ShareDialogProps) => {
+  const [open, setOpen] = useState(defaultOpen ?? false);
   const [shares, setShares] = useState<ShareLink[]>([]);
   const [creating, setCreating] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -97,7 +99,7 @@ const ShareDialog = ({ projectId, specContent }: ShareDialogProps) => {
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={(v) => { setOpen(v); onOpenChange?.(v); }}>
       <DialogTrigger asChild>
         <Button size="sm" variant="outline" className="gap-2" disabled={!specContent.trim()}>
           <Share2 className="h-3.5 w-3.5" />
