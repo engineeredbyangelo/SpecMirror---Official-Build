@@ -99,7 +99,7 @@ const ShareDialog = ({ projectId, specContent, defaultOpen, onOpenChange }: Shar
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={(v) => { setOpen(v); onOpenChange?.(v); }}>
       <DialogTrigger asChild>
         <Button size="sm" variant="outline" className="gap-2" disabled={!specContent.trim()}>
           <Share2 className="h-3.5 w-3.5" />
