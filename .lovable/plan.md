@@ -1,28 +1,42 @@
 
 
-# Checkout Flow for Pro Button
+# Approve Spec Flow
 
-## What changes
+## What it does
+When a user clicks "Approve" on a spec, it marks the project as approved. On the Dashboard, approved projects display an **"Approved Spec Brief"** label in emerald green, and each project row gets a Share button so users can create encrypted links and distribute specs directly from the dashboard.
 
-Replace the static `<Link to="/signup">` on the Pro pricing card with a smart button that:
-- If user is **logged in**: calls `create-checkout` edge function with the Pro price ID, then redirects to Stripe Checkout
-- If user is **not logged in**: navigates to `/signup` (existing behavior)
+## Database change
+Add an `approved` boolean column (default `false`) to the `projects` table via migration. No new RLS policies needed — existing ones cover it.
 
-## Files changed
+## Code changes
 
-| File | Change |
-|---|---|
-| `src/pages/Landing.tsx` | Import `useAuth`, replace Pro button with a component that checks auth state and either invokes checkout or links to signup |
+### 1. `src/pages/ProjectMirror.tsx`
+- Wire the **Approve** button's `onClick` to set `approved = true` in the database and update local state
+- Show a toast on success ("Spec approved")
+- Visually indicate approved state (button turns green with checkmark, disabled after approval)
 
-## Implementation detail
+### 2. `src/pages/Dashboard.tsx`
+- Fetch `approved` field alongside existing columns
+- For approved projects, show an **"Approved Spec Brief"** badge in emerald green (`text-emerald-400`) next to the project title
+- Add a **Share** button on each approved project row that opens the ShareDialog
+- Fetch spec content on-demand when share is triggered (since dashboard currently only loads id/title/confidence/updated_at)
 
-In `Landing.tsx`:
-1. Import `useAuth` from `@/contexts/AuthContext` and `STRIPE_TIERS`
-2. Import `supabase` client
-3. Replace the Pro card's `<Button asChild><Link to="/signup">` with an `onClick` handler:
-   - If `user` exists: set loading state, call `supabase.functions.invoke("create-checkout", { body: { priceId: STRIPE_TIERS.pro.price_id } })`, open returned URL in current tab
-   - If no `user`: navigate to `/signup`
-4. Show a spinner/loading state on the button while checkout is being created
+### 3. `src/components/ShareDialog.tsx`
+- No changes needed — it already accepts `projectId` and `specContent` as props and handles everything internally
 
-No backend changes needed — `create-checkout` already accepts `priceId` in the request body and returns a session URL.
+## Technical details
+
+```text
+Dashboard row (approved):
+┌──────────────────────────────────────────────────────────┐
+│ 📄 My Product Brief                                     │
+│    Approved Spec Brief  (emerald-400)   Updated 2h ago  │
+│                                    [Share] [🗑]  85% ██ │
+└──────────────────────────────────────────────────────────┘
+```
+
+- Migration SQL: `ALTER TABLE projects ADD COLUMN approved boolean NOT NULL DEFAULT false;`
+- Approve handler saves `approved: true` and shows confirmation toast
+- Dashboard fetches `approved` and conditionally renders the green label + share button
+- Share button fetches the project's `spec` field before opening the dialog
 
