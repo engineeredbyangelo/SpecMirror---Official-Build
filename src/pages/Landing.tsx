@@ -336,32 +336,66 @@ const Landing = () => {
 
           {/* Comparison table */}
           <div className="mb-16 overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-xl">
-            <div className="grid grid-cols-[1fr,1fr,1fr] border-b border-white/[0.06]">
-              <div className="p-4 md:p-5 text-xs font-medium uppercase tracking-widest text-muted-foreground/60">Capability</div>
-              <div className="p-4 md:p-5 text-xs font-medium uppercase tracking-widest text-muted-foreground/60 border-l border-white/[0.06]">Generic AI</div>
-              <div className="p-4 md:p-5 text-xs font-medium uppercase tracking-widest text-primary border-l border-white/[0.06]">SpecMirror</div>
+            {/* Desktop: 3-column table */}
+            <div className="hidden md:block">
+              <div className="grid grid-cols-[1fr,1fr,1fr] border-b border-white/[0.06]">
+                <div className="p-5 text-xs font-medium uppercase tracking-widest text-muted-foreground/60">Capability</div>
+                <div className="p-5 text-xs font-medium uppercase tracking-widest text-muted-foreground/60 border-l border-white/[0.06]">Generic AI</div>
+                <div className="p-5 text-xs font-medium uppercase tracking-widest text-primary border-l border-white/[0.06]">SpecMirror</div>
+              </div>
+              {[
+                { capability: "Output format", generic: "Freeform chat, copy-paste", spec: "Structured production spec" },
+                { capability: "Domain knowledge", generic: "General purpose", spec: "Trained on 10,000+ technical docs" },
+                { capability: "Consistency", generic: "Varies per prompt", spec: "Standardized every time" },
+                { capability: "Security", generic: "Data sent to third parties", spec: "End-to-end encrypted, zero-knowledge" },
+                { capability: "Integration", generic: "None", spec: "Syncs to your PM tools" },
+              ].map((row, i) => (
+                <FadeSection key={row.capability} delay={i * 0.07}>
+                  <div className={`grid grid-cols-[1fr,1fr,1fr] ${i < 4 ? "border-b border-white/[0.06]" : ""}`}>
+                    <div className="p-5 text-sm font-medium text-foreground/80">{row.capability}</div>
+                    <div className="p-5 flex items-start gap-2.5 border-l border-white/[0.06]">
+                      <X className="h-4 w-4 shrink-0 mt-0.5 text-red-400/50" />
+                      <span className="text-sm text-muted-foreground/60">{row.generic}</span>
+                    </div>
+                    <div className="p-5 flex items-start gap-2.5 border-l border-white/[0.06] bg-accent/[0.03]">
+                      <Check className="h-4 w-4 shrink-0 mt-0.5 text-accent drop-shadow-[0_0_6px_hsl(160_84%_39%/0.4)]" />
+                      <span className="text-sm text-foreground/90">{row.spec}</span>
+                    </div>
+                  </div>
+                </FadeSection>
+              ))}
             </div>
-            {[
-              { capability: "Output format", generic: "Freeform chat, copy-paste", spec: "Structured production spec" },
-              { capability: "Domain knowledge", generic: "General purpose", spec: "Trained on 10,000+ technical docs" },
-              { capability: "Consistency", generic: "Varies per prompt", spec: "Standardized every time" },
-              { capability: "Security", generic: "Data sent to third parties", spec: "End-to-end encrypted, zero-knowledge" },
-              { capability: "Integration", generic: "None", spec: "Syncs to your PM tools" },
-            ].map((row, i) => (
-              <FadeSection key={row.capability} delay={i * 0.07}>
-                <div className={`grid grid-cols-[1fr,1fr,1fr] ${i < 4 ? "border-b border-white/[0.06]" : ""}`}>
-                  <div className="p-4 md:p-5 text-sm font-medium text-foreground/80">{row.capability}</div>
-                  <div className="p-4 md:p-5 flex items-start gap-2.5 border-l border-white/[0.06]">
-                    <X className="h-4 w-4 shrink-0 mt-0.5 text-red-400/50" />
-                    <span className="text-sm text-muted-foreground/60">{row.generic}</span>
+
+            {/* Mobile: stacked cards */}
+            <div className="md:hidden divide-y divide-white/[0.06]">
+              {[
+                { capability: "Output format", generic: "Freeform chat, copy-paste", spec: "Structured production spec" },
+                { capability: "Domain knowledge", generic: "General purpose", spec: "Trained on 10,000+ technical docs" },
+                { capability: "Consistency", generic: "Varies per prompt", spec: "Standardized every time" },
+                { capability: "Security", generic: "Data sent to third parties", spec: "End-to-end encrypted, zero-knowledge" },
+                { capability: "Integration", generic: "None", spec: "Syncs to your PM tools" },
+              ].map((row, i) => (
+                <FadeSection key={row.capability} delay={i * 0.07}>
+                  <div className="p-4 space-y-3">
+                    <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground/60">{row.capability}</p>
+                    <div className="flex items-start gap-2">
+                      <X className="h-4 w-4 shrink-0 mt-0.5 text-red-400/50" />
+                      <div>
+                        <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground/40">Generic AI</span>
+                        <p className="text-sm text-muted-foreground/60">{row.generic}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-2 rounded-lg bg-accent/[0.05] p-2.5 -mx-1">
+                      <Check className="h-4 w-4 shrink-0 mt-0.5 text-accent drop-shadow-[0_0_6px_hsl(160_84%_39%/0.4)]" />
+                      <div>
+                        <span className="text-[11px] font-medium uppercase tracking-wider text-primary">SpecMirror</span>
+                        <p className="text-sm text-foreground/90">{row.spec}</p>
+                      </div>
+                    </div>
                   </div>
-                  <div className="p-4 md:p-5 flex items-start gap-2.5 border-l border-white/[0.06] bg-accent/[0.03]">
-                    <Check className="h-4 w-4 shrink-0 mt-0.5 text-accent drop-shadow-[0_0_6px_hsl(160_84%_39%/0.4)]" />
-                    <span className="text-sm text-foreground/90">{row.spec}</span>
-                  </div>
-                </div>
-              </FadeSection>
-            ))}
+                </FadeSection>
+              ))}
+            </div>
           </div>
 
           {/* Training depth visual */}
