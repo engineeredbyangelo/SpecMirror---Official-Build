@@ -44,6 +44,7 @@ const ProjectMirror = () => {
       setBrief(data.brief || "");
       setSpec(data.spec || "");
       setConfidence(data.confidence || 0);
+      setApproved(data.approved || false);
       setLoading(false);
     };
     load();
