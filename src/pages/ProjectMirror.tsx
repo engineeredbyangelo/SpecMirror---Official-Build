@@ -1,7 +1,7 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
-import { Search, ArrowLeft, Sparkles, Check, Loader2 } from "lucide-react";
+import { Search, ArrowLeft, Sparkles, Check, Loader2, CheckCircle2, ArrowRight, Link2 } from "lucide-react";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
