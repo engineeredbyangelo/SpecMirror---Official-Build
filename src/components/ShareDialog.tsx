@@ -23,7 +23,7 @@ interface ShareLink {
   created_at: string;
 }
 
-const ShareDialog = ({ projectId, specContent, defaultOpen, onOpenChange }: ShareDialogProps) => {
+const ShareDialog = ({ projectId, specContent, defaultOpen, onOpenChange, children }: ShareDialogProps) => {
   const [open, setOpen] = useState(defaultOpen ?? false);
   const [shares, setShares] = useState<ShareLink[]>([]);
   const [creating, setCreating] = useState(false);
