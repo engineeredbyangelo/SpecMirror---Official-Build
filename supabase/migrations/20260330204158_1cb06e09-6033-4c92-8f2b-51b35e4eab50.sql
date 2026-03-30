@@ -1,0 +1,1 @@
+DROP POLICY "Public read by token" ON shared_specs;

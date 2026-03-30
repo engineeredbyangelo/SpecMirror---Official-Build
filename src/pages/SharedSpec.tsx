@@ -20,23 +20,18 @@ const SharedSpec = () => {
           return;
         }
 
-        const { data, error: fetchError } = await supabase
-          .from("shared_specs")
-          .select("encrypted_spec, encryption_iv, expires_at")
-          .eq("share_token", token)
-          .maybeSingle();
+        const { data: fnData, error: fnError } = await supabase.functions.invoke(
+          "get-shared-spec",
+          { body: { token } }
+        );
 
-        if (fetchError || !data) {
-          setError("Link not found or has been revoked.");
+        if (fnError || !fnData || fnData.error) {
+          setError(fnData?.error || "Link not found or has been revoked.");
           setLoading(false);
           return;
         }
 
-        if (data.expires_at && new Date(data.expires_at) < new Date()) {
-          setError("This share link has expired.");
-          setLoading(false);
-          return;
-        }
+        const data = fnData as { encrypted_spec: string; encryption_iv: string };
 
         const key = await importKey(keyB64);
         const plaintext = await decrypt(data.encrypted_spec, data.encryption_iv, key);
