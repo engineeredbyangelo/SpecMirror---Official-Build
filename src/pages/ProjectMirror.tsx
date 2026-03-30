@@ -1,7 +1,7 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
-import { Search, ArrowLeft, Sparkles, Check, Loader2 } from "lucide-react";
+import { Search, ArrowLeft, Sparkles, Check, Loader2, CheckCircle2, ArrowRight, Link2 } from "lucide-react";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -243,6 +243,33 @@ const ProjectMirror = () => {
           </Button>
         </div>
       </div>
+
+      {/* Approval success banner */}
+      {approved && (
+        <div className="mx-4 mt-3 mb-1 flex items-center justify-between rounded-lg border border-accent/30 bg-accent/10 px-5 py-3">
+          <div className="flex items-center gap-3">
+            <CheckCircle2 className="h-5 w-5 text-accent" />
+            <div>
+              <p className="text-sm font-medium text-accent">Your spec has been approved!</p>
+              <p className="text-xs text-muted-foreground">Share it with your team or return to your dashboard.</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <ShareDialog projectId={id!} specContent={spec}>
+              <Button size="sm" variant="outline" className="gap-1.5 border-accent/30 text-accent hover:bg-accent/10 hover:text-accent">
+                <Link2 className="h-3.5 w-3.5" />
+                Create Link
+              </Button>
+            </ShareDialog>
+            <Link to="/dashboard">
+              <Button size="sm" variant="ghost" className="gap-1.5 text-muted-foreground hover:text-foreground">
+                Dashboard
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      )}
 
       {/* Split panels */}
       <ResizablePanelGroup direction="horizontal" className="flex-1">

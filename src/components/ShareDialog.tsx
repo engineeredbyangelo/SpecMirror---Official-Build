@@ -13,6 +13,7 @@ interface ShareDialogProps {
   specContent: string;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
+  children?: React.ReactNode;
 }
 
 interface ShareLink {
@@ -22,7 +23,7 @@ interface ShareLink {
   created_at: string;
 }
 
-const ShareDialog = ({ projectId, specContent, defaultOpen, onOpenChange }: ShareDialogProps) => {
+const ShareDialog = ({ projectId, specContent, defaultOpen, onOpenChange, children }: ShareDialogProps) => {
   const [open, setOpen] = useState(defaultOpen ?? false);
   const [shares, setShares] = useState<ShareLink[]>([]);
   const [creating, setCreating] = useState(false);
@@ -101,10 +102,12 @@ const ShareDialog = ({ projectId, specContent, defaultOpen, onOpenChange }: Shar
   return (
     <Dialog open={open} onOpenChange={(v) => { setOpen(v); onOpenChange?.(v); }}>
       <DialogTrigger asChild>
-        <Button size="sm" variant="outline" className="gap-2" disabled={!specContent.trim()}>
-          <Share2 className="h-3.5 w-3.5" />
-          Share
-        </Button>
+        {children || (
+          <Button size="sm" variant="outline" className="gap-2" disabled={!specContent.trim()}>
+            <Share2 className="h-3.5 w-3.5" />
+            Share
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="border-border/50 bg-card/95 backdrop-blur-xl sm:max-w-md">
         <DialogHeader>
