@@ -13,6 +13,7 @@ interface ShareDialogProps {
   specContent: string;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
+  children?: React.ReactNode;
 }
 
 interface ShareLink {
