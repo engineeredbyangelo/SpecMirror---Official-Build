@@ -663,7 +663,7 @@ const StepRow = ({
   align: "left" | "right";
 }) => (
   <div className={`flex flex-col gap-6 md:flex-row md:items-center ${align === "right" ? "md:flex-row-reverse" : ""}`}>
-    <div className={`flex-1 space-y-3 ${align === "right" ? "md:pl-24" : "md:pr-16"}`}>
+    <div className={`flex-1 space-y-3 ${align === "right" ? "md:pl-32" : "md:pr-16"}`}>
       <div className="inline-flex items-center gap-3">
         <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
           {icon}
