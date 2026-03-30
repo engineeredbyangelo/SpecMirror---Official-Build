@@ -21,6 +21,8 @@ const ProjectMirror = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [approved, setApproved] = useState(false);
+  const [approving, setApproving] = useState(false);
 
   const saveTimerRef = useRef<ReturnType<typeof setTimeout>>();
 
