@@ -2,8 +2,7 @@ import { AbsoluteFill, useCurrentFrame, interpolate } from "remotion";
 import { TransitionSeries, springTiming } from "@remotion/transitions";
 import { fade } from "@remotion/transitions/fade";
 import { Scene1Intro } from "./scenes/Scene1Intro";
-import { Scene2Brief } from "./scenes/Scene2Brief";
-import { Scene3Spec } from "./scenes/Scene3Spec";
+import { Scene2Mirror } from "./scenes/Scene2Mirror";
 import { Scene4Approve } from "./scenes/Scene4Approve";
 
 const BG = "#08090f";
@@ -17,7 +16,6 @@ const PersistentBackground: React.FC = () => {
 
   return (
     <AbsoluteFill style={{ background: BG }}>
-      {/* Indigo orb */}
       <div
         style={{
           position: "absolute",
@@ -30,7 +28,6 @@ const PersistentBackground: React.FC = () => {
           filter: "blur(80px)",
         }}
       />
-      {/* Emerald orb */}
       <div
         style={{
           position: "absolute",
@@ -59,21 +56,14 @@ export const MainVideo: React.FC = () => {
           presentation={fade()}
           timing={springTiming({ config: { damping: 200 }, durationInFrames: 15 })}
         />
-        <TransitionSeries.Sequence durationInFrames={95}>
-          <Scene2Brief />
+        <TransitionSeries.Sequence durationInFrames={240}>
+          <Scene2Mirror />
         </TransitionSeries.Sequence>
         <TransitionSeries.Transition
           presentation={fade()}
           timing={springTiming({ config: { damping: 200 }, durationInFrames: 15 })}
         />
-        <TransitionSeries.Sequence durationInFrames={95}>
-          <Scene3Spec />
-        </TransitionSeries.Sequence>
-        <TransitionSeries.Transition
-          presentation={fade()}
-          timing={springTiming({ config: { damping: 200 }, durationInFrames: 15 })}
-        />
-        <TransitionSeries.Sequence durationInFrames={115}>
+        <TransitionSeries.Sequence durationInFrames={155}>
           <Scene4Approve />
         </TransitionSeries.Sequence>
       </TransitionSeries>
