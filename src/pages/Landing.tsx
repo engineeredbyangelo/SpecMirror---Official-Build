@@ -39,6 +39,7 @@ const Landing = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [showDemo, setShowDemo] = useState(false);
 
   const handleProClick = async () => {
     if (!user) {
@@ -117,9 +118,14 @@ const Landing = () => {
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" className="gap-2 border-white/[0.1] bg-white/[0.03] text-base backdrop-blur-sm hover:bg-white/[0.06]">
+              <Button
+                size="lg"
+                variant="outline"
+                className="gap-2 border-white/[0.1] bg-white/[0.03] text-base backdrop-blur-sm hover:bg-white/[0.06]"
+                onClick={() => setShowDemo(true)}
+              >
                 <Play className="h-4 w-4" />
-                Watch 47-second demo
+                Watch 15-second demo
               </Button>
             </div>
             <p className="mt-10 text-xs text-muted-foreground/50">
@@ -642,6 +648,34 @@ const Landing = () => {
           </p>
         </div>
       </footer>
+
+      {/* Demo Video Modal */}
+      {showDemo && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm"
+          onClick={() => setShowDemo(false)}
+        >
+          <div
+            className="relative w-full max-w-4xl mx-6 rounded-2xl overflow-hidden border border-white/[0.08] bg-card shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setShowDemo(false)}
+              className="absolute top-3 right-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-background/80 text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <X className="h-4 w-4" />
+            </button>
+            <video
+              src="/specmirror-demo.mp4"
+              autoPlay
+              controls
+              playsInline
+              className="w-full"
+              onEnded={() => setShowDemo(false)}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
