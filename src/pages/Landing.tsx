@@ -118,9 +118,14 @@ const Landing = () => {
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" className="gap-2 border-white/[0.1] bg-white/[0.03] text-base backdrop-blur-sm hover:bg-white/[0.06]">
+              <Button
+                size="lg"
+                variant="outline"
+                className="gap-2 border-white/[0.1] bg-white/[0.03] text-base backdrop-blur-sm hover:bg-white/[0.06]"
+                onClick={() => setShowDemo(true)}
+              >
                 <Play className="h-4 w-4" />
-                Watch 47-second demo
+                Watch 15-second demo
               </Button>
             </div>
             <p className="mt-10 text-xs text-muted-foreground/50">
