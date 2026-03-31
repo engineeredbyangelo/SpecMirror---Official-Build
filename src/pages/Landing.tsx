@@ -39,6 +39,7 @@ const Landing = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [showDemo, setShowDemo] = useState(false);
 
   const handleProClick = async () => {
     if (!user) {
