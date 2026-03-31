@@ -648,6 +648,34 @@ const Landing = () => {
           </p>
         </div>
       </footer>
+
+      {/* Demo Video Modal */}
+      {showDemo && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm"
+          onClick={() => setShowDemo(false)}
+        >
+          <div
+            className="relative w-full max-w-4xl mx-6 rounded-2xl overflow-hidden border border-white/[0.08] bg-card shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setShowDemo(false)}
+              className="absolute top-3 right-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-background/80 text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <X className="h-4 w-4" />
+            </button>
+            <video
+              src="/specmirror-demo.mp4"
+              autoPlay
+              controls
+              playsInline
+              className="w-full"
+              onEnded={() => setShowDemo(false)}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
