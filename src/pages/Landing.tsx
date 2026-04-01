@@ -650,7 +650,7 @@ const Landing = () => {
             <span className="text-lg font-semibold">SpecMirror</span>
           </div>
           <div className="flex gap-8 text-sm text-muted-foreground">
-            <a href="https://github.com/nicholasb4711/SpecMirror" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">GitHub</a>
+            <a href="https://github.com/engineeredbyangelo/SpecMirror---Official-Build" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">GitHub</a>
             <a href="/roadmap" className="hover:text-foreground transition-colors">Roadmap</a>
           </div>
           <p className="text-xs text-muted-foreground/50">
