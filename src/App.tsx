@@ -12,6 +12,7 @@ import ResetPassword from "./pages/ResetPassword";
 import Dashboard from "./pages/Dashboard";
 import ProjectMirror from "./pages/ProjectMirror";
 import SharedSpec from "./pages/SharedSpec";
+import Roadmap from "./pages/Roadmap";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,6 +32,7 @@ const App = () => (
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/project/:id" element={<ProtectedRoute><ProjectMirror /></ProtectedRoute>} />
             <Route path="/shared/:token" element={<SharedSpec />} />
+            <Route path="/roadmap" element={<Roadmap />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
