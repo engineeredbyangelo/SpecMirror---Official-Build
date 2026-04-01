@@ -601,28 +601,40 @@ const Landing = () => {
           </FadeSection>
           <FadeSection delay={0.1}>
             <Accordion type="single" collapsible className="w-full">
-              <AccordionItem value="dark-mode" className="border-white/[0.06]">
-                <AccordionTrigger className="text-left text-base">Is it really dark mode only?</AccordionTrigger>
+              <AccordionItem value="what-is" className="border-white/[0.06]">
+                <AccordionTrigger className="text-left text-base">What exactly does SpecMirror generate?</AccordionTrigger>
                 <AccordionContent className="text-muted-foreground leading-relaxed">
-                  Yes. We believe beautiful dark interfaces make deep work feel better. No light mode in v0.1.
+                  You write a plain-English project brief — goals, audience, key features. SpecMirror&apos;s AI mirrors it back as a structured technical spec covering architecture, auth strategy, data models, API surface, and infrastructure — ready for your engineering team to build from.
                 </AccordionContent>
               </AccordionItem>
-              <AccordionItem value="integrations" className="border-white/[0.06]">
-                <AccordionTrigger className="text-left text-base">Does it integrate with project management tools?</AccordionTrigger>
+              <AccordionItem value="who-for" className="border-white/[0.06]">
+                <AccordionTrigger className="text-left text-base">Who is this built for?</AccordionTrigger>
                 <AccordionContent className="text-muted-foreground leading-relaxed">
-                  Yes. One-click sync turns an approved spec into a trackable issue in your favorite PM tool with full context.
+                  Product managers, founders, and technical leads who need to translate product thinking into engineering-ready specs without spending hours writing boilerplate. If you&apos;ve ever lost context between &ldquo;what we want&rdquo; and &ldquo;how to build it,&rdquo; SpecMirror closes that gap.
                 </AccordionContent>
               </AccordionItem>
-              <AccordionItem value="ai" className="border-white/[0.06]">
-                <AccordionTrigger className="text-left text-base">What AI model does it use?</AccordionTrigger>
+              <AccordionItem value="accuracy" className="border-white/[0.06]">
+                <AccordionTrigger className="text-left text-base">How accurate are the generated specs?</AccordionTrigger>
                 <AccordionContent className="text-muted-foreground leading-relaxed">
-                  SpecMirror uses state-of-the-art AI to generate technical specs from your product briefs. The AI is optimized for speed and accuracy.
+                  Every spec includes a confidence score so you know where the AI is certain and where it needs your input. You review, edit, and approve before anything ships — SpecMirror is a starting point, not an autopilot.
+                </AccordionContent>
+              </AccordionItem>
+              <AccordionItem value="sharing" className="border-white/[0.06]">
+                <AccordionTrigger className="text-left text-base">How does encrypted sharing work?</AccordionTrigger>
+                <AccordionContent className="text-muted-foreground leading-relaxed">
+                  Once you approve a spec, you can generate an AES-encrypted link with an optional expiry. Share it with your team or stakeholders — they can view the spec without needing an account, and the link self-destructs after expiration.
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="pricing" className="border-white/[0.06]">
-                <AccordionTrigger className="text-left text-base">Is it free?</AccordionTrigger>
+                <AccordionTrigger className="text-left text-base">What&apos;s included in the free tier?</AccordionTrigger>
                 <AccordionContent className="text-muted-foreground leading-relaxed">
-                  We offer a generous free tier. Start building specs today with no credit card required.
+                  Free accounts get up to 3 active projects with full AI spec generation and encrypted sharing. The Pro plan unlocks unlimited projects, priority generation, and upcoming integrations like Slack and Jira sync. No credit card required to start.
+                </AccordionContent>
+              </AccordionItem>
+              <AccordionItem value="data" className="border-white/[0.06]">
+                <AccordionTrigger className="text-left text-base">Is my data safe?</AccordionTrigger>
+                <AccordionContent className="text-muted-foreground leading-relaxed">
+                  Your briefs and specs are stored securely with row-level security policies. Shared links use client-side AES-GCM encryption — we never store the decryption key. Your product ideas stay yours.
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
