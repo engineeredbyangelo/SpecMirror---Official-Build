@@ -32,6 +32,7 @@ const App = () => (
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/project/:id" element={<ProtectedRoute><ProjectMirror /></ProtectedRoute>} />
             <Route path="/shared/:token" element={<SharedSpec />} />
+            <Route path="/roadmap" element={<Roadmap />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
