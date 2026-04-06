@@ -1,42 +1,28 @@
 
 
-# Approve Spec Flow
+## Make Mirror View Responsive on Mobile
 
-## What it does
-When a user clicks "Approve" on a spec, it marks the project as approved. On the Dashboard, approved projects display an **"Approved Spec Brief"** label in emerald green, and each project row gets a Share button so users can create encrypted links and distribute specs directly from the dashboard.
+The current mirror interface uses `ResizablePanelGroup` with a horizontal split and a drag handle — this doesn't work on small screens. On mobile, we need to stack the panels vertically with a tab switcher instead.
 
-## Database change
-Add an `approved` boolean column (default `false`) to the `projects` table via migration. No new RLS policies needed — existing ones cover it.
+### Approach
 
-## Code changes
+**Single file change: `src/pages/ProjectMirror.tsx`**
 
-### 1. `src/pages/ProjectMirror.tsx`
-- Wire the **Approve** button's `onClick` to set `approved = true` in the database and update local state
-- Show a toast on success ("Spec approved")
-- Visually indicate approved state (button turns green with checkmark, disabled after approval)
+1. **Import `useIsMobile`** from `@/hooks/use-mobile`
 
-### 2. `src/pages/Dashboard.tsx`
-- Fetch `approved` field alongside existing columns
-- For approved projects, show an **"Approved Spec Brief"** badge in emerald green (`text-emerald-400`) next to the project title
-- Add a **Share** button on each approved project row that opens the ShareDialog
-- Fetch spec content on-demand when share is triggered (since dashboard currently only loads id/title/confidence/updated_at)
+2. **Top bar (lines 179-245)**: Wrap the action buttons in a scrollable row and allow the title input to shrink. On mobile, move the confidence meter + buttons below the title row or make them horizontally scrollable.
 
-### 3. `src/components/ShareDialog.tsx`
-- No changes needed — it already accepts `projectId` and `specContent` as props and handles everything internally
+3. **Approval banner (lines 248-272)**: Stack vertically on mobile — text on top, buttons below.
 
-## Technical details
+4. **Split panels → tabbed view on mobile (lines 274-317)**:
+   - When `isMobile` is true, replace `ResizablePanelGroup` with a simple tab interface (two tabs: "Brief" / "Mirror") using state to toggle which panel is visible
+   - Each tab shows the full-height textarea or spec content
+   - When `isMobile` is false, keep the existing resizable side-by-side layout unchanged
 
-```text
-Dashboard row (approved):
-┌──────────────────────────────────────────────────────────┐
-│ 📄 My Product Brief                                     │
-│    Approved Spec Brief  (emerald-400)   Updated 2h ago  │
-│                                    [Share] [🗑]  85% ██ │
-└──────────────────────────────────────────────────────────┘
-```
+### Technical details
 
-- Migration SQL: `ALTER TABLE projects ADD COLUMN approved boolean NOT NULL DEFAULT false;`
-- Approve handler saves `approved: true` and shows confirmation toast
-- Dashboard fetches `approved` and conditionally renders the green label + share button
-- Share button fetches the project's `spec` field before opening the dialog
+- Use a `const [activeTab, setActiveTab] = useState<"brief" | "mirror">("brief")` for mobile tab state
+- Tab bar: two buttons styled with border-bottom highlight, sitting where the panel headers currently are
+- No new dependencies needed — just conditional rendering based on `useIsMobile()`
+- The Generate button should be accessible from both tabs on mobile (keep it in the top bar)
 
