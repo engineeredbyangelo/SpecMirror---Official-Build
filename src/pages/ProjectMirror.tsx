@@ -6,6 +6,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { useIsMobile } from "@/hooks/use-mobile";
 import ShareDialog from "@/components/ShareDialog";
 
 const ProjectMirror = () => {
@@ -13,6 +14,7 @@ const ProjectMirror = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
+  const isMobile = useIsMobile();
 
   const [title, setTitle] = useState("Untitled Brief");
   const [brief, setBrief] = useState("");
@@ -23,6 +25,7 @@ const ProjectMirror = () => {
   const [saving, setSaving] = useState(false);
   const [approved, setApproved] = useState(false);
   const [approving, setApproving] = useState(false);
+  const [activeTab, setActiveTab] = useState<"brief" | "mirror">("brief");
 
   const saveTimerRef = useRef<ReturnType<typeof setTimeout>>();
 
@@ -95,6 +98,7 @@ const ProjectMirror = () => {
     setIsGenerating(true);
     setSpec("");
     setConfidence(0);
+    if (isMobile) setActiveTab("mirror");
 
     try {
       const resp = await fetch(
@@ -151,7 +155,6 @@ const ProjectMirror = () => {
         }
       }
 
-      // Calculate confidence based on spec completeness
       const sections = ["Architecture", "Data Model", "API Design", "Error Handling", "Security", "Testing", "Effort Estimate", "Acceptance Criteria", "Risks"];
       const found = sections.filter(s => fullSpec.includes(s)).length;
       const conf = Math.min(98, Math.round((found / sections.length) * 85 + 10));
@@ -173,29 +176,76 @@ const ProjectMirror = () => {
     );
   }
 
+  // Shared panel content
+  const briefPanel = (
+    <div className="flex h-full flex-col">
+      {!isMobile && (
+        <div className="border-b border-border/50 px-4 py-2">
+          <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Product Brief</span>
+        </div>
+      )}
+      <textarea
+        className="flex-1 resize-none bg-transparent p-4 text-sm leading-relaxed text-foreground outline-none placeholder:text-muted-foreground/40 font-mono"
+        value={brief}
+        onChange={(e) => handleBriefChange(e.target.value)}
+        placeholder="Write your product brief here…"
+      />
+    </div>
+  );
+
+  const mirrorPanel = (
+    <div className="flex h-full flex-col">
+      {!isMobile && (
+        <div className="border-b border-border/50 px-4 py-2">
+          <span className="text-xs font-medium uppercase tracking-wider text-primary">Technical Mirror</span>
+        </div>
+      )}
+      {isGenerating ? (
+        <div className="flex-1 space-y-3 p-4">
+          {Array.from({ length: 12 }).map((_, i) => (
+            <div key={i} className="h-3 animate-pulse rounded bg-muted" style={{ width: `${Math.random() * 40 + 50}%`, animationDelay: `${i * 100}ms` }} />
+          ))}
+        </div>
+      ) : spec ? (
+        <textarea
+          className="flex-1 resize-none bg-transparent p-4 text-sm leading-relaxed text-foreground outline-none font-mono"
+          value={spec}
+          onChange={(e) => handleSpecChange(e.target.value)}
+        />
+      ) : (
+        <div className="flex flex-1 items-center justify-center">
+          <div className="text-center">
+            <Sparkles className="mx-auto mb-3 h-8 w-8 text-muted-foreground/30" />
+            <p className="text-sm text-muted-foreground">Click "Generate Mirror" to create a technical spec</p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <div className="flex h-screen flex-col bg-background">
       {/* Top bar */}
-      <div className="flex h-12 items-center justify-between border-b border-border/50 px-4">
-        <div className="flex items-center gap-3">
-          <Link to="/dashboard" className="text-muted-foreground hover:text-foreground">
+      <div className="flex h-auto min-h-[48px] flex-wrap items-center justify-between gap-2 border-b border-border/50 px-3 py-2 sm:px-4">
+        <div className="flex items-center gap-2 min-w-0 flex-1">
+          <Link to="/dashboard" className="text-muted-foreground hover:text-foreground shrink-0">
             <ArrowLeft className="h-4 w-4" />
           </Link>
-          <div className="flex items-center gap-2">
-            <Search className="h-4 w-4 text-primary" />
+          <div className="flex items-center gap-2 min-w-0 flex-1">
+            <Search className="h-4 w-4 text-primary shrink-0" />
             <input
-              className="bg-transparent text-sm font-medium outline-none placeholder:text-muted-foreground/40"
+              className="bg-transparent text-sm font-medium outline-none placeholder:text-muted-foreground/40 min-w-0 w-full"
               value={title}
               onChange={(e) => handleTitleChange(e.target.value)}
               placeholder="Project title…"
             />
           </div>
-          {saving && <span className="text-[10px] text-muted-foreground/50">Saving…</span>}
+          {saving && <span className="text-[10px] text-muted-foreground/50 shrink-0">Saving…</span>}
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
           {/* Confidence meter */}
-          <div className="flex items-center gap-2 rounded-full border border-border/50 px-3 py-1">
-            <svg className="h-5 w-5 -rotate-90" viewBox="0 0 36 36">
+          <div className="flex items-center gap-1.5 rounded-full border border-border/50 px-2 py-1 sm:px-3">
+            <svg className="h-4 w-4 sm:h-5 sm:w-5 -rotate-90" viewBox="0 0 36 36">
               <path
                 className="text-muted"
                 d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
@@ -215,13 +265,13 @@ const ProjectMirror = () => {
             <span className="text-xs text-muted-foreground">{confidence ? `${confidence}%` : "—"}</span>
           </div>
           <ShareDialog projectId={id!} specContent={spec} />
-          <Button size="sm" variant="outline" className="gap-2" onClick={handleGenerate} disabled={isGenerating}>
-            <Sparkles className="h-3.5 w-3.5" />
-            {isGenerating ? "Generating…" : "Generate Mirror"}
+          <Button size="sm" variant="outline" className="gap-1.5 text-xs sm:text-sm" onClick={handleGenerate} disabled={isGenerating}>
+            <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+            {isGenerating ? "Generating…" : isMobile ? "Generate" : "Generate Mirror"}
           </Button>
           <Button
             size="sm"
-            className={`gap-2 ${approved ? "bg-emerald-600 hover:bg-emerald-600 text-white" : ""}`}
+            className={`gap-1.5 text-xs sm:text-sm ${approved ? "bg-emerald-600 hover:bg-emerald-600 text-white" : ""}`}
             disabled={!spec || approving || approved}
             onClick={async () => {
               setApproving(true);
@@ -238,7 +288,7 @@ const ProjectMirror = () => {
               toast({ title: "Spec approved", description: "Your spec brief has been approved." });
             }}
           >
-            {approving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Check className="h-3.5 w-3.5" />}
+            {approving ? <Loader2 className="h-3 w-3 animate-spin" /> : <Check className="h-3 w-3" />}
             {approved ? "Approved" : "Approve"}
           </Button>
         </div>
@@ -246,23 +296,23 @@ const ProjectMirror = () => {
 
       {/* Approval success banner */}
       {approved && (
-        <div className="mx-4 mt-3 mb-1 flex items-center justify-between rounded-lg border border-accent/30 bg-accent/10 px-5 py-3">
+        <div className="mx-3 sm:mx-4 mt-3 mb-1 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 rounded-lg border border-accent/30 bg-accent/10 px-4 sm:px-5 py-3">
           <div className="flex items-center gap-3">
-            <CheckCircle2 className="h-5 w-5 text-accent" />
+            <CheckCircle2 className="h-5 w-5 text-accent shrink-0" />
             <div>
               <p className="text-sm font-medium text-accent">Your spec has been approved!</p>
               <p className="text-xs text-muted-foreground">Share it with your team or return to your dashboard.</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 w-full sm:w-auto">
             <ShareDialog projectId={id!} specContent={spec}>
-              <Button size="sm" variant="outline" className="gap-1.5 border-accent/30 text-accent hover:bg-accent/10 hover:text-accent">
+              <Button size="sm" variant="outline" className="gap-1.5 border-accent/30 text-accent hover:bg-accent/10 hover:text-accent flex-1 sm:flex-initial">
                 <Link2 className="h-3.5 w-3.5" />
                 Create Link
               </Button>
             </ShareDialog>
-            <Link to="/dashboard">
-              <Button size="sm" variant="ghost" className="gap-1.5 text-muted-foreground hover:text-foreground">
+            <Link to="/dashboard" className="flex-1 sm:flex-initial">
+              <Button size="sm" variant="ghost" className="gap-1.5 text-muted-foreground hover:text-foreground w-full">
                 Dashboard
                 <ArrowRight className="h-3.5 w-3.5" />
               </Button>
@@ -271,50 +321,47 @@ const ProjectMirror = () => {
         </div>
       )}
 
-      {/* Split panels */}
-      <ResizablePanelGroup direction="horizontal" className="flex-1">
-        <ResizablePanel defaultSize={50} minSize={30}>
-          <div className="flex h-full flex-col">
-            <div className="border-b border-border/50 px-4 py-2">
-              <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Product Brief</span>
-            </div>
-            <textarea
-              className="flex-1 resize-none bg-transparent p-4 text-sm leading-relaxed text-foreground outline-none placeholder:text-muted-foreground/40 font-mono"
-              value={brief}
-              onChange={(e) => handleBriefChange(e.target.value)}
-              placeholder="Write your product brief here…"
-            />
+      {/* Mobile: Tab switcher */}
+      {isMobile ? (
+        <>
+          <div className="flex border-b border-border/50">
+            <button
+              className={`flex-1 py-2.5 text-xs font-medium uppercase tracking-wider transition-colors ${
+                activeTab === "brief"
+                  ? "text-foreground border-b-2 border-primary"
+                  : "text-muted-foreground"
+              }`}
+              onClick={() => setActiveTab("brief")}
+            >
+              Product Brief
+            </button>
+            <button
+              className={`flex-1 py-2.5 text-xs font-medium uppercase tracking-wider transition-colors ${
+                activeTab === "mirror"
+                  ? "text-primary border-b-2 border-primary"
+                  : "text-muted-foreground"
+              }`}
+              onClick={() => setActiveTab("mirror")}
+            >
+              Technical Mirror
+            </button>
           </div>
-        </ResizablePanel>
-        <ResizableHandle withHandle />
-        <ResizablePanel defaultSize={50} minSize={30}>
-          <div className="flex h-full flex-col">
-            <div className="border-b border-border/50 px-4 py-2">
-              <span className="text-xs font-medium uppercase tracking-wider text-primary">Technical Mirror</span>
-            </div>
-            {isGenerating ? (
-              <div className="flex-1 space-y-3 p-4">
-                {Array.from({ length: 12 }).map((_, i) => (
-                  <div key={i} className="h-3 animate-pulse rounded bg-muted" style={{ width: `${Math.random() * 40 + 50}%`, animationDelay: `${i * 100}ms` }} />
-                ))}
-              </div>
-            ) : spec ? (
-              <textarea
-                className="flex-1 resize-none bg-transparent p-4 text-sm leading-relaxed text-foreground outline-none font-mono"
-                value={spec}
-                onChange={(e) => handleSpecChange(e.target.value)}
-              />
-            ) : (
-              <div className="flex flex-1 items-center justify-center">
-                <div className="text-center">
-                  <Sparkles className="mx-auto mb-3 h-8 w-8 text-muted-foreground/30" />
-                  <p className="text-sm text-muted-foreground">Click "Generate Mirror" to create a technical spec</p>
-                </div>
-              </div>
-            )}
+          <div className="flex-1 overflow-hidden">
+            {activeTab === "brief" ? briefPanel : mirrorPanel}
           </div>
-        </ResizablePanel>
-      </ResizablePanelGroup>
+        </>
+      ) : (
+        /* Desktop: Resizable side-by-side */
+        <ResizablePanelGroup direction="horizontal" className="flex-1">
+          <ResizablePanel defaultSize={50} minSize={30}>
+            {briefPanel}
+          </ResizablePanel>
+          <ResizableHandle withHandle />
+          <ResizablePanel defaultSize={50} minSize={30}>
+            {mirrorPanel}
+          </ResizablePanel>
+        </ResizablePanelGroup>
+      )}
     </div>
   );
 };
