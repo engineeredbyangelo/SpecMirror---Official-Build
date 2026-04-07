@@ -467,7 +467,7 @@ const Landing = () => {
               },
               {
                 role: "Technical & Non-Tech Founders",
-                quote: "Translate your vision into buildable specs from day one — avoid costly technical debt before writing a single line of code.",
+                quote: "Translate your vision into buildable specs from day one. Avoid costly technical debt before writing a single line of code.",
                 icon: <Layers className="h-5 w-5" />,
                 accentColor: "accent" as const,
                 stat: "60%",
@@ -729,50 +729,62 @@ const StepRow = ({
   </div>
 );
 
-/* ── Animated Mirror Demo with real text ── */
+/* ── Animated Mirror Demo with real text (looping) ── */
 const MirrorDemo = () => {
   const [phase, setPhase] = useState<"typing" | "loading" | "reveal">("typing");
   const [visibleBriefLines, setVisibleBriefLines] = useState(0);
   const [visibleSpecLines, setVisibleSpecLines] = useState(0);
+  const [cycle, setCycle] = useState(0);
 
   const briefLines = [
-    { text: "User Authentication Flow", isHeading: true },
-    { text: "Users should be able to sign up with email and password. Support social login via Google and GitHub." },
-    { text: "Password reset via email link." },
-    { text: "Session Management", isHeading: true },
-    { text: "Keep users logged in for 30 days with refresh token rotation." },
+    { text: "I want to build a mobile task manager for small teams.", isHeading: false },
+    { text: "People should be able to create tasks, assign them, and get notified when something changes.", isHeading: false },
+    { text: "It needs to work offline and sync when back online.", isHeading: false },
+    { text: "Oh, and users should be able to sign in with Google.", isHeading: false },
   ];
 
   const specLines = [
     { text: "Architecture", isSection: true },
-    { text: "JWT with httpOnly cookies, bcrypt password hashing, OAuth2 flow for Google/GitHub providers." },
+    { text: "React Native + Expo, Supabase Postgres with realtime subscriptions, offline-first via WatermelonDB local cache." },
+    { text: "Authentication", isSection: true },
+    { text: "OAuth 2.0 via Google provider, JWT access tokens with 15-min expiry, refresh token rotation." },
+    { text: "Data Model", isSection: true },
+    { text: "Users → Teams (many-to-many), Teams → Tasks (one-to-many), Tasks have assignee_id, status enum, priority int." },
     { text: "Effort Estimate", isSection: true },
-    { text: "~3 sprint points · 2 days implementation" },
+    { text: "~8 sprint points · 1.5 weeks for MVP" },
     { text: "Acceptance Criteria", isSection: true },
-    { text: "✓ Email signup with verification flow" },
-    { text: "✓ Social login creates linked profile" },
-    { text: "✓ Refresh tokens rotate on each use" },
+    { text: "✓ Offline task creation syncs on reconnect" },
+    { text: "✓ Push notifications on task assignment" },
+    { text: "✓ Google SSO with auto-provisioned profile" },
   ];
 
   useEffect(() => {
-    // Type brief lines one by one
     const timers: ReturnType<typeof setTimeout>[] = [];
+    setPhase("typing");
+    setVisibleBriefLines(0);
+    setVisibleSpecLines(0);
+
     briefLines.forEach((_, i) => {
-      timers.push(setTimeout(() => setVisibleBriefLines(i + 1), (i + 1) * 500));
+      timers.push(setTimeout(() => setVisibleBriefLines(i + 1), (i + 1) * 600));
     });
-    // After brief done → loading phase
-    const loadDelay = (briefLines.length + 1) * 500;
+
+    const loadDelay = (briefLines.length + 1) * 600;
     timers.push(setTimeout(() => setPhase("loading"), loadDelay));
-    // After loading → reveal spec
+
     timers.push(setTimeout(() => {
       setPhase("reveal");
       specLines.forEach((_, i) => {
-        timers.push(setTimeout(() => setVisibleSpecLines(i + 1), i * 300));
+        timers.push(setTimeout(() => setVisibleSpecLines(i + 1), i * 250));
       });
-    }, loadDelay + 1200));
+    }, loadDelay + 1500));
+
+    // Restart loop after full reveal
+    const totalDuration = loadDelay + 1500 + specLines.length * 250 + 4000;
+    timers.push(setTimeout(() => setCycle(c => c + 1), totalDuration));
+
     return () => timers.forEach(clearTimeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [cycle]);
 
   return (
     <div className="relative rounded-2xl border border-white/[0.06] bg-white/[0.02] p-2 backdrop-blur-sm">
@@ -784,7 +796,7 @@ const MirrorDemo = () => {
           <div className="h-3 w-3 rounded-full bg-white/[0.08]" />
         </div>
         <div className="mx-auto flex h-7 w-64 items-center justify-center rounded-md bg-white/[0.04] text-[11px] text-muted-foreground/50">
-          specmirror.app/project/auth-flow
+          specmirror.app/project/task-manager
         </div>
       </div>
 
@@ -794,16 +806,13 @@ const MirrorDemo = () => {
           <div className="mb-4">
             <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Product Brief</p>
           </div>
-          <div className="space-y-2 font-mono text-xs leading-relaxed text-foreground/80">
+          <div className="space-y-2.5 text-sm leading-relaxed text-foreground/80">
             {briefLines.slice(0, visibleBriefLines).map((line, i) => (
-              <p
-                key={i}
-                className={`animate-fade-in ${line.isHeading ? "font-semibold text-primary text-sm mt-3 first:mt-0" : ""}`}
-              >
+              <p key={i} className="animate-fade-in">
                 {line.text}
               </p>
             ))}
-            {visibleBriefLines < briefLines.length && (
+            {phase === "typing" && visibleBriefLines < briefLines.length && (
               <span className="inline-block h-4 w-0.5 animate-pulse bg-primary" />
             )}
           </div>
@@ -813,36 +822,38 @@ const MirrorDemo = () => {
         <div className="rounded-xl bg-white/[0.03] p-6 border border-primary/20">
           <div className="mb-4 flex items-center justify-between">
             <p className="text-xs font-medium uppercase tracking-widest text-primary">Technical Mirror</p>
-            <div className="relative flex items-center gap-2">
-              <svg width="28" height="28" viewBox="0 0 56 56" className="rotate-[-90deg]">
-                <circle cx="28" cy="28" r="25" fill="none" stroke="hsl(0 0% 100% / 0.06)" strokeWidth="3" />
-                <circle cx="28" cy="28" r="25" fill="none" stroke="hsl(160 84% 39%)" strokeWidth="3" strokeLinecap="round" className="confidence-ring" style={{ ["--target-offset" as string]: "9.4" }} />
-              </svg>
-              <span className="text-xs font-medium text-accent" style={{ animation: "pulse-glow 2s ease-in-out 3s infinite" }}>94%</span>
-            </div>
+            {phase === "reveal" && (
+              <div className="relative flex items-center gap-2 animate-fade-in">
+                <svg width="28" height="28" viewBox="0 0 56 56" className="rotate-[-90deg]">
+                  <circle cx="28" cy="28" r="25" fill="none" stroke="hsl(0 0% 100% / 0.06)" strokeWidth="3" />
+                  <circle cx="28" cy="28" r="25" fill="none" stroke="hsl(160 84% 39%)" strokeWidth="3" strokeLinecap="round" className="confidence-ring" style={{ ["--target-offset" as string]: "6.3" }} />
+                </svg>
+                <span className="text-xs font-medium text-accent" style={{ animation: "pulse-glow 2s ease-in-out infinite" }}>96%</span>
+              </div>
+            )}
           </div>
 
           {phase === "typing" && (
-            <div className="flex h-32 items-center justify-center">
+            <div className="flex h-40 items-center justify-center">
               <p className="text-xs text-muted-foreground/40">Waiting for brief…</p>
             </div>
           )}
 
           {phase === "loading" && (
             <div className="space-y-3">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="h-3 animate-pulse rounded bg-muted" style={{ width: `${50 + Math.random() * 40}%`, animationDelay: `${i * 100}ms` }} />
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div key={i} className="h-3 animate-pulse rounded bg-muted" style={{ width: `${40 + Math.random() * 50}%`, animationDelay: `${i * 80}ms` }} />
               ))}
               <p className="mt-2 text-[10px] font-medium uppercase tracking-widest text-accent/60" style={{ animation: "pulse-glow 1.5s ease-in-out infinite" }}>Generating…</p>
             </div>
           )}
 
           {phase === "reveal" && (
-            <div className="space-y-2 font-mono text-xs leading-relaxed text-foreground/80">
+            <div className="space-y-1.5 text-xs leading-relaxed text-foreground/80">
               {specLines.slice(0, visibleSpecLines).map((line, i) => (
                 <p
                   key={i}
-                  className={`animate-fade-in ${line.isSection ? "font-semibold text-accent text-sm mt-3 first:mt-0" : ""}`}
+                  className={`animate-fade-in ${line.isSection ? "font-semibold text-accent text-sm mt-3 first:mt-0" : "pl-2 text-foreground/70"}`}
                 >
                   {line.text}
                 </p>
