@@ -638,7 +638,6 @@ const Landing = () => {
                 <AccordionContent className="text-muted-foreground leading-relaxed">
                   Free accounts get 5 AI spec generations per day with full confidence scoring and encrypted sharing. The Pro plan unlocks unlimited daily generations, priority processing, and upcoming integrations like Slack sync. No credit card required to start.
                 </AccordionContent>
-                </AccordionContent>
               </AccordionItem>
               <AccordionItem value="data" className="border-white/[0.06]">
                 <AccordionTrigger className="text-left text-base">Is my data safe?</AccordionTrigger>
