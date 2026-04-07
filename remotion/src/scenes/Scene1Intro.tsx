@@ -8,12 +8,11 @@ export const Scene1Intro: React.FC = () => {
   const { fps } = useVideoConfig();
 
   const logoScale = spring({ frame, fps, config: { damping: 15, stiffness: 120 } });
-  const titleOpacity = interpolate(frame, [15, 40], [0, 1], { extrapolateRight: "clamp" });
-  const titleY = interpolate(frame, [15, 40], [30, 0], { extrapolateRight: "clamp" });
-  const subtitleOpacity = interpolate(frame, [35, 55], [0, 1], { extrapolateRight: "clamp" });
-  const subtitleY = interpolate(frame, [35, 55], [20, 0], { extrapolateRight: "clamp" });
+  const titleOpacity = interpolate(frame, [10, 30], [0, 1], { extrapolateRight: "clamp" });
+  const titleY = interpolate(frame, [10, 30], [30, 0], { extrapolateRight: "clamp" });
+  const subtitleOpacity = interpolate(frame, [25, 45], [0, 1], { extrapolateRight: "clamp" });
+  const subtitleY = interpolate(frame, [25, 45], [20, 0], { extrapolateRight: "clamp" });
 
-  // Gentle float
   const float = Math.sin(frame * 0.05) * 3;
 
   return (
@@ -24,7 +23,6 @@ export const Scene1Intro: React.FC = () => {
         fontFamily: "Inter, sans-serif",
       }}
     >
-      {/* Logo icon */}
       <div
         style={{
           transform: `scale(${logoScale}) translateY(${float}px)`,
@@ -44,7 +42,6 @@ export const Scene1Intro: React.FC = () => {
         </svg>
       </div>
 
-      {/* Title */}
       <div
         style={{
           opacity: titleOpacity,
@@ -58,7 +55,6 @@ export const Scene1Intro: React.FC = () => {
         Spec<span style={{ color: INDIGO }}>Mirror</span>
       </div>
 
-      {/* Subtitle */}
       <div
         style={{
           opacity: subtitleOpacity,

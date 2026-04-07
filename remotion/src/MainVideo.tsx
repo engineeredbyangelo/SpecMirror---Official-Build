@@ -1,9 +1,11 @@
-import { AbsoluteFill, useCurrentFrame, interpolate } from "remotion";
+import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { TransitionSeries, springTiming } from "@remotion/transitions";
 import { fade } from "@remotion/transitions/fade";
 import { Scene1Intro } from "./scenes/Scene1Intro";
-import { Scene2Mirror } from "./scenes/Scene2Mirror";
-import { Scene4Approve } from "./scenes/Scene4Approve";
+import { Scene2Brief } from "./scenes/Scene2Brief";
+import { Scene3Generation } from "./scenes/Scene3Spec";
+import { Scene4Reveal } from "./scenes/Scene4Reveal";
+import { Scene5Approve } from "./scenes/Scene5Approve";
 
 const BG = "#08090f";
 const INDIGO = "#4a6cf7";
@@ -49,22 +51,36 @@ export const MainVideo: React.FC = () => {
     <AbsoluteFill>
       <PersistentBackground />
       <TransitionSeries>
-        <TransitionSeries.Sequence durationInFrames={100}>
+        <TransitionSeries.Sequence durationInFrames={80}>
           <Scene1Intro />
         </TransitionSeries.Sequence>
         <TransitionSeries.Transition
           presentation={fade()}
           timing={springTiming({ config: { damping: 200 }, durationInFrames: 15 })}
         />
-        <TransitionSeries.Sequence durationInFrames={240}>
-          <Scene2Mirror />
+        <TransitionSeries.Sequence durationInFrames={210}>
+          <Scene2Brief />
         </TransitionSeries.Sequence>
         <TransitionSeries.Transition
           presentation={fade()}
           timing={springTiming({ config: { damping: 200 }, durationInFrames: 15 })}
         />
-        <TransitionSeries.Sequence durationInFrames={155}>
-          <Scene4Approve />
+        <TransitionSeries.Sequence durationInFrames={120}>
+          <Scene3Generation />
+        </TransitionSeries.Sequence>
+        <TransitionSeries.Transition
+          presentation={fade()}
+          timing={springTiming({ config: { damping: 200 }, durationInFrames: 15 })}
+        />
+        <TransitionSeries.Sequence durationInFrames={270}>
+          <Scene4Reveal />
+        </TransitionSeries.Sequence>
+        <TransitionSeries.Transition
+          presentation={fade()}
+          timing={springTiming({ config: { damping: 200 }, durationInFrames: 15 })}
+        />
+        <TransitionSeries.Sequence durationInFrames={160}>
+          <Scene5Approve />
         </TransitionSeries.Sequence>
       </TransitionSeries>
     </AbsoluteFill>
