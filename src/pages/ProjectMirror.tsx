@@ -321,7 +321,7 @@ const ProjectMirror = () => {
         </div>
       )}
 
-      {/* Mobile: Tab switcher */}
+      {/* Mobile: Tab switcher with swipe */}
       {isMobile ? (
         <>
           <div className="flex border-b border-border/50">
@@ -346,7 +346,20 @@ const ProjectMirror = () => {
               Technical Mirror
             </button>
           </div>
-          <div className="flex-1 overflow-hidden">
+          <div
+            className="flex-1 overflow-hidden"
+            onTouchStart={(e) => {
+              const touch = e.touches[0];
+              (e.currentTarget as HTMLDivElement).dataset.touchStartX = String(touch.clientX);
+            }}
+            onTouchEnd={(e) => {
+              const startX = Number((e.currentTarget as HTMLDivElement).dataset.touchStartX || 0);
+              const endX = e.changedTouches[0].clientX;
+              const diff = startX - endX;
+              if (diff > 50) setActiveTab("mirror");
+              if (diff < -50) setActiveTab("brief");
+            }}
+          >
             {activeTab === "brief" ? briefPanel : mirrorPanel}
           </div>
         </>
