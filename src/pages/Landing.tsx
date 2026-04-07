@@ -125,7 +125,7 @@ const Landing = () => {
                 onClick={() => setShowDemo(true)}
               >
                 <Play className="h-4 w-4" />
-                Watch 15-second demo
+                Watch 28-second demo
               </Button>
             </div>
             <p className="mt-10 text-xs text-muted-foreground/50">
