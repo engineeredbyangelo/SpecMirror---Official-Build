@@ -1,10 +1,14 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "npm:@supabase/supabase-js@2.57.2";
+import Stripe from "https://esm.sh/stripe@18.5.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
+
+const FREE_DAILY_LIMIT = 5;
 
 const SYSTEM_PROMPT = `You are SpecMirror — a senior staff engineer and technical architect. Given a product brief, you produce a comprehensive, production-grade technical specification.
 
@@ -100,13 +104,18 @@ RULES:
 - If the brief is vague, make reasonable assumptions and document them.
 - Aim for 800-1500 words minimum.`;
 
+const logStep = (step: string, details?: any) => {
+  const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
+  console.log(`[GENERATE-SPEC] ${step}${detailsStr}`);
+};
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { brief, title } = await req.json();
+    const { brief, title, projectId } = await req.json();
 
     if (!brief || typeof brief !== "string" || brief.trim().length < 10) {
       return new Response(
@@ -114,6 +123,91 @@ serve(async (req) => {
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
+
+    // Authenticate user
+    const supabaseClient = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+    );
+
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: "Authentication required." }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const token = authHeader.replace("Bearer ", "");
+    const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
+    if (userError || !userData.user) {
+      return new Response(
+        JSON.stringify({ error: "Invalid authentication." }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const user = userData.user;
+    logStep("User authenticated", { userId: user.id, email: user.email });
+
+    // Check subscription status via Stripe
+    let isSubscribed = false;
+    try {
+      const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
+      if (stripeKey && user.email) {
+        const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
+        const customers = await stripe.customers.list({ email: user.email, limit: 1 });
+        if (customers.data.length > 0) {
+          const subscriptions = await stripe.subscriptions.list({
+            customer: customers.data[0].id,
+            status: "active",
+            limit: 1,
+          });
+          isSubscribed = subscriptions.data.length > 0;
+        }
+      }
+    } catch (e) {
+      logStep("Stripe check failed, defaulting to free tier", { error: String(e) });
+    }
+
+    logStep("Subscription status", { isSubscribed });
+
+    // Rate limit check for free users
+    if (!isSubscribed) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const { count, error: countError } = await supabaseClient
+        .from("generation_logs")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", user.id)
+        .gte("created_at", today.toISOString());
+
+      if (countError) {
+        logStep("Error checking generation count", { error: countError.message });
+      }
+
+      const todayCount = count ?? 0;
+      logStep("Daily generation count", { todayCount, limit: FREE_DAILY_LIMIT });
+
+      if (todayCount >= FREE_DAILY_LIMIT) {
+        return new Response(
+          JSON.stringify({
+            error: `You've reached your daily limit of ${FREE_DAILY_LIMIT} generations. Upgrade to Pro for unlimited spec generations.`,
+            rateLimited: true,
+            dailyLimit: FREE_DAILY_LIMIT,
+            used: todayCount,
+          }),
+          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+    }
+
+    // Log this generation
+    await supabaseClient.from("generation_logs").insert({
+      user_id: user.id,
+      project_id: projectId || null,
+    });
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
