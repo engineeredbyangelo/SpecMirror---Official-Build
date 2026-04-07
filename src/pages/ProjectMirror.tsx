@@ -101,21 +101,29 @@ const ProjectMirror = () => {
     if (isMobile) setActiveTab("mirror");
 
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const accessToken = session?.access_token ?? import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+
       const resp = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-spec`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+            Authorization: `Bearer ${accessToken}`,
           },
-          body: JSON.stringify({ brief, title }),
+          body: JSON.stringify({ brief, title, projectId: id }),
         }
       );
 
       if (!resp.ok) {
         const err = await resp.json().catch(() => ({ error: "Generation failed" }));
-        toast({ variant: "destructive", title: "Generation failed", description: err.error || "Please try again." });
+        const isRateLimited = err.rateLimited === true;
+        toast({
+          variant: "destructive",
+          title: isRateLimited ? "Daily limit reached" : "Generation failed",
+          description: err.error || "Please try again.",
+        });
         setIsGenerating(false);
         return;
       }
