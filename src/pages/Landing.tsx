@@ -729,57 +729,100 @@ const StepRow = ({
   </div>
 );
 
-/* ── Animated Mirror Demo with real text (looping) ── */
+/* ── Animated Mirror Demo with real text (~30s looping) ── */
 const MirrorDemo = () => {
   const [phase, setPhase] = useState<"typing" | "loading" | "reveal">("typing");
   const [visibleBriefLines, setVisibleBriefLines] = useState(0);
   const [visibleSpecLines, setVisibleSpecLines] = useState(0);
   const [cycle, setCycle] = useState(0);
+  const [confidence, setConfidence] = useState(0);
 
   const briefLines = [
-    { text: "I want to build a mobile task manager for small teams.", isHeading: false },
-    { text: "People should be able to create tasks, assign them, and get notified when something changes.", isHeading: false },
-    { text: "It needs to work offline and sync when back online.", isHeading: false },
-    { text: "Oh, and users should be able to sign in with Google.", isHeading: false },
+    "I want to build a fitness tracking app for personal trainers and their clients.",
+    "Trainers should be able to create workout plans, assign them to clients, and track progress over time.",
+    "Clients need a mobile-friendly view where they can log exercises, upload progress photos, and message their trainer.",
+    "It should handle payments too — trainers charge monthly subscriptions through the app.",
+    "I'd like push notifications when a new plan is assigned or when a client completes a workout.",
   ];
 
-  const specLines = [
-    { text: "Architecture", isSection: true },
-    { text: "React Native + Expo, Supabase Postgres with realtime subscriptions, offline-first via WatermelonDB local cache." },
-    { text: "Authentication", isSection: true },
-    { text: "OAuth 2.0 via Google provider, JWT access tokens with 15-min expiry, refresh token rotation." },
-    { text: "Data Model", isSection: true },
-    { text: "Users → Teams (many-to-many), Teams → Tasks (one-to-many), Tasks have assignee_id, status enum, priority int." },
-    { text: "Effort Estimate", isSection: true },
-    { text: "~8 sprint points · 1.5 weeks for MVP" },
-    { text: "Acceptance Criteria", isSection: true },
-    { text: "✓ Offline task creation syncs on reconnect" },
-    { text: "✓ Push notifications on task assignment" },
-    { text: "✓ Google SSO with auto-provisioned profile" },
+  const specSections = [
+    { heading: "Executive Summary", lines: [
+      "A client-facing fitness platform enabling personal trainers to manage workout programming, client progress tracking, and recurring billing. Core value: replaces scattered spreadsheets and payment links with a single cohesive experience.",
+    ]},
+    { heading: "Architecture Overview", lines: [
+      "React Native (Expo) mobile client + Next.js admin dashboard",
+      "Supabase (Postgres + Auth + Realtime + Storage)",
+      "Stripe Connect for trainer payouts with platform fee",
+      "Expo Push Notifications via Firebase Cloud Messaging",
+    ]},
+    { heading: "Data Model", lines: [
+      "trainers → profiles (1:1), trainers → clients (1:many)",
+      "workout_plans: id, trainer_id, title, blocks jsonb",
+      "sessions: id, client_id, plan_id, completed_at, notes",
+      "progress_photos: id, client_id, storage_path, created_at",
+    ]},
+    { heading: "API Design", lines: [
+      "POST /api/plans → create workout plan (trainer auth)",
+      "GET /api/clients/:id/sessions → client progress history",
+      "POST /api/billing/subscribe → Stripe checkout session",
+    ]},
+    { heading: "Auth & Authorization", lines: [
+      "Supabase Auth with email + Google OAuth",
+      "JWT with 15-min access / 7-day refresh rotation",
+      "RLS policies: trainers see own clients, clients see own data",
+    ]},
+    { heading: "Effort Estimate", lines: [
+      "Phase 1: Auth + data model → 3 days (1 engineer)",
+      "Phase 2: Workout builder + client UI → 5 days",
+      "Phase 3: Payments + notifications → 4 days",
+      "Total: ~12 days (2 engineers)",
+    ]},
+    { heading: "Acceptance Criteria", lines: [
+      "✓ Trainer creates plan and assigns to client in <30s",
+      "✓ Client logs exercise with auto-saved reps/weight",
+      "✓ Stripe subscription creates with platform fee split",
+      "✓ Push notification fires within 5s of plan assignment",
+    ]},
   ];
+
+  const flatSpecLines = specSections.flatMap(s => [
+    { text: s.heading, isSection: true },
+    ...s.lines.map(l => ({ text: l, isSection: false })),
+  ]);
 
   useEffect(() => {
     const timers: ReturnType<typeof setTimeout>[] = [];
     setPhase("typing");
     setVisibleBriefLines(0);
     setVisibleSpecLines(0);
+    setConfidence(0);
 
+    // Type brief lines — 800ms each for readability
     briefLines.forEach((_, i) => {
-      timers.push(setTimeout(() => setVisibleBriefLines(i + 1), (i + 1) * 600));
+      timers.push(setTimeout(() => setVisibleBriefLines(i + 1), (i + 1) * 800));
     });
 
-    const loadDelay = (briefLines.length + 1) * 600;
-    timers.push(setTimeout(() => setPhase("loading"), loadDelay));
+    const briefDone = (briefLines.length + 1) * 800;
 
+    // Loading shimmer phase
+    timers.push(setTimeout(() => setPhase("loading"), briefDone));
+
+    // Reveal spec lines
+    const revealStart = briefDone + 2000;
     timers.push(setTimeout(() => {
       setPhase("reveal");
-      specLines.forEach((_, i) => {
-        timers.push(setTimeout(() => setVisibleSpecLines(i + 1), i * 250));
+      flatSpecLines.forEach((_, i) => {
+        timers.push(setTimeout(() => setVisibleSpecLines(i + 1), i * 200));
       });
-    }, loadDelay + 1500));
+      // Animate confidence counter
+      const targetConfidence = 94;
+      for (let c = 0; c <= targetConfidence; c++) {
+        timers.push(setTimeout(() => setConfidence(c), c * 15));
+      }
+    }, revealStart));
 
-    // Restart loop after full reveal
-    const totalDuration = loadDelay + 1500 + specLines.length * 250 + 4000;
+    // Hold on the completed spec, then restart
+    const totalDuration = revealStart + flatSpecLines.length * 200 + 5000;
     timers.push(setTimeout(() => setCycle(c => c + 1), totalDuration));
 
     return () => timers.forEach(clearTimeout);
@@ -795,22 +838,20 @@ const MirrorDemo = () => {
           <div className="h-3 w-3 rounded-full bg-white/[0.08]" />
           <div className="h-3 w-3 rounded-full bg-white/[0.08]" />
         </div>
-        <div className="mx-auto flex h-7 w-64 items-center justify-center rounded-md bg-white/[0.04] text-[11px] text-muted-foreground/50">
-          specmirror.app/project/task-manager
+        <div className="mx-auto flex h-7 w-72 items-center justify-center rounded-md bg-white/[0.04] text-[11px] text-muted-foreground/50">
+          specmirror.app/project/fitness-tracker
         </div>
       </div>
 
       <div className="grid gap-2 md:grid-cols-2">
         {/* Brief Panel */}
-        <div className="rounded-xl bg-white/[0.03] p-6 border border-white/[0.06]">
+        <div className="rounded-xl bg-white/[0.03] p-5 border border-white/[0.06]">
           <div className="mb-4">
             <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Product Brief</p>
           </div>
-          <div className="space-y-2.5 text-sm leading-relaxed text-foreground/80">
+          <div className="space-y-2.5 text-sm leading-relaxed text-foreground/80 min-h-[180px]">
             {briefLines.slice(0, visibleBriefLines).map((line, i) => (
-              <p key={i} className="animate-fade-in">
-                {line.text}
-              </p>
+              <p key={i} className="animate-fade-in">{line}</p>
             ))}
             {phase === "typing" && visibleBriefLines < briefLines.length && (
               <span className="inline-block h-4 w-0.5 animate-pulse bg-primary" />
@@ -819,43 +860,48 @@ const MirrorDemo = () => {
         </div>
 
         {/* Spec Panel */}
-        <div className="rounded-xl bg-white/[0.03] p-6 border border-primary/20">
+        <div className="rounded-xl bg-white/[0.03] p-5 border border-primary/20">
           <div className="mb-4 flex items-center justify-between">
             <p className="text-xs font-medium uppercase tracking-widest text-primary">Technical Mirror</p>
-            {phase === "reveal" && (
+            {phase === "reveal" && confidence > 0 && (
               <div className="relative flex items-center gap-2 animate-fade-in">
                 <svg width="28" height="28" viewBox="0 0 56 56" className="rotate-[-90deg]">
                   <circle cx="28" cy="28" r="25" fill="none" stroke="hsl(0 0% 100% / 0.06)" strokeWidth="3" />
-                  <circle cx="28" cy="28" r="25" fill="none" stroke="hsl(160 84% 39%)" strokeWidth="3" strokeLinecap="round" className="confidence-ring" style={{ ["--target-offset" as string]: "6.3" }} />
+                  <circle
+                    cx="28" cy="28" r="25" fill="none"
+                    stroke="hsl(160 84% 39%)" strokeWidth="3" strokeLinecap="round"
+                    strokeDasharray={`${2 * Math.PI * 25}`}
+                    strokeDashoffset={`${2 * Math.PI * 25 * (1 - confidence / 100)}`}
+                  />
                 </svg>
-                <span className="text-xs font-medium text-accent" style={{ animation: "pulse-glow 2s ease-in-out infinite" }}>96%</span>
+                <span className="text-xs font-medium text-accent tabular-nums" style={{ animation: "pulse-glow 2s ease-in-out infinite" }}>{confidence}%</span>
               </div>
             )}
           </div>
 
           {phase === "typing" && (
-            <div className="flex h-40 items-center justify-center">
+            <div className="flex min-h-[180px] items-center justify-center">
               <p className="text-xs text-muted-foreground/40">Waiting for brief…</p>
             </div>
           )}
 
           {phase === "loading" && (
-            <div className="space-y-3">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="h-3 animate-pulse rounded bg-muted" style={{ width: `${40 + Math.random() * 50}%`, animationDelay: `${i * 80}ms` }} />
+            <div className="min-h-[180px] space-y-3">
+              {Array.from({ length: 10 }).map((_, i) => (
+                <div key={i} className="h-3 animate-pulse rounded bg-muted" style={{ width: `${35 + Math.random() * 55}%`, animationDelay: `${i * 80}ms` }} />
               ))}
-              <p className="mt-2 text-[10px] font-medium uppercase tracking-widest text-accent/60" style={{ animation: "pulse-glow 1.5s ease-in-out infinite" }}>Generating…</p>
+              <p className="mt-3 text-[10px] font-medium uppercase tracking-widest text-accent/60" style={{ animation: "pulse-glow 1.5s ease-in-out infinite" }}>Generating technical specification…</p>
             </div>
           )}
 
           {phase === "reveal" && (
-            <div className="space-y-1.5 text-xs leading-relaxed text-foreground/80">
-              {specLines.slice(0, visibleSpecLines).map((line, i) => (
+            <div className="space-y-1 text-xs leading-relaxed text-foreground/80 min-h-[180px] max-h-[320px] overflow-y-auto scrollbar-thin">
+              {flatSpecLines.slice(0, visibleSpecLines).map((line, i) => (
                 <p
                   key={i}
-                  className={`animate-fade-in ${line.isSection ? "font-semibold text-accent text-sm mt-3 first:mt-0" : "pl-2 text-foreground/70"}`}
+                  className={`animate-fade-in ${line.isSection ? "font-semibold text-accent text-[13px] mt-3 first:mt-0 border-b border-white/[0.06] pb-1" : "pl-3 text-foreground/70"}`}
                 >
-                  {line.text}
+                  {line.isSection ? `### ${line.text}` : `• ${line.text}`}
                 </p>
               ))}
             </div>
