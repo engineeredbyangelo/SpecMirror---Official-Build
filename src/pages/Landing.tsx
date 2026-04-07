@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Sparkles, Users, Layers, ArrowRight, Play, Search, FileText, Zap, Lock, GitBranch, X, Check, Loader2 } from "lucide-react";
@@ -466,10 +466,18 @@ const Landing = () => {
                 statLabel: "Spec confidence",
               },
               {
+                role: "Technical & Non-Tech Founders",
+                quote: "Translate your vision into buildable specs from day one — avoid costly technical debt before writing a single line of code.",
+                icon: <Layers className="h-5 w-5" />,
+                accentColor: "accent" as const,
+                stat: "60%",
+                statLabel: "Less rework",
+              },
+              {
                 role: "Engineers",
                 quote: 'Influence scope on day zero instead of week three. No more "this is impossible" surprises.',
                 icon: <Zap className="h-5 w-5" />,
-                accentColor: "accent" as const,
+                accentColor: "primary" as const,
                 stat: "3×",
                 statLabel: "Faster alignment",
               },
@@ -721,29 +729,50 @@ const StepRow = ({
   </div>
 );
 
-/* ── Animated Mirror Demo ── */
+/* ── Animated Mirror Demo with real text ── */
 const MirrorDemo = () => {
+  const [phase, setPhase] = useState<"typing" | "loading" | "reveal">("typing");
+  const [visibleBriefLines, setVisibleBriefLines] = useState(0);
+  const [visibleSpecLines, setVisibleSpecLines] = useState(0);
+
   const briefLines = [
-    { text: "User Authentication Flow", width: "65%", isHeading: true },
-    { text: "Users should be able to sign up with email", width: "85%" },
-    { text: "and password. Social login via Google and", width: "80%" },
-    { text: "GitHub. Password reset via email link.", width: "70%" },
-    { text: "Session Management", width: "50%", isHeading: true },
-    { text: "Keep users logged in for 30 days with", width: "75%" },
-    { text: "refresh token rotation.", width: "55%" },
+    { text: "User Authentication Flow", isHeading: true },
+    { text: "Users should be able to sign up with email and password. Support social login via Google and GitHub." },
+    { text: "Password reset via email link." },
+    { text: "Session Management", isHeading: true },
+    { text: "Keep users logged in for 30 days with refresh token rotation." },
   ];
 
   const specLines = [
-    { text: "Architecture", width: "40%", isSection: true },
-    { text: "JWT + httpOnly cookies, bcrypt hashing", width: "80%" },
-    { text: "OAuth2 flow for Google/GitHub providers", width: "78%" },
-    { text: "Effort Estimate", width: "45%", isSection: true },
-    { text: "~3 sprint points, 2 days implementation", width: "82%" },
-    { text: "Acceptance Criteria", width: "50%", isSection: true },
-    { text: "✓ Email signup with verification flow", width: "72%" },
-    { text: "✓ Social login creates linked profile", width: "70%" },
-    { text: "✓ Refresh tokens rotate on each use", width: "68%" },
+    { text: "Architecture", isSection: true },
+    { text: "JWT with httpOnly cookies, bcrypt password hashing, OAuth2 flow for Google/GitHub providers." },
+    { text: "Effort Estimate", isSection: true },
+    { text: "~3 sprint points · 2 days implementation" },
+    { text: "Acceptance Criteria", isSection: true },
+    { text: "✓ Email signup with verification flow" },
+    { text: "✓ Social login creates linked profile" },
+    { text: "✓ Refresh tokens rotate on each use" },
   ];
+
+  useEffect(() => {
+    // Type brief lines one by one
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    briefLines.forEach((_, i) => {
+      timers.push(setTimeout(() => setVisibleBriefLines(i + 1), (i + 1) * 500));
+    });
+    // After brief done → loading phase
+    const loadDelay = (briefLines.length + 1) * 500;
+    timers.push(setTimeout(() => setPhase("loading"), loadDelay));
+    // After loading → reveal spec
+    timers.push(setTimeout(() => {
+      setPhase("reveal");
+      specLines.forEach((_, i) => {
+        timers.push(setTimeout(() => setVisibleSpecLines(i + 1), i * 300));
+      });
+    }, loadDelay + 1200));
+    return () => timers.forEach(clearTimeout);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="relative rounded-2xl border border-white/[0.06] bg-white/[0.02] p-2 backdrop-blur-sm">
@@ -762,21 +791,21 @@ const MirrorDemo = () => {
       <div className="grid gap-2 md:grid-cols-2">
         {/* Brief Panel */}
         <div className="rounded-xl bg-white/[0.03] p-6 border border-white/[0.06]">
-          <div className="mb-4 flex items-center justify-between">
+          <div className="mb-4">
             <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Product Brief</p>
           </div>
-          <div className="space-y-2.5">
-            {briefLines.map((line, i) => (
-              <div
+          <div className="space-y-2 font-mono text-xs leading-relaxed text-foreground/80">
+            {briefLines.slice(0, visibleBriefLines).map((line, i) => (
+              <p
                 key={i}
-                className="typing-line h-2.5 rounded-sm"
-                style={{
-                  ["--target-width" as string]: line.width,
-                  animationDelay: `${i * 0.4}s`,
-                  background: line.isHeading ? "hsl(226 70% 55.5% / 0.25)" : "hsl(0 0% 100% / 0.08)",
-                }}
-              />
+                className={`animate-fade-in ${line.isHeading ? "font-semibold text-primary text-sm mt-3 first:mt-0" : ""}`}
+              >
+                {line.text}
+              </p>
             ))}
+            {visibleBriefLines < briefLines.length && (
+              <span className="inline-block h-4 w-0.5 animate-pulse bg-primary" />
+            )}
           </div>
         </div>
 
@@ -792,21 +821,34 @@ const MirrorDemo = () => {
               <span className="text-xs font-medium text-accent" style={{ animation: "pulse-glow 2s ease-in-out 3s infinite" }}>94%</span>
             </div>
           </div>
-          <div className="shimmer rounded-lg p-0.5">
-            <div className="space-y-2.5 rounded-lg bg-background/80 p-3">
-              {specLines.map((line, i) => (
-                <div
+
+          {phase === "typing" && (
+            <div className="flex h-32 items-center justify-center">
+              <p className="text-xs text-muted-foreground/40">Waiting for brief…</p>
+            </div>
+          )}
+
+          {phase === "loading" && (
+            <div className="space-y-3">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="h-3 animate-pulse rounded bg-muted" style={{ width: `${50 + Math.random() * 40}%`, animationDelay: `${i * 100}ms` }} />
+              ))}
+              <p className="mt-2 text-[10px] font-medium uppercase tracking-widest text-accent/60" style={{ animation: "pulse-glow 1.5s ease-in-out infinite" }}>Generating…</p>
+            </div>
+          )}
+
+          {phase === "reveal" && (
+            <div className="space-y-2 font-mono text-xs leading-relaxed text-foreground/80">
+              {specLines.slice(0, visibleSpecLines).map((line, i) => (
+                <p
                   key={i}
-                  className="spec-line h-2.5 rounded-sm"
-                  style={{
-                    width: line.width,
-                    animationDelay: `${2 + i * 0.3}s`,
-                    background: line.isSection ? "hsl(160 84% 39% / 0.3)" : "hsl(0 0% 100% / 0.08)",
-                  }}
-                />
+                  className={`animate-fade-in ${line.isSection ? "font-semibold text-accent text-sm mt-3 first:mt-0" : ""}`}
+                >
+                  {line.text}
+                </p>
               ))}
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
