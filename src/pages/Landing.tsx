@@ -98,11 +98,11 @@ const Landing = () => {
           </FadeSection>
           <FadeSection delay={0.1}>
             <h1 className="mb-6 text-4xl font-bold leading-[1.08] tracking-tighter sm:text-5xl md:text-7xl">
-              Product briefs.{" "}
+              Your vision to{" "}
               <br className="hidden sm:block" />
-              <span className="bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">Technical specs.</span>
+              <span className="bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">blueprint.</span>
               <br className="hidden sm:block" />
-              One mirror.
+              In seconds.
             </h1>
           </FadeSection>
           <FadeSection delay={0.2}>
