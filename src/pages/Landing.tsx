@@ -557,7 +557,7 @@ const Landing = () => {
                   <p className="mt-3 text-sm text-muted-foreground leading-relaxed">Perfect for trying SpecMirror on personal projects.</p>
                 </div>
                 <ul className="mb-8 flex-1 space-y-3 text-sm text-muted-foreground">
-                  {["5 specs per month", "Basic AI generation", "Encrypted sharing", "Single user"].map((f) => (
+                  {["5 generations per day", "Full AI spec generation", "Encrypted sharing", "Confidence scoring"].map((f) => (
                     <li key={f} className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 shrink-0 text-accent" />
                       {f}
@@ -585,7 +585,7 @@ const Landing = () => {
                   <p className="mt-3 text-sm text-muted-foreground leading-relaxed">For teams that ship fast and need unlimited specs.</p>
                 </div>
                 <ul className="mb-8 flex-1 space-y-3 text-sm text-muted-foreground">
-                  {["Unlimited spec generations", "Priority AI processing", "Team sharing and collaboration", "Version history", "PM tool integrations", "Priority support"].map((f) => (
+                  {["Unlimited spec generations", "Priority AI processing", "Team sharing & collaboration", "Version history", "Slack & PM tool integrations", "Priority support"].map((f) => (
                     <li key={f} className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 shrink-0 text-accent" />
                       {f}
@@ -636,7 +636,7 @@ const Landing = () => {
               <AccordionItem value="pricing" className="border-white/[0.06]">
                 <AccordionTrigger className="text-left text-base">What&apos;s included in the free tier?</AccordionTrigger>
                 <AccordionContent className="text-muted-foreground leading-relaxed">
-                  Free accounts get up to 3 active projects with full AI spec generation and encrypted sharing. The Pro plan unlocks unlimited projects, priority generation, and upcoming integrations like Slack and Jira sync. No credit card required to start.
+                  Free accounts get 5 AI spec generations per day with full confidence scoring and encrypted sharing. The Pro plan unlocks unlimited daily generations, priority processing, and upcoming integrations like Slack sync. No credit card required to start.
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="data" className="border-white/[0.06]">
