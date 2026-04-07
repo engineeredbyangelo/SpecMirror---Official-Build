@@ -557,7 +557,7 @@ const Landing = () => {
                   <p className="mt-3 text-sm text-muted-foreground leading-relaxed">Perfect for trying SpecMirror on personal projects.</p>
                 </div>
                 <ul className="mb-8 flex-1 space-y-3 text-sm text-muted-foreground">
-                  {["5 specs per month", "Basic AI generation", "Encrypted sharing", "Single user"].map((f) => (
+                  {["5 generations per day", "Full AI spec generation", "Encrypted sharing", "Confidence scoring"].map((f) => (
                     <li key={f} className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 shrink-0 text-accent" />
                       {f}
