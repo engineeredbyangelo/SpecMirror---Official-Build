@@ -305,9 +305,15 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Features — Bento Grid */}
-      <section id="features" className="py-20 md:py-28">
-        <div className="mx-auto max-w-6xl px-6">
+      {/* Features — Immersive Linear-Inspired Section */}
+      <section id="features" className="relative py-20 md:py-28 overflow-hidden">
+        {/* Deep gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.04] via-background to-accent/[0.03]" />
+        {/* Ambient glow orbs */}
+        <div className="absolute top-1/4 left-1/4 h-96 w-96 rounded-full bg-primary/[0.04] blur-3xl" />
+        <div className="absolute bottom-1/4 right-1/4 h-96 w-96 rounded-full bg-accent/[0.03] blur-3xl" />
+
+        <div className="relative z-10 mx-auto max-w-6xl px-6">
           <FadeSection>
             <SectionHeader
               label="Features"
@@ -317,127 +323,183 @@ const Landing = () => {
             />
           </FadeSection>
 
-          <div className="grid gap-4 md:grid-cols-3">
-            {/* Large feature — spans 2 cols */}
-            <FadeSection className="md:col-span-2">
-              <div className="group relative h-full overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8 backdrop-blur-xl transition-all duration-500 hover:border-primary/30 hover:bg-white/[0.04]">
-                <div className="absolute -top-24 -right-24 h-48 w-48 rounded-full bg-primary/[0.06] blur-3xl transition-opacity duration-500 group-hover:opacity-100 opacity-0" />
-                <div className="relative z-10">
-                  <div className="mb-5 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                    <Layers className="h-5 w-5" />
+          {/* Zone 1 + Zone 2: Dashboard Hero with Floating Nodes */}
+          <div className="relative">
+            {/* SVG Cyber-line connectors — desktop only */}
+            <svg className="absolute inset-0 w-full h-full pointer-events-none hidden md:block" style={{ zIndex: 1 }}>
+              <defs>
+                <linearGradient id="cyber-gradient-left" x1="0%" y1="50%" x2="100%" y2="50%">
+                  <stop offset="0%" stopColor="hsl(226 70% 55.5% / 0)" />
+                  <stop offset="50%" stopColor="hsl(226 70% 55.5% / 0.3)" />
+                  <stop offset="100%" stopColor="hsl(226 70% 55.5% / 0.1)" />
+                </linearGradient>
+                <linearGradient id="cyber-gradient-right" x1="0%" y1="50%" x2="100%" y2="50%">
+                  <stop offset="0%" stopColor="hsl(160 84% 39% / 0.1)" />
+                  <stop offset="50%" stopColor="hsl(160 84% 39% / 0.3)" />
+                  <stop offset="100%" stopColor="hsl(160 84% 39% / 0)" />
+                </linearGradient>
+              </defs>
+              {/* Left connector */}
+              <line x1="0%" y1="35%" x2="18%" y2="45%" stroke="url(#cyber-gradient-left)" strokeWidth="1" filter="drop-shadow(0 0 6px hsl(226 70% 55.5% / 0.2))" />
+              {/* Right connector */}
+              <line x1="82%" y1="45%" x2="100%" y2="35%" stroke="url(#cyber-gradient-right)" strokeWidth="1" filter="drop-shadow(0 0 6px hsl(160 84% 39% / 0.2))" />
+            </svg>
+
+            <div className="flex flex-col md:flex-row items-stretch gap-4 md:gap-5">
+              {/* Left floating node */}
+              <FadeSection delay={0.2} className="md:w-52 shrink-0 self-center">
+                <div className="animate-float rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5 backdrop-blur-xl" style={{ boxShadow: "0 0 40px hsl(226 70% 55.5% / 0.06)" }}>
+                  <div className="mb-3 inline-flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                    <Sparkles className="h-4 w-4" />
                   </div>
-                  <h3 className="mb-2 text-xl font-bold tracking-tight md:text-2xl">Live Mirror View</h3>
-                  <p className="mb-6 max-w-md text-sm leading-relaxed text-muted-foreground md:text-base">
-                    Side-by-side product brief + technical spec with real-time streaming and confidence scoring.
-                  </p>
-                  <div className="grid grid-cols-2 gap-3 rounded-xl border border-white/[0.06] bg-background/40 p-4">
-                    <div className="space-y-2">
-                      <div className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground/60">Brief</div>
-                      <div className="h-2 rounded-sm bg-primary/20 w-2/3" />
-                      <div className="h-2 rounded-sm bg-white/[0.06] w-full" />
-                      <div className="h-2 rounded-sm bg-white/[0.06] w-4/5" />
-                      <div className="h-2 rounded-sm bg-white/[0.06] w-3/5" />
-                    </div>
-                    <div className="space-y-2 border-l border-white/[0.06] pl-3">
-                      <div className="text-[10px] font-medium uppercase tracking-widest text-primary/60">Spec</div>
-                      <div className="h-2 rounded-sm bg-accent/25 w-1/2" />
-                      <div className="h-2 rounded-sm bg-white/[0.06] w-full" />
-                      <div className="h-2 rounded-sm bg-white/[0.06] w-3/4" />
-                      <div className="h-2 rounded-sm bg-accent/25 w-2/5" />
-                    </div>
+                  <h3 className="mb-1 text-sm font-bold tracking-tight">Instant AI Generation</h3>
+                  <p className="text-xs leading-relaxed text-muted-foreground">One click transforms briefs into production specs.</p>
+                  <div className="mt-3 flex items-center gap-1.5">
+                    <div className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse" />
+                    <span className="font-mono text-[9px] uppercase tracking-widest text-accent/70">Streaming</span>
                   </div>
                 </div>
-              </div>
-            </FadeSection>
+              </FadeSection>
 
-            {/* Right column — two stacked small cards */}
-            <div className="flex flex-col gap-4">
-              <FadeSection delay={0.1} className="flex-1">
-                <div className="group relative overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 backdrop-blur-xl transition-all duration-500 hover:border-accent/30 hover:bg-white/[0.04] h-full">
-                  <div className="absolute -bottom-12 -left-12 h-32 w-32 rounded-full bg-accent/[0.06] blur-2xl transition-opacity duration-500 group-hover:opacity-100 opacity-0" />
+              {/* Central Dashboard Hero */}
+              <FadeSection className="flex-1 min-w-0">
+                <div className="relative rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 md:p-8 backdrop-blur-xl overflow-hidden" style={{ boxShadow: "0 0 80px hsl(226 70% 55.5% / 0.04), 0 0 40px hsl(160 84% 39% / 0.02)" }}>
+                  {/* Neon glow behind */}
+                  <div className="absolute -top-20 left-1/2 -translate-x-1/2 h-40 w-80 rounded-full bg-primary/[0.06] blur-3xl" />
+
                   <div className="relative z-10">
-                    <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent">
-                      <Sparkles className="h-5 w-5" />
+                    <div className="mb-5 flex items-center justify-between">
+                      <div className="flex items-center gap-2.5">
+                        <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                          <Layers className="h-5 w-5" />
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-bold tracking-tight md:text-xl">Live Mirror View</h3>
+                          <p className="text-xs text-muted-foreground">Real-time brief → spec transformation</p>
+                        </div>
+                      </div>
+                      {/* Confidence badge */}
+                      <div className="hidden sm:flex items-center gap-1.5 rounded-full border border-accent/30 bg-accent/10 px-3 py-1.5" style={{ boxShadow: "0 0 20px hsl(160 84% 39% / 0.15)" }}>
+                        <div className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse" />
+                        <span className="font-mono text-[10px] font-semibold text-accent">94%</span>
+                        <span className="font-mono text-[9px] uppercase tracking-widest text-accent/60">confidence</span>
+                      </div>
                     </div>
-                    <h3 className="mb-1.5 text-lg font-bold tracking-tight">Instant AI Generation</h3>
-                    <p className="text-sm leading-relaxed text-muted-foreground">
-                      One click transforms any brief into architecture, effort estimates, and acceptance criteria.
-                    </p>
-                    <div className="mt-4 flex items-center gap-2">
-                      <div className="h-2 w-2 rounded-full bg-accent animate-pulse" />
-                      <span className="text-[10px] font-medium uppercase tracking-widest text-accent/70">Streaming</span>
+
+                    {/* Dual-view interface */}
+                    <div className="grid grid-cols-2 gap-px rounded-xl border border-white/[0.06] bg-white/[0.04] overflow-hidden">
+                      {/* Brief pane */}
+                      <div className="p-4 md:p-5 space-y-2.5 bg-background/40">
+                        <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground/60">Brief</span>
+                        <div className="space-y-2">
+                          <div className="typing-line h-2 rounded-sm" style={{ ["--target-width" as string]: "80%", animationDelay: "0s", background: "hsl(226 70% 55.5% / 0.25)" }} />
+                          <div className="typing-line h-2 rounded-sm" style={{ ["--target-width" as string]: "95%", animationDelay: "0.3s", background: "hsl(0 0% 100% / 0.07)" }} />
+                          <div className="typing-line h-2 rounded-sm" style={{ ["--target-width" as string]: "60%", animationDelay: "0.6s", background: "hsl(0 0% 100% / 0.07)" }} />
+                          <div className="typing-line h-2 rounded-sm" style={{ ["--target-width" as string]: "75%", animationDelay: "0.9s", background: "hsl(0 0% 100% / 0.07)" }} />
+                          <div className="typing-line h-2 rounded-sm" style={{ ["--target-width" as string]: "50%", animationDelay: "1.2s", background: "hsl(0 0% 100% / 0.05)" }} />
+                        </div>
+                      </div>
+                      {/* Spec pane */}
+                      <div className="p-4 md:p-5 space-y-2.5 bg-background/60 border-l border-white/[0.06]">
+                        <span className="font-mono text-[10px] uppercase tracking-widest text-primary/60">Spec</span>
+                        <div className="space-y-2">
+                          <div className="spec-line h-2 rounded-sm" style={{ width: "45%", animationDelay: "0.5s", background: "hsl(160 84% 39% / 0.3)" }} />
+                          <div className="spec-line h-2 rounded-sm" style={{ width: "85%", animationDelay: "0.8s", background: "hsl(0 0% 100% / 0.07)" }} />
+                          <div className="spec-line h-2 rounded-sm" style={{ width: "70%", animationDelay: "1.1s", background: "hsl(0 0% 100% / 0.07)" }} />
+                          <div className="spec-line h-2 rounded-sm" style={{ width: "55%", animationDelay: "1.4s", background: "hsl(160 84% 39% / 0.25)" }} />
+                          <div className="spec-line h-2 rounded-sm" style={{ width: "90%", animationDelay: "1.7s", background: "hsl(0 0% 100% / 0.05)" }} />
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
               </FadeSection>
 
-              <FadeSection delay={0.2} className="flex-1">
-                <div className="group relative overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 backdrop-blur-xl transition-all duration-500 hover:border-primary/30 hover:bg-white/[0.04] h-full">
-                  <div className="absolute -top-12 -right-12 h-32 w-32 rounded-full bg-primary/[0.06] blur-2xl transition-opacity duration-500 group-hover:opacity-100 opacity-0" />
-                  <div className="relative z-10">
-                    <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                      <Users className="h-5 w-5" />
-                    </div>
-                    <h3 className="mb-1.5 text-lg font-bold tracking-tight">Seamless Collaboration</h3>
-                    <p className="text-sm leading-relaxed text-muted-foreground">
-                      Encrypted sharing, version history, and team presence. All built in.
-                    </p>
-                    <div className="mt-4 flex gap-1">
-                      {[...Array(3)].map((_, i) => (
-                        <div key={i} className="h-6 w-6 rounded-full border-2 border-background bg-gradient-to-br from-primary/40 to-accent/30" style={{ marginLeft: i > 0 ? "-6px" : 0 }} />
-                      ))}
-                      <span className="ml-1 self-center text-[10px] text-muted-foreground/60">+4</span>
-                    </div>
+              {/* Right floating node */}
+              <FadeSection delay={0.3} className="md:w-52 shrink-0 self-center">
+                <div className="animate-float-delayed rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5 backdrop-blur-xl" style={{ boxShadow: "0 0 40px hsl(160 84% 39% / 0.06)" }}>
+                  <div className="mb-3 inline-flex h-9 w-9 items-center justify-center rounded-xl bg-accent/10 text-accent">
+                    <Users className="h-4 w-4" />
+                  </div>
+                  <h3 className="mb-1 text-sm font-bold tracking-tight">Seamless Collaboration</h3>
+                  <p className="text-xs leading-relaxed text-muted-foreground">Encrypted sharing, version history, team presence.</p>
+                  <div className="mt-3 flex gap-0.5">
+                    {[...Array(3)].map((_, i) => (
+                      <div key={i} className="h-5 w-5 rounded-full border-2 border-background bg-gradient-to-br from-primary/40 to-accent/30" style={{ marginLeft: i > 0 ? "-4px" : 0 }} />
+                    ))}
+                    <span className="ml-1 self-center text-[9px] text-muted-foreground/60">+4</span>
                   </div>
                 </div>
               </FadeSection>
             </div>
+          </div>
 
-            {/* PRD or Technical Spec — directly under Live Mirror View */}
-            <FadeSection delay={0.3} className="md:col-span-2">
-              <div className="group relative overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 backdrop-blur-xl transition-all duration-500 hover:border-primary/30 hover:bg-white/[0.04]">
-                <div className="relative z-10">
-                  <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                    <ClipboardList className="h-5 w-5" />
-                  </div>
-                  <h3 className="mb-2 text-lg font-bold tracking-tight md:text-xl">PRD or Technical Spec — You Decide</h3>
-                  <p className="mb-5 max-w-xl text-sm leading-relaxed text-muted-foreground">
-                    Two powerful outputs, one simple choice. Pick the format that matches your role and your stage.
-                  </p>
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    <div className="rounded-lg border border-primary/20 bg-primary/[0.04] p-4 space-y-2">
-                      <div className="flex items-center gap-2">
-                        <FileText className="h-4 w-4 text-primary" />
-                        <span className="text-sm font-semibold text-primary">Product Requirements Doc</span>
-                      </div>
-                      <p className="text-xs leading-relaxed text-muted-foreground">
-                        Best for <span className="text-foreground/80 font-medium">PMs and founders</span>. User stories, acceptance criteria, and priority rankings — align your team on <span className="text-foreground/80 font-medium">what</span> to build.
-                      </p>
-                      <div className="flex flex-wrap gap-1.5">
-                        {["User stories", "Acceptance criteria", "Priorities"].map(tag => (
-                          <span key={tag} className="rounded-full border border-primary/20 bg-primary/[0.06] px-2 py-0.5 text-[10px] font-medium text-primary/80">{tag}</span>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="rounded-lg border border-accent/20 bg-accent/[0.04] p-4 space-y-2">
-                      <div className="flex items-center gap-2">
-                        <Code2 className="h-4 w-4 text-accent" />
-                        <span className="text-sm font-semibold text-accent">Technical Specification</span>
-                      </div>
-                      <p className="text-xs leading-relaxed text-muted-foreground">
-                        Best for <span className="text-foreground/80 font-medium">engineers and tech leads</span>. Architecture, API contracts, and data models — know exactly <span className="text-foreground/80 font-medium">how</span> to build it.
-                      </p>
-                      <div className="flex flex-wrap gap-1.5">
-                        {["Architecture", "API contracts", "Data models"].map(tag => (
-                          <span key={tag} className="rounded-full border border-accent/20 bg-accent/[0.06] px-2 py-0.5 text-[10px] font-medium text-accent/80">{tag}</span>
-                        ))}
-                      </div>
-                    </div>
+          {/* Zone 3: PRD vs Tech Spec Interactive Toggle */}
+          <FadeSection delay={0.4}>
+            <div className="mt-6 mx-auto max-w-2xl">
+              <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 backdrop-blur-xl transition-all duration-500" style={{ boxShadow: activeDocType === 'prd' ? "0 0 30px hsl(226 70% 55.5% / 0.06), inset 0 0 0 1px hsl(226 70% 55.5% / 0.08)" : "0 0 30px hsl(160 84% 39% / 0.06), inset 0 0 0 1px hsl(160 84% 39% / 0.08)" }}>
+                {/* Toggle bar */}
+                <div className="mb-5 flex items-center justify-center">
+                  <div className="inline-flex items-center rounded-full border border-white/[0.08] bg-white/[0.03] p-1">
+                    <button
+                      onClick={() => setActiveDocType('prd')}
+                      className={`relative rounded-full px-5 py-2 text-xs font-semibold transition-all duration-300 ${activeDocType === 'prd' ? 'bg-primary text-primary-foreground shadow-lg' : 'text-muted-foreground hover:text-foreground'}`}
+                      style={activeDocType === 'prd' ? { boxShadow: "0 0 16px hsl(226 70% 55.5% / 0.3)" } : {}}
+                    >
+                      Product Requirements
+                    </button>
+                    <button
+                      onClick={() => setActiveDocType('spec')}
+                      className={`relative rounded-full px-5 py-2 text-xs font-semibold transition-all duration-300 ${activeDocType === 'spec' ? 'bg-accent text-accent-foreground shadow-lg' : 'text-muted-foreground hover:text-foreground'}`}
+                      style={activeDocType === 'spec' ? { boxShadow: "0 0 16px hsl(160 84% 39% / 0.3)" } : {}}
+                    >
+                      Technical Spec
+                    </button>
                   </div>
                 </div>
+
+                {/* Content panel */}
+                <motion.div
+                  key={activeDocType}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
+                >
+                  {activeDocType === 'prd' ? (
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2.5">
+                        <FileText className="h-5 w-5 text-primary" />
+                        <span className="text-base font-bold text-foreground">Product Requirements Doc</span>
+                      </div>
+                      <p className="text-sm leading-relaxed text-muted-foreground">
+                        Best for <span className="text-foreground/80 font-medium">PMs and founders</span>. Align your team on <span className="text-foreground/80 font-medium">what</span> to build with structured user stories, acceptance criteria, and priority rankings.
+                      </p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {["User stories", "Acceptance criteria", "Priorities", "Feature breakdown", "Success metrics"].map(tag => (
+                          <span key={tag} className="rounded-full border border-primary/20 bg-primary/[0.06] px-2.5 py-0.5 font-mono text-[10px] font-medium text-primary/80">{tag}</span>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2.5">
+                        <Code2 className="h-5 w-5 text-accent" />
+                        <span className="text-base font-bold text-foreground">Technical Specification</span>
+                      </div>
+                      <p className="text-sm leading-relaxed text-muted-foreground">
+                        Best for <span className="text-foreground/80 font-medium">engineers and tech leads</span>. Know exactly <span className="text-foreground/80 font-medium">how</span> to build it with system architecture, API contracts, and data models.
+                      </p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {["Architecture", "API contracts", "Data models", "Infrastructure", "Security"].map(tag => (
+                          <span key={tag} className="rounded-full border border-accent/20 bg-accent/[0.06] px-2.5 py-0.5 font-mono text-[10px] font-medium text-accent/80">{tag}</span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </motion.div>
               </div>
-            </FadeSection>
-          </div>
+            </div>
+          </FadeSection>
         </div>
       </section>
 
