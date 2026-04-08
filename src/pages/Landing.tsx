@@ -643,9 +643,13 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* For Every Team — Horizontal role cards */}
-      <section id="how-it-helps" className="py-20 md:py-28">
-        <div className="mx-auto max-w-6xl px-6">
+      {/* For Every Team — Immersive */}
+      <section id="how-it-helps" className="relative py-20 md:py-28 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.03] via-background to-primary/[0.03]" />
+        <div className="absolute top-1/4 left-1/3 h-72 w-72 rounded-full bg-primary/[0.04] blur-3xl" />
+        <div className="absolute bottom-1/4 right-1/3 h-72 w-72 rounded-full bg-accent/[0.03] blur-3xl" />
+
+        <div className="relative z-10 mx-auto max-w-6xl px-6">
           <FadeSection>
             <SectionHeader
               label="For every team"
@@ -695,15 +699,13 @@ const Landing = () => {
                   item.accentColor === "accent"
                     ? "border-accent/20 hover:border-accent/40"
                     : "border-white/[0.06] hover:border-primary/30"
-                }`}>
-                  {/* Left accent bar */}
+                }`} style={{ boxShadow: item.accentColor === "accent" ? "0 0 30px hsl(160 84% 39% / 0.03)" : "0 0 30px hsl(226 70% 55.5% / 0.03)" }}>
                   <div className={`absolute left-0 top-0 bottom-0 w-[3px] rounded-full transition-all duration-500 ${
                     item.accentColor === "accent"
                       ? "bg-accent/40 group-hover:bg-accent"
                       : "bg-primary/40 group-hover:bg-primary"
-                  }`} />
+                  }`} style={{ boxShadow: item.accentColor === "accent" ? "0 0 8px hsl(160 84% 39% / 0.3)" : "0 0 8px hsl(226 70% 55.5% / 0.3)" }} />
 
-                  {/* Icon + role */}
                   <div className="flex shrink-0 items-center gap-4 md:w-48">
                     <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${
                       item.accentColor === "accent" ? "bg-accent/10 text-accent" : "bg-primary/10 text-primary"
@@ -713,17 +715,15 @@ const Landing = () => {
                     <h3 className="text-lg font-bold tracking-tight">{item.role}</h3>
                   </div>
 
-                  {/* Quote */}
                   <p className="flex-1 text-sm leading-relaxed text-muted-foreground md:text-base md:px-6 md:border-l md:border-white/[0.06]">
                     "{item.quote}"
                   </p>
 
-                  {/* Stat */}
                   <div className="shrink-0 text-right md:w-32">
                     <div className={`text-2xl font-bold tracking-tight ${
                       item.accentColor === "accent" ? "text-accent" : "text-primary"
-                    }`}>{item.stat}</div>
-                    <div className="text-xs text-muted-foreground/60 uppercase tracking-widest">{item.statLabel}</div>
+                    }`} style={{ filter: item.accentColor === "accent" ? "drop-shadow(0 0 8px hsl(160 84% 39% / 0.3))" : "drop-shadow(0 0 8px hsl(226 70% 55.5% / 0.3))" }}>{item.stat}</div>
+                    <div className="font-mono text-[10px] text-muted-foreground/60 uppercase tracking-[0.2em]">{item.statLabel}</div>
                   </div>
                 </div>
               </FadeSection>
