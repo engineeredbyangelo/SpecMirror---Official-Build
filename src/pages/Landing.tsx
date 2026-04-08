@@ -317,9 +317,9 @@ const Landing = () => {
             />
           </FadeSection>
 
-          <div className="grid gap-4 md:grid-cols-3 md:grid-rows-3">
-            {/* Large feature — spans 2 cols, 2 rows */}
-            <FadeSection className="md:col-span-2 md:row-span-2">
+          <div className="grid gap-4 md:grid-cols-3">
+            {/* Large feature — spans 2 cols */}
+            <FadeSection className="md:col-span-2">
               <div className="group relative h-full overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8 backdrop-blur-xl transition-all duration-500 hover:border-primary/30 hover:bg-white/[0.04]">
                 <div className="absolute -top-24 -right-24 h-48 w-48 rounded-full bg-primary/[0.06] blur-3xl transition-opacity duration-500 group-hover:opacity-100 opacity-0" />
                 <div className="relative z-10">
@@ -327,10 +327,9 @@ const Landing = () => {
                     <Layers className="h-5 w-5" />
                   </div>
                   <h3 className="mb-2 text-xl font-bold tracking-tight md:text-2xl">Live Mirror View</h3>
-                  <p className="mb-8 max-w-md text-sm leading-relaxed text-muted-foreground md:text-base">
+                  <p className="mb-6 max-w-md text-sm leading-relaxed text-muted-foreground md:text-base">
                     Side-by-side product brief + technical spec with real-time streaming and confidence scoring.
                   </p>
-                  {/* Mini split-screen visual */}
                   <div className="grid grid-cols-2 gap-3 rounded-xl border border-white/[0.06] bg-background/40 p-4">
                     <div className="space-y-2">
                       <div className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground/60">Brief</div>
@@ -351,91 +350,85 @@ const Landing = () => {
               </div>
             </FadeSection>
 
-            {/* Top-right small card */}
-            <FadeSection delay={0.1}>
-              <div className="group relative overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 backdrop-blur-xl transition-all duration-500 hover:border-accent/30 hover:bg-white/[0.04] h-full">
-                <div className="absolute -bottom-12 -left-12 h-32 w-32 rounded-full bg-accent/[0.06] blur-2xl transition-opacity duration-500 group-hover:opacity-100 opacity-0" />
-                <div className="relative z-10">
-                  <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent">
-                    <Sparkles className="h-5 w-5" />
-                  </div>
-                  <h3 className="mb-1.5 text-lg font-bold tracking-tight">Instant AI Generation</h3>
-                  <p className="text-sm leading-relaxed text-muted-foreground">
-                    One click transforms any brief into architecture, effort estimates, and acceptance criteria.
-                  </p>
-                  <div className="mt-4 flex items-center gap-2">
-                    <div className="h-2 w-2 rounded-full bg-accent animate-pulse" />
-                    <span className="text-[10px] font-medium uppercase tracking-widest text-accent/70">Streaming</span>
+            {/* Right column — two stacked small cards */}
+            <div className="flex flex-col gap-4">
+              <FadeSection delay={0.1} className="flex-1">
+                <div className="group relative overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 backdrop-blur-xl transition-all duration-500 hover:border-accent/30 hover:bg-white/[0.04] h-full">
+                  <div className="absolute -bottom-12 -left-12 h-32 w-32 rounded-full bg-accent/[0.06] blur-2xl transition-opacity duration-500 group-hover:opacity-100 opacity-0" />
+                  <div className="relative z-10">
+                    <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent">
+                      <Sparkles className="h-5 w-5" />
+                    </div>
+                    <h3 className="mb-1.5 text-lg font-bold tracking-tight">Instant AI Generation</h3>
+                    <p className="text-sm leading-relaxed text-muted-foreground">
+                      One click transforms any brief into architecture, effort estimates, and acceptance criteria.
+                    </p>
+                    <div className="mt-4 flex items-center gap-2">
+                      <div className="h-2 w-2 rounded-full bg-accent animate-pulse" />
+                      <span className="text-[10px] font-medium uppercase tracking-widest text-accent/70">Streaming</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </FadeSection>
+              </FadeSection>
 
-            {/* Bottom-right small card */}
-            <FadeSection delay={0.2}>
-              <div className="group relative overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 backdrop-blur-xl transition-all duration-500 hover:border-primary/30 hover:bg-white/[0.04] h-full">
-                <div className="absolute -top-12 -right-12 h-32 w-32 rounded-full bg-primary/[0.06] blur-2xl transition-opacity duration-500 group-hover:opacity-100 opacity-0" />
+              <FadeSection delay={0.2} className="flex-1">
+                <div className="group relative overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 backdrop-blur-xl transition-all duration-500 hover:border-primary/30 hover:bg-white/[0.04] h-full">
+                  <div className="absolute -top-12 -right-12 h-32 w-32 rounded-full bg-primary/[0.06] blur-2xl transition-opacity duration-500 group-hover:opacity-100 opacity-0" />
+                  <div className="relative z-10">
+                    <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                      <Users className="h-5 w-5" />
+                    </div>
+                    <h3 className="mb-1.5 text-lg font-bold tracking-tight">Seamless Collaboration</h3>
+                    <p className="text-sm leading-relaxed text-muted-foreground">
+                      Encrypted sharing, version history, and team presence. All built in.
+                    </p>
+                    <div className="mt-4 flex gap-1">
+                      {[...Array(3)].map((_, i) => (
+                        <div key={i} className="h-6 w-6 rounded-full border-2 border-background bg-gradient-to-br from-primary/40 to-accent/30" style={{ marginLeft: i > 0 ? "-6px" : 0 }} />
+                      ))}
+                      <span className="ml-1 self-center text-[10px] text-muted-foreground/60">+4</span>
+                    </div>
+                  </div>
+                </div>
+              </FadeSection>
+            </div>
+
+            {/* PRD or Technical Spec — directly under Live Mirror View */}
+            <FadeSection delay={0.3} className="md:col-span-2">
+              <div className="group relative overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 backdrop-blur-xl transition-all duration-500 hover:border-primary/30 hover:bg-white/[0.04]">
                 <div className="relative z-10">
                   <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                    <Users className="h-5 w-5" />
-                  </div>
-                  <h3 className="mb-1.5 text-lg font-bold tracking-tight">Seamless Collaboration</h3>
-                  <p className="text-sm leading-relaxed text-muted-foreground">
-                    Encrypted sharing, version history, and team presence. All built in.
-                  </p>
-                  <div className="mt-4 flex gap-1">
-                    {[...Array(3)].map((_, i) => (
-                      <div key={i} className="h-6 w-6 rounded-full border-2 border-background bg-gradient-to-br from-primary/40 to-accent/30" style={{ marginLeft: i > 0 ? "-6px" : 0 }} />
-                    ))}
-                    <span className="ml-1 self-center text-[10px] text-muted-foreground/60">+4</span>
-                  </div>
-                </div>
-              </div>
-            </FadeSection>
-
-            {/* New card — PRD or Technical Spec */}
-            <FadeSection delay={0.3} className="md:col-span-3">
-              <div className="group relative overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 md:p-8 backdrop-blur-xl transition-all duration-500 hover:border-primary/30 hover:bg-white/[0.04]">
-                <div className="absolute -bottom-16 left-1/2 -translate-x-1/2 h-40 w-40 rounded-full bg-primary/[0.04] blur-3xl transition-opacity duration-500 group-hover:opacity-100 opacity-0" />
-                <div className="relative z-10">
-                  <div className="mb-5 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
                     <ClipboardList className="h-5 w-5" />
                   </div>
-                  <h3 className="mb-2 text-xl font-bold tracking-tight md:text-2xl">PRD or Technical Spec — You Decide</h3>
-                  <p className="mb-6 max-w-2xl text-sm leading-relaxed text-muted-foreground md:text-base">
+                  <h3 className="mb-2 text-lg font-bold tracking-tight md:text-xl">PRD or Technical Spec — You Decide</h3>
+                  <p className="mb-5 max-w-xl text-sm leading-relaxed text-muted-foreground">
                     Two powerful outputs, one simple choice. Pick the format that matches your role and your stage.
                   </p>
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    {/* PRD side */}
-                    <div className="rounded-xl border border-primary/20 bg-primary/[0.04] p-5 space-y-3">
-                      <div className="flex items-center gap-2.5">
-                        <div className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-primary/15 text-primary">
-                          <FileText className="h-4 w-4" />
-                        </div>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <div className="rounded-lg border border-primary/20 bg-primary/[0.04] p-4 space-y-2">
+                      <div className="flex items-center gap-2">
+                        <FileText className="h-4 w-4 text-primary" />
                         <span className="text-sm font-semibold text-primary">Product Requirements Doc</span>
                       </div>
                       <p className="text-xs leading-relaxed text-muted-foreground">
-                        Best for <span className="text-foreground/80 font-medium">PMs and founders</span>. Generates user stories, feature breakdowns, acceptance criteria, and priority rankings. Perfect for aligning your team on <span className="text-foreground/80 font-medium">what</span> to build.
+                        Best for <span className="text-foreground/80 font-medium">PMs and founders</span>. User stories, acceptance criteria, and priority rankings — align your team on <span className="text-foreground/80 font-medium">what</span> to build.
                       </p>
                       <div className="flex flex-wrap gap-1.5">
-                        {["User stories", "Acceptance criteria", "Feature priorities", "Success metrics"].map(tag => (
+                        {["User stories", "Acceptance criteria", "Priorities"].map(tag => (
                           <span key={tag} className="rounded-full border border-primary/20 bg-primary/[0.06] px-2 py-0.5 text-[10px] font-medium text-primary/80">{tag}</span>
                         ))}
                       </div>
                     </div>
-                    {/* Tech Spec side */}
-                    <div className="rounded-xl border border-accent/20 bg-accent/[0.04] p-5 space-y-3">
-                      <div className="flex items-center gap-2.5">
-                        <div className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-accent/15 text-accent">
-                          <Code2 className="h-4 w-4" />
-                        </div>
+                    <div className="rounded-lg border border-accent/20 bg-accent/[0.04] p-4 space-y-2">
+                      <div className="flex items-center gap-2">
+                        <Code2 className="h-4 w-4 text-accent" />
                         <span className="text-sm font-semibold text-accent">Technical Specification</span>
                       </div>
                       <p className="text-xs leading-relaxed text-muted-foreground">
-                        Best for <span className="text-foreground/80 font-medium">engineers and technical leads</span>. Generates system architecture, API contracts, data models, and infrastructure recommendations. Perfect for knowing <span className="text-foreground/80 font-medium">how</span> to build it.
+                        Best for <span className="text-foreground/80 font-medium">engineers and tech leads</span>. Architecture, API contracts, and data models — know exactly <span className="text-foreground/80 font-medium">how</span> to build it.
                       </p>
                       <div className="flex flex-wrap gap-1.5">
-                        {["Architecture", "API contracts", "Data models", "Infrastructure"].map(tag => (
+                        {["Architecture", "API contracts", "Data models"].map(tag => (
                           <span key={tag} className="rounded-full border border-accent/20 bg-accent/[0.06] px-2 py-0.5 text-[10px] font-medium text-accent/80">{tag}</span>
                         ))}
                       </div>
