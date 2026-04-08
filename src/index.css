@@ -140,3 +140,24 @@
   stroke-dasharray: 157;
   stroke-dashoffset: 157;
 }
+
+/* Float animation for feature nodes */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: float 6s ease-in-out 3s infinite;
+}
+
+/* Cyber-line connector glow */
+.cyber-line {
+  stroke: url(#cyber-gradient);
+  stroke-width: 1;
+  filter: drop-shadow(0 0 4px hsl(226 70% 55.5% / 0.3));
+}
