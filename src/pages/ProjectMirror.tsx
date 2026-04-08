@@ -298,20 +298,24 @@ const ProjectMirror = () => {
             {copiedSpec ? "Copied" : "Copy"}
           </Button>
           <ShareDialog projectId={id!} specContent={spec} />
-          <Select value={specType} onValueChange={setSpecType}>
-            <SelectTrigger className="h-8 w-[160px] sm:w-[200px] text-xs sm:text-sm">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {SPEC_TYPES.map(t => (
-                <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Button size="sm" variant="outline" className="gap-1.5 text-xs sm:text-sm" onClick={handleGenerate} disabled={isGenerating}>
-            <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
-            {isGenerating ? "Generating…" : isMobile ? "Generate" : "Generate Mirror"}
-          </Button>
+          {!isMobile && (
+            <Select value={specType} onValueChange={setSpecType}>
+              <SelectTrigger className="h-8 w-[200px] text-sm">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {SPEC_TYPES.map(t => (
+                  <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+          {!isMobile && (
+            <Button size="sm" variant="outline" className="gap-1.5 text-sm" onClick={handleGenerate} disabled={isGenerating}>
+              <Sparkles className="h-3.5 w-3.5" />
+              {isGenerating ? "Generating…" : "Generate Mirror"}
+            </Button>
+          )}
           <Button
             size="sm"
             className={`gap-1.5 text-xs sm:text-sm ${approved ? "bg-emerald-600 hover:bg-emerald-600 text-white" : ""}`}
