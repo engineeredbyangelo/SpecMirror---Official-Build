@@ -40,6 +40,7 @@ const Landing = () => {
   const navigate = useNavigate();
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [showDemo, setShowDemo] = useState(false);
+  const [activeDocType, setActiveDocType] = useState<'prd' | 'spec'>('prd');
 
   const handleProClick = async () => {
     if (!user) {
