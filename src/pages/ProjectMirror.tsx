@@ -1,6 +1,7 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, ArrowLeft, Sparkles, Check, Loader2, CheckCircle2, ArrowRight, Link2, Copy } from "lucide-react";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,6 +9,11 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import ShareDialog from "@/components/ShareDialog";
+
+const SPEC_TYPES = [
+  { value: "technical-spec", label: "Technical Specification" },
+  { value: "prd", label: "Product Requirements Doc" },
+] as const;
 
 const ProjectMirror = () => {
   const { id } = useParams();
