@@ -129,9 +129,12 @@ const Landing = () => {
                 Watch 28-second demo
               </Button>
             </div>
-            <p className="mt-10 text-xs text-muted-foreground/50">
-              Trusted by 200+ product and engineering teams
-            </p>
+            <div className="mt-10 inline-flex items-center gap-2 px-4 py-2 rounded-full border border-primary/20 bg-primary/5 animate-pulse">
+              <span className="h-2 w-2 rounded-full bg-accent shadow-[0_0_8px_hsl(160_84%_39%/0.6)]" />
+              <span className="text-xs font-medium text-muted-foreground">
+                Join our Beta cohort and be the first to ship deploy-ready architecture.
+              </span>
+            </div>
           </FadeSection>
         </div>
       </section>
