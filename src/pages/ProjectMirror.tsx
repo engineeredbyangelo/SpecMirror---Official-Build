@@ -33,6 +33,7 @@ const ProjectMirror = () => {
   const [approving, setApproving] = useState(false);
   const [activeTab, setActiveTab] = useState<"brief" | "mirror">("brief");
   const [copiedSpec, setCopiedSpec] = useState(false);
+  const [specType, setSpecType] = useState<string>("technical-spec");
 
   const saveTimerRef = useRef<ReturnType<typeof setTimeout>>();
 
