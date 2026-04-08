@@ -244,8 +244,9 @@ const ProjectMirror = () => {
   return (
     <div className="flex h-screen flex-col bg-background">
       {/* Top bar */}
-      <div className="flex h-auto min-h-[48px] flex-wrap items-center justify-between gap-2 border-b border-border/50 px-3 py-2 sm:px-4">
-        <div className="flex items-center gap-2 min-w-0 flex-1">
+      <div className="border-b border-border/50 px-3 py-2 sm:px-4">
+        {/* Row 1: Back + Title + Saving */}
+        <div className="flex items-center gap-2 min-w-0">
           <Link to="/dashboard" className="text-muted-foreground hover:text-foreground shrink-0">
             <ArrowLeft className="h-4 w-4" />
           </Link>
@@ -260,7 +261,8 @@ const ProjectMirror = () => {
           </div>
           {saving && <span className="text-[10px] text-muted-foreground/50 shrink-0">Saving…</span>}
         </div>
-        <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+        {/* Row 2: Confidence + Actions */}
+        <div className="flex items-center gap-1.5 sm:gap-2 mt-2 sm:mt-0 flex-wrap">
           {/* Confidence meter */}
           <div className="flex items-center gap-1.5 rounded-full border border-border/50 px-2 py-1 sm:px-3">
             <svg className="h-4 w-4 sm:h-5 sm:w-5 -rotate-90" viewBox="0 0 36 36">
