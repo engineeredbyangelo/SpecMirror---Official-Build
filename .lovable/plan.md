@@ -1,44 +1,60 @@
 
 
-## Update Landing Page: How It Works + Features Bento Grid
+## Redesign Features Section — Linear-Inspired Immersive Layout
 
-### 1. How It Works — Add Step for Choosing Document Type
+### What Changes
 
-**File: `src/pages/Landing.tsx` (lines 150-232)**
+Replace the current bento grid features section (lines 308-442) with a premium, Linear-aesthetic immersive section built around three distinct zones.
 
-Insert a new step between Step 01 (Write your brief) and the current Step 02 (AI mirrors your intent). Renumber existing steps to 01→01, new→02, old 02→03, old 03→04.
+### Architecture
 
-**New Step 02: "Choose what you need"**
-- Title: "Choose your output"
-- Description: "Pick the document that fits your stage. Need user stories and acceptance criteria? Go with a Product Requirements Doc. Need architecture, APIs, and data models? Choose Technical Specification."
-- Visual: Two mini cards side by side — one labeled "PRD" with bullet icons (user stories, priorities), one labeled "Technical Spec" with code/architecture icons. Styled like a selector UI to mirror the actual in-app experience.
+**File: `src/pages/Landing.tsx` (lines 308-442)**
 
-**Updated Step 03 (formerly 02): "SpecAI generates your document"**
-- Retitle from "AI mirrors your intent" to "SpecAI builds your document"
-- Update description: "Trained on thousands of real-world technical documents, SpecAI generates production-grade specs or PRDs — complete with architecture diagrams, API definitions, data models, and a dedicated confidence score that tells you how well your brief was understood."
-- Keep the existing shimmer visual but add a small confidence badge (e.g., "94% confidence") in the corner.
+The entire `<section id="features">` block gets replaced with a new composition:
 
-### 2. Features Bento Grid — Add PRD vs Technical Spec Card
+#### Zone 1: Central Dashboard Hero
+- Large glass-morphic container (80%+ width) showing the **Live Mirror** dual-view interface
+- Deep gradient background (`bg-gradient-to-b from-primary/[0.04] via-background to-accent/[0.03]`) spanning the full section
+- The dashboard mock shows Brief (left) and Spec (right) panes with subtle animated skeleton lines
+- Confidence score badge floats in the top-right corner with a soft emerald glow ring
+- Monospaced labels (`font-mono text-[10px] uppercase tracking-widest`) for "Brief", "Spec", "Confidence"
 
-**File: `src/pages/Landing.tsx` (lines 248-323)**
+#### Zone 2: Floating Feature Nodes
+- Two feature cards — "Instant AI Generation" and "Seamless Collaboration" — float beside the dashboard (left and right on desktop, stacked below on mobile)
+- Each card: `glass-card` styling with subtle `box-shadow: 0 0 40px hsl(226 70% 55.5% / 0.06)` glow
+- **Cyber-line connectors**: SVG `<line>` elements with gradient strokes (`from-primary/40 to-transparent`) connecting each floating card to the central dashboard. Use `position: absolute` SVG overlay. Hidden on mobile.
+- Cards have a subtle float animation: `@keyframes float { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-6px) } }` with 6s duration
 
-Replace the current bottom-right small card ("Seamless Collaboration") or add a third small card. Better approach: convert the grid to `md:grid-cols-3 md:grid-rows-3` and add two new small cards, keeping the existing ones.
+#### Zone 3: PRD vs Tech Spec Toggle
+- Positioned directly below the dashboard as a contained module
+- Replace the two static side-by-side cards with an **interactive toggle** using `useState`
+- Toggle bar: two pill buttons — "Product Requirements" (indigo) and "Technical Spec" (emerald) — with animated active indicator sliding between them
+- Below the toggle, a single content panel cross-fades (framer-motion `AnimatePresence`) to show the relevant details:
+  - **PRD selected**: Icon + "Best for PMs and founders" + tag pills (User stories, Acceptance criteria, Priorities) + one-liner description
+  - **Tech Spec selected**: Icon + "Best for engineers" + tag pills (Architecture, API contracts, Data models) + one-liner description
+- The toggle container itself has a faint neon border glow matching the active selection color
 
-**New bento card: "PRD or Technical Spec — You Decide"**
-- Placed as a new small card in the bento grid
-- Icon: `FileText` or a split icon
-- Content explains in plain language:
-  - **Product Requirements Doc**: "Best for PMs and founders. Generates user stories, feature breakdowns, acceptance criteria, and priority rankings. Perfect for aligning your team on what to build."
-  - **Technical Specification**: "Best for engineers and technical leads. Generates system architecture, API contracts, data models, and infrastructure recommendations. Perfect for knowing how to build it."
-- Visual: Two mini pill/tab elements showing "PRD" and "Tech Spec" with a brief one-liner under each.
+### Visual Details
 
-### 3. Summary of Changes
+- **Glassmorphism**: `backdrop-blur-xl bg-white/[0.02] border border-white/[0.06]` on all panels
+- **Neon glows**: Absolutely positioned blurred circles (`blur-3xl`) in primary and accent colors behind key elements
+- **Monospaced labels**: Add `font-mono` to all technical labels (Brief, Spec, PRD, Tech Spec, Confidence)
+- **Deep gradient bg**: Section gets its own gradient background, not relying on the global `glass-bg`
+- **Zero dead space**: The dashboard is tall and prominent; floating cards hug it closely; the toggle section sits flush beneath
 
-| Change | Location | Lines affected |
-|--------|----------|---------------|
-| Add Step 02 "Choose your output" | How It Works section | ~30 new lines between current steps 01 and 02 |
-| Renumber steps 02→03, 03→04 | How It Works section | Update step numbers and tweak step 03 description |
-| Update step 03 description to mention SpecAI + confidence score | How It Works section | ~5 lines |
-| Add new bento card explaining PRD vs Tech Spec | Features bento grid | ~40 new lines |
-| May need to import additional icon (`ClipboardList` or similar) | Top of file | 1 line |
+### New CSS (in `src/index.css`)
+- Add `@keyframes float` animation
+- Add `.cyber-line` utility for the SVG connector glow
+
+### New Tailwind Config
+- Add `float` animation to `tailwind.config.ts`
+
+### Summary
+
+| Change | File | What |
+|--------|------|------|
+| Replace features section | `Landing.tsx` lines 308-442 | New 3-zone layout with dashboard, floating cards, toggle |
+| Add float keyframe | `tailwind.config.ts` | `float: "float 6s ease-in-out infinite"` |
+| Add cyber-line + float CSS | `src/index.css` | SVG connector glow styles |
+| Add `useState` for toggle | `Landing.tsx` | `const [activeDocType, setActiveDocType] = useState<'prd' | 'spec'>('prd')` |
 
