@@ -108,7 +108,7 @@ const Landing = () => {
           </FadeSection>
           <FadeSection delay={0.2}>
             <p className="mx-auto mb-10 max-w-xl text-base leading-relaxed text-muted-foreground md:text-lg">
-              Turn rough product ideas into production-ready technical specs in seconds. AI-powered, encrypted, and built for teams that ship fast.
+              Turn rough product ideas into production-ready specs and PRDs in seconds. AI-powered, encrypted, and built for teams and founders who ship fast.
             </p>
           </FadeSection>
           <FadeSection delay={0.3}>
