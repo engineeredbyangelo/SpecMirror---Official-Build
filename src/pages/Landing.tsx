@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Sparkles, Users, Layers, ArrowRight, Play, Search, FileText, Zap, Lock, GitBranch, X, Check, Loader2 } from "lucide-react";
+import { Sparkles, Users, Layers, ArrowRight, Play, Search, FileText, Zap, Lock, GitBranch, X, Check, Loader2, ClipboardList, Code2 } from "lucide-react";
 import { useAuth, STRIPE_TIERS } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -152,6 +152,7 @@ const Landing = () => {
             <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-primary/40 via-accent/30 to-transparent hidden md:block" />
 
             <div className="space-y-12 md:space-y-20">
+              {/* Step 01 — Write your brief */}
               <FadeSection>
                 <StepRow
                   step="01"
@@ -172,16 +173,78 @@ const Landing = () => {
                   align="left"
                 />
               </FadeSection>
+
+              {/* Step 02 — Choose your output */}
               <FadeSection>
                 <StepRow
                   step="02"
+                  icon={<ClipboardList className="h-5 w-5" />}
+                  title="Choose your output"
+                  description="Pick the document that fits your stage. Need user stories and acceptance criteria? Go with a Product Requirements Doc. Need architecture, APIs, and data models? Choose Technical Specification."
+                  visual={
+                    <div className="glass-card rounded-xl p-5">
+                      <div className="mb-3 text-xs font-medium uppercase tracking-widest text-muted-foreground">Select Output</div>
+                      <div className="grid grid-cols-2 gap-3">
+                        {/* PRD card */}
+                        <div className="rounded-lg border border-primary/30 bg-primary/[0.06] p-3 space-y-2">
+                          <div className="flex items-center gap-2">
+                            <FileText className="h-4 w-4 text-primary" />
+                            <span className="text-xs font-semibold text-primary">PRD</span>
+                          </div>
+                          <div className="space-y-1.5">
+                            <div className="flex items-center gap-1.5">
+                              <div className="h-1 w-1 rounded-full bg-primary/50" />
+                              <span className="text-[10px] text-muted-foreground">User stories</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              <div className="h-1 w-1 rounded-full bg-primary/50" />
+                              <span className="text-[10px] text-muted-foreground">Acceptance criteria</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              <div className="h-1 w-1 rounded-full bg-primary/50" />
+                              <span className="text-[10px] text-muted-foreground">Priority rankings</span>
+                            </div>
+                          </div>
+                        </div>
+                        {/* Tech Spec card */}
+                        <div className="rounded-lg border border-accent/30 bg-accent/[0.06] p-3 space-y-2">
+                          <div className="flex items-center gap-2">
+                            <Code2 className="h-4 w-4 text-accent" />
+                            <span className="text-xs font-semibold text-accent">Tech Spec</span>
+                          </div>
+                          <div className="space-y-1.5">
+                            <div className="flex items-center gap-1.5">
+                              <div className="h-1 w-1 rounded-full bg-accent/50" />
+                              <span className="text-[10px] text-muted-foreground">Architecture</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              <div className="h-1 w-1 rounded-full bg-accent/50" />
+                              <span className="text-[10px] text-muted-foreground">API contracts</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              <div className="h-1 w-1 rounded-full bg-accent/50" />
+                              <span className="text-[10px] text-muted-foreground">Data models</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  }
+                  align="right"
+                />
+              </FadeSection>
+
+              {/* Step 03 — SpecAI generates */}
+              <FadeSection>
+                <StepRow
+                  step="03"
                   icon={<Zap className="h-5 w-5" />}
-                  title="AI mirrors your intent"
-                  description="Trained on thousands of technical docs, our AI generates production-grade specs with architecture, APIs, and acceptance criteria in seconds."
+                  title="SpecAI builds your document"
+                  description="Trained on thousands of real-world technical documents, SpecAI generates production-grade specs or PRDs — complete with architecture, API definitions, data models, and a dedicated confidence score that tells you how well your brief was understood."
                   visual={
                     <div className="glass-card rounded-xl p-5 border-primary/20">
                       <div className="mb-3 flex items-center justify-between">
-                        <span className="text-xs font-medium uppercase tracking-widest text-primary">Technical Mirror</span>
+                        <span className="text-xs font-medium uppercase tracking-widest text-primary">SpecAI</span>
                         <span className="text-xs font-medium text-accent" style={{ animation: "pulse-glow 2s ease-in-out infinite" }}>Generating…</span>
                       </div>
                       <div className="shimmer rounded-lg p-0.5">
@@ -193,14 +256,23 @@ const Landing = () => {
                           <div className="spec-line h-2.5 rounded-sm" style={{ width: "85%", animationDelay: "1.7s", background: "hsl(0 0% 100% / 0.08)" }} />
                         </div>
                       </div>
+                      {/* Confidence badge */}
+                      <div className="mt-3 flex justify-end">
+                        <div className="inline-flex items-center gap-1.5 rounded-full border border-accent/30 bg-accent/10 px-2.5 py-1 text-[10px] font-semibold text-accent">
+                          <div className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse" />
+                          94% confidence
+                        </div>
+                      </div>
                     </div>
                   }
-                  align="right"
+                  align="left"
                 />
               </FadeSection>
+
+              {/* Step 04 — Collaborate and ship */}
               <FadeSection>
                 <StepRow
-                  step="03"
+                  step="04"
                   icon={<GitBranch className="h-5 w-5" />}
                   title="Collaborate and ship"
                   description="Share encrypted specs with your team. Track versions, review diffs, and sync approved specs to your favorite project management tools."
@@ -225,7 +297,7 @@ const Landing = () => {
                       </div>
                     </div>
                   }
-                  align="left"
+                  align="right"
                 />
               </FadeSection>
             </div>
@@ -245,8 +317,8 @@ const Landing = () => {
             />
           </FadeSection>
 
-          <div className="grid gap-4 md:grid-cols-3 md:grid-rows-2">
-            {/* Large feature — spans 2 cols */}
+          <div className="grid gap-4 md:grid-cols-3 md:grid-rows-3">
+            {/* Large feature — spans 2 cols, 2 rows */}
             <FadeSection className="md:col-span-2 md:row-span-2">
               <div className="group relative h-full overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8 backdrop-blur-xl transition-all duration-500 hover:border-primary/30 hover:bg-white/[0.04]">
                 <div className="absolute -top-24 -right-24 h-48 w-48 rounded-full bg-primary/[0.06] blur-3xl transition-opacity duration-500 group-hover:opacity-100 opacity-0" />
@@ -316,6 +388,58 @@ const Landing = () => {
                       <div key={i} className="h-6 w-6 rounded-full border-2 border-background bg-gradient-to-br from-primary/40 to-accent/30" style={{ marginLeft: i > 0 ? "-6px" : 0 }} />
                     ))}
                     <span className="ml-1 self-center text-[10px] text-muted-foreground/60">+4</span>
+                  </div>
+                </div>
+              </div>
+            </FadeSection>
+
+            {/* New card — PRD or Technical Spec */}
+            <FadeSection delay={0.3} className="md:col-span-3">
+              <div className="group relative overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 md:p-8 backdrop-blur-xl transition-all duration-500 hover:border-primary/30 hover:bg-white/[0.04]">
+                <div className="absolute -bottom-16 left-1/2 -translate-x-1/2 h-40 w-40 rounded-full bg-primary/[0.04] blur-3xl transition-opacity duration-500 group-hover:opacity-100 opacity-0" />
+                <div className="relative z-10">
+                  <div className="mb-5 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                    <ClipboardList className="h-5 w-5" />
+                  </div>
+                  <h3 className="mb-2 text-xl font-bold tracking-tight md:text-2xl">PRD or Technical Spec — You Decide</h3>
+                  <p className="mb-6 max-w-2xl text-sm leading-relaxed text-muted-foreground md:text-base">
+                    Two powerful outputs, one simple choice. Pick the format that matches your role and your stage.
+                  </p>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    {/* PRD side */}
+                    <div className="rounded-xl border border-primary/20 bg-primary/[0.04] p-5 space-y-3">
+                      <div className="flex items-center gap-2.5">
+                        <div className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-primary/15 text-primary">
+                          <FileText className="h-4 w-4" />
+                        </div>
+                        <span className="text-sm font-semibold text-primary">Product Requirements Doc</span>
+                      </div>
+                      <p className="text-xs leading-relaxed text-muted-foreground">
+                        Best for <span className="text-foreground/80 font-medium">PMs and founders</span>. Generates user stories, feature breakdowns, acceptance criteria, and priority rankings. Perfect for aligning your team on <span className="text-foreground/80 font-medium">what</span> to build.
+                      </p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {["User stories", "Acceptance criteria", "Feature priorities", "Success metrics"].map(tag => (
+                          <span key={tag} className="rounded-full border border-primary/20 bg-primary/[0.06] px-2 py-0.5 text-[10px] font-medium text-primary/80">{tag}</span>
+                        ))}
+                      </div>
+                    </div>
+                    {/* Tech Spec side */}
+                    <div className="rounded-xl border border-accent/20 bg-accent/[0.04] p-5 space-y-3">
+                      <div className="flex items-center gap-2.5">
+                        <div className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-accent/15 text-accent">
+                          <Code2 className="h-4 w-4" />
+                        </div>
+                        <span className="text-sm font-semibold text-accent">Technical Specification</span>
+                      </div>
+                      <p className="text-xs leading-relaxed text-muted-foreground">
+                        Best for <span className="text-foreground/80 font-medium">engineers and technical leads</span>. Generates system architecture, API contracts, data models, and infrastructure recommendations. Perfect for knowing <span className="text-foreground/80 font-medium">how</span> to build it.
+                      </p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {["Architecture", "API contracts", "Data models", "Infrastructure"].map(tag => (
+                          <span key={tag} className="rounded-full border border-accent/20 bg-accent/[0.06] px-2 py-0.5 text-[10px] font-medium text-accent/80">{tag}</span>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
