@@ -394,7 +394,7 @@ const ProjectMirror = () => {
             </button>
           </div>
           <div
-            className="flex-1 overflow-hidden"
+            className="flex-1 overflow-hidden pb-16"
             onTouchStart={(e) => {
               const touch = e.touches[0];
               (e.currentTarget as HTMLDivElement).dataset.touchStartX = String(touch.clientX);
@@ -408,6 +408,23 @@ const ProjectMirror = () => {
             }}
           >
             {activeTab === "brief" ? briefPanel : mirrorPanel}
+          </div>
+          {/* Fixed bottom bar for mobile */}
+          <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-border/50 bg-background px-3 py-2.5 flex items-center gap-2">
+            <Select value={specType} onValueChange={setSpecType}>
+              <SelectTrigger className="h-9 flex-1 text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {SPEC_TYPES.map(t => (
+                  <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Button size="sm" className="gap-1.5 shrink-0" onClick={handleGenerate} disabled={isGenerating}>
+              <Sparkles className="h-3.5 w-3.5" />
+              {isGenerating ? "Generating…" : "Generate"}
+            </Button>
           </div>
         </>
       ) : (
