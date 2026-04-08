@@ -738,50 +738,50 @@ const MirrorDemo = () => {
   const [confidence, setConfidence] = useState(0);
 
   const briefLines = [
-    "I want to build a fitness tracking app for personal trainers and their clients.",
-    "Trainers should be able to create workout plans, assign them to clients, and track progress over time.",
-    "Clients need a mobile-friendly view where they can log exercises, upload progress photos, and message their trainer.",
-    "It should handle payments too — trainers charge monthly subscriptions through the app.",
-    "I'd like push notifications when a new plan is assigned or when a client completes a workout.",
+    "I want to build an AI assistant platform for small business owners who aren't technical.",
+    "Users describe what they need in plain English and the app creates AI agents that handle tasks for them.",
+    "Things like sorting emails, drafting replies, scheduling social posts, summarizing documents.",
+    "It needs a simple dashboard where they can see what their agents are doing and approve actions before they run.",
+    "Should have a free tier with basic agents and a paid plan that unlocks custom workflows and integrations.",
   ];
 
   const specSections = [
     { heading: "Executive Summary", lines: [
-      "A client-facing fitness platform enabling personal trainers to manage workout programming, client progress tracking, and recurring billing. Core value: replaces scattered spreadsheets and payment links with a single cohesive experience.",
+      "A no-code AI agent platform enabling non-technical users to automate repetitive business tasks through natural language. Core value: replaces manual busywork with supervised AI agents that users can trust and control.",
     ]},
     { heading: "Architecture Overview", lines: [
-      "React Native (Expo) mobile client + Next.js admin dashboard",
-      "Supabase (Postgres + Auth + Realtime + Storage)",
-      "Stripe Connect for trainer payouts with platform fee",
-      "Expo Push Notifications via Firebase Cloud Messaging",
+      "Next.js web app with responsive mobile-first UI",
+      "Supabase (Postgres + Auth + Edge Functions + Realtime)",
+      "OpenAI GPT-4o for agent reasoning + tool execution",
+      "Stripe billing with free tier gating + usage metering",
     ]},
     { heading: "Data Model", lines: [
-      "trainers → profiles (1:1), trainers → clients (1:many)",
-      "workout_plans: id, trainer_id, title, blocks jsonb",
-      "sessions: id, client_id, plan_id, completed_at, notes",
-      "progress_photos: id, client_id, storage_path, created_at",
+      "users → agents (1:many), agents → tasks (1:many)",
+      "agents: id, user_id, name, instructions text, tools jsonb",
+      "tasks: id, agent_id, status, input, output, approved_at",
+      "integrations: id, user_id, provider, credentials_encrypted",
     ]},
     { heading: "API Design", lines: [
-      "POST /api/plans → create workout plan (trainer auth)",
-      "GET /api/clients/:id/sessions → client progress history",
-      "POST /api/billing/subscribe → Stripe checkout session",
+      "POST /api/agents → create agent from natural language prompt",
+      "GET /api/agents/:id/tasks → task history with status filters",
+      "POST /api/tasks/:id/approve → human-in-the-loop confirmation",
     ]},
     { heading: "Auth & Authorization", lines: [
       "Supabase Auth with email + Google OAuth",
       "JWT with 15-min access / 7-day refresh rotation",
-      "RLS policies: trainers see own clients, clients see own data",
+      "RLS policies: users see only own agents, tasks, and integrations",
     ]},
     { heading: "Effort Estimate", lines: [
-      "Phase 1: Auth + data model → 3 days (1 engineer)",
-      "Phase 2: Workout builder + client UI → 5 days",
-      "Phase 3: Payments + notifications → 4 days",
-      "Total: ~12 days (2 engineers)",
+      "Phase 1: Auth + agent builder + dashboard → 4 days",
+      "Phase 2: Task execution engine + approvals → 5 days",
+      "Phase 3: Integrations + billing + usage limits → 4 days",
+      "Total: ~13 days (2 engineers)",
     ]},
     { heading: "Acceptance Criteria", lines: [
-      "✓ Trainer creates plan and assigns to client in <30s",
-      "✓ Client logs exercise with auto-saved reps/weight",
-      "✓ Stripe subscription creates with platform fee split",
-      "✓ Push notification fires within 5s of plan assignment",
+      "✓ User creates working agent from plain English in <60s",
+      "✓ Agent executes task only after user approval",
+      "✓ Free tier limits to 3 agents and 50 tasks/month",
+      "✓ Dashboard shows real-time agent activity feed",
     ]},
   ];
 
@@ -839,7 +839,7 @@ const MirrorDemo = () => {
           <div className="h-3 w-3 rounded-full bg-white/[0.08]" />
         </div>
         <div className="mx-auto flex h-7 w-72 items-center justify-center rounded-md bg-white/[0.04] text-[11px] text-muted-foreground/50">
-          specmirror.app/project/fitness-tracker
+          specmirror.app/project/ai-agent-platform
         </div>
       </div>
 
