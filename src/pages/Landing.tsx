@@ -643,9 +643,13 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* For Every Team — Horizontal role cards */}
-      <section id="how-it-helps" className="py-20 md:py-28">
-        <div className="mx-auto max-w-6xl px-6">
+      {/* For Every Team — Immersive */}
+      <section id="how-it-helps" className="relative py-20 md:py-28 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.03] via-background to-primary/[0.03]" />
+        <div className="absolute top-1/4 left-1/3 h-72 w-72 rounded-full bg-primary/[0.04] blur-3xl" />
+        <div className="absolute bottom-1/4 right-1/3 h-72 w-72 rounded-full bg-accent/[0.03] blur-3xl" />
+
+        <div className="relative z-10 mx-auto max-w-6xl px-6">
           <FadeSection>
             <SectionHeader
               label="For every team"
@@ -695,15 +699,13 @@ const Landing = () => {
                   item.accentColor === "accent"
                     ? "border-accent/20 hover:border-accent/40"
                     : "border-white/[0.06] hover:border-primary/30"
-                }`}>
-                  {/* Left accent bar */}
+                }`} style={{ boxShadow: item.accentColor === "accent" ? "0 0 30px hsl(160 84% 39% / 0.03)" : "0 0 30px hsl(226 70% 55.5% / 0.03)" }}>
                   <div className={`absolute left-0 top-0 bottom-0 w-[3px] rounded-full transition-all duration-500 ${
                     item.accentColor === "accent"
                       ? "bg-accent/40 group-hover:bg-accent"
                       : "bg-primary/40 group-hover:bg-primary"
-                  }`} />
+                  }`} style={{ boxShadow: item.accentColor === "accent" ? "0 0 8px hsl(160 84% 39% / 0.3)" : "0 0 8px hsl(226 70% 55.5% / 0.3)" }} />
 
-                  {/* Icon + role */}
                   <div className="flex shrink-0 items-center gap-4 md:w-48">
                     <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${
                       item.accentColor === "accent" ? "bg-accent/10 text-accent" : "bg-primary/10 text-primary"
@@ -713,17 +715,15 @@ const Landing = () => {
                     <h3 className="text-lg font-bold tracking-tight">{item.role}</h3>
                   </div>
 
-                  {/* Quote */}
                   <p className="flex-1 text-sm leading-relaxed text-muted-foreground md:text-base md:px-6 md:border-l md:border-white/[0.06]">
                     "{item.quote}"
                   </p>
 
-                  {/* Stat */}
                   <div className="shrink-0 text-right md:w-32">
                     <div className={`text-2xl font-bold tracking-tight ${
                       item.accentColor === "accent" ? "text-accent" : "text-primary"
-                    }`}>{item.stat}</div>
-                    <div className="text-xs text-muted-foreground/60 uppercase tracking-widest">{item.statLabel}</div>
+                    }`} style={{ filter: item.accentColor === "accent" ? "drop-shadow(0 0 8px hsl(160 84% 39% / 0.3))" : "drop-shadow(0 0 8px hsl(226 70% 55.5% / 0.3))" }}>{item.stat}</div>
+                    <div className="font-mono text-[10px] text-muted-foreground/60 uppercase tracking-[0.2em]">{item.statLabel}</div>
                   </div>
                 </div>
               </FadeSection>
@@ -732,9 +732,12 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Pricing */}
-      <section id="pricing" className="border-t border-white/[0.06] py-20 md:py-28">
-        <div className="mx-auto max-w-5xl px-6">
+      {/* Pricing — Immersive */}
+      <section id="pricing" className="relative py-20 md:py-28 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.04] via-background to-accent/[0.03]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[400px] w-[600px] rounded-full bg-primary/[0.03] blur-3xl" />
+
+        <div className="relative z-10 mx-auto max-w-5xl px-6">
           <FadeSection>
             <SectionHeader
               label="Pricing"
@@ -745,9 +748,8 @@ const Landing = () => {
           </FadeSection>
 
           <div className="mx-auto grid max-w-3xl gap-6 md:grid-cols-2">
-            {/* Free tier */}
             <FadeSection>
-              <div className="flex h-full flex-col rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8 backdrop-blur-xl">
+              <div className="flex h-full flex-col rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8 backdrop-blur-xl transition-all duration-500 hover:border-white/[0.12] hover:bg-white/[0.04]" style={{ boxShadow: "0 0 40px hsl(226 70% 55.5% / 0.03)" }}>
                 <div className="mb-6">
                   <h3 className="text-lg font-bold">Free</h3>
                   <div className="mt-3 flex items-baseline gap-1">
@@ -759,7 +761,7 @@ const Landing = () => {
                 <ul className="mb-8 flex-1 space-y-3 text-sm text-muted-foreground">
                   {["5 generations per day", "Full AI spec generation", "Encrypted sharing", "Confidence scoring"].map((f) => (
                     <li key={f} className="flex items-center gap-2.5">
-                      <Check className="h-4 w-4 shrink-0 text-accent" />
+                      <Check className="h-4 w-4 shrink-0 text-accent" style={{ filter: "drop-shadow(0 0 4px hsl(160 84% 39% / 0.3))" }} />
                       {f}
                     </li>
                   ))}
@@ -770,10 +772,9 @@ const Landing = () => {
               </div>
             </FadeSection>
 
-            {/* Pro tier */}
             <FadeSection delay={0.1}>
-              <div className="relative flex h-full flex-col rounded-2xl border border-primary/30 bg-white/[0.02] p-8 backdrop-blur-xl">
-                <div className="absolute -top-3 left-6 rounded-full bg-primary px-3 py-0.5 text-xs font-medium text-primary-foreground">
+              <div className="relative flex h-full flex-col rounded-2xl border border-primary/30 bg-white/[0.02] p-8 backdrop-blur-xl transition-all duration-500 hover:border-primary/50 hover:bg-white/[0.04]" style={{ boxShadow: "0 0 60px hsl(226 70% 55.5% / 0.06), inset 0 0 0 1px hsl(226 70% 55.5% / 0.05)" }}>
+                <div className="absolute -top-3 left-6 rounded-full bg-primary px-3 py-0.5 font-mono text-[10px] font-medium text-primary-foreground uppercase tracking-wider" style={{ boxShadow: "0 0 12px hsl(226 70% 55.5% / 0.4)" }}>
                   Most popular
                 </div>
                 <div className="mb-6">
@@ -787,7 +788,7 @@ const Landing = () => {
                 <ul className="mb-8 flex-1 space-y-3 text-sm text-muted-foreground">
                   {["Unlimited spec generations", "Priority AI processing", "Team sharing & collaboration", "Version history", "Slack & PM tool integrations", "Priority support"].map((f) => (
                     <li key={f} className="flex items-center gap-2.5">
-                      <Check className="h-4 w-4 shrink-0 text-accent" />
+                      <Check className="h-4 w-4 shrink-0 text-accent" style={{ filter: "drop-shadow(0 0 4px hsl(160 84% 39% / 0.3))" }} />
                       {f}
                     </li>
                   ))}
@@ -801,67 +802,75 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* FAQ */}
-      <section id="faq" className="border-t border-white/[0.06] py-20 md:py-28">
-        <div className="mx-auto max-w-2xl px-6">
+      {/* FAQ — Immersive */}
+      <section id="faq" className="relative py-20 md:py-28 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.02] via-background to-primary/[0.03]" />
+        <div className="absolute top-1/3 right-1/4 h-64 w-64 rounded-full bg-accent/[0.03] blur-3xl" />
+
+        <div className="relative z-10 mx-auto max-w-2xl px-6">
           <FadeSection>
             <SectionHeader label="FAQ" title="Frequently asked" highlight="questions" />
           </FadeSection>
           <FadeSection delay={0.1}>
-            <Accordion type="single" collapsible className="w-full">
-              <AccordionItem value="what-is" className="border-white/[0.06]">
-                <AccordionTrigger className="text-left text-base">What exactly does SpecMirror generate?</AccordionTrigger>
-                <AccordionContent className="text-muted-foreground leading-relaxed">
-                  You write a plain-English project brief — goals, audience, key features. SpecMirror&apos;s AI mirrors it back as a structured technical spec covering architecture, auth strategy, data models, API surface, and infrastructure — ready for your engineering team to build from.
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="who-for" className="border-white/[0.06]">
-                <AccordionTrigger className="text-left text-base">Who is this built for?</AccordionTrigger>
-                <AccordionContent className="text-muted-foreground leading-relaxed">
-                  Product managers, founders, and technical leads who need to translate product thinking into engineering-ready specs without spending hours writing boilerplate. If you&apos;ve ever lost context between &ldquo;what we want&rdquo; and &ldquo;how to build it,&rdquo; SpecMirror closes that gap.
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="accuracy" className="border-white/[0.06]">
-                <AccordionTrigger className="text-left text-base">How accurate are the generated specs?</AccordionTrigger>
-                <AccordionContent className="text-muted-foreground leading-relaxed">
-                  Every spec includes a confidence score so you know where the AI is certain and where it needs your input. You review, edit, and approve before anything ships — SpecMirror is a starting point, not an autopilot.
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="sharing" className="border-white/[0.06]">
-                <AccordionTrigger className="text-left text-base">How does encrypted sharing work?</AccordionTrigger>
-                <AccordionContent className="text-muted-foreground leading-relaxed">
-                  Once you approve a spec, you can generate an AES-encrypted link with an optional expiry. Share it with your team or stakeholders — they can view the spec without needing an account, and the link self-destructs after expiration.
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="pricing" className="border-white/[0.06]">
-                <AccordionTrigger className="text-left text-base">What&apos;s included in the free tier?</AccordionTrigger>
-                <AccordionContent className="text-muted-foreground leading-relaxed">
-                  Free accounts get 5 AI spec generations per day with full confidence scoring and encrypted sharing. The Pro plan unlocks unlimited daily generations, priority processing, and upcoming integrations like Slack sync. No credit card required to start.
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="data" className="border-white/[0.06]">
-                <AccordionTrigger className="text-left text-base">Is my data safe?</AccordionTrigger>
-                <AccordionContent className="text-muted-foreground leading-relaxed">
-                  Your briefs and specs are stored securely with row-level security policies. Shared links use client-side AES-GCM encryption — we never store the decryption key. Your product ideas stay yours.
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
+            <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-1 backdrop-blur-xl" style={{ boxShadow: "0 0 40px hsl(226 70% 55.5% / 0.03)" }}>
+              <Accordion type="single" collapsible className="w-full">
+                <AccordionItem value="what-is" className="border-white/[0.06] px-5">
+                  <AccordionTrigger className="text-left text-base">What exactly does SpecMirror generate?</AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground leading-relaxed">
+                    You write a plain-English project brief — goals, audience, key features. SpecMirror&apos;s AI mirrors it back as a structured technical spec covering architecture, auth strategy, data models, API surface, and infrastructure — ready for your engineering team to build from.
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="who-for" className="border-white/[0.06] px-5">
+                  <AccordionTrigger className="text-left text-base">Who is this built for?</AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground leading-relaxed">
+                    Product managers, founders, and technical leads who need to translate product thinking into engineering-ready specs without spending hours writing boilerplate. If you&apos;ve ever lost context between &ldquo;what we want&rdquo; and &ldquo;how to build it,&rdquo; SpecMirror closes that gap.
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="accuracy" className="border-white/[0.06] px-5">
+                  <AccordionTrigger className="text-left text-base">How accurate are the generated specs?</AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground leading-relaxed">
+                    Every spec includes a confidence score so you know where the AI is certain and where it needs your input. You review, edit, and approve before anything ships — SpecMirror is a starting point, not an autopilot.
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="sharing" className="border-white/[0.06] px-5">
+                  <AccordionTrigger className="text-left text-base">How does encrypted sharing work?</AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground leading-relaxed">
+                    Once you approve a spec, you can generate an AES-encrypted link with an optional expiry. Share it with your team or stakeholders — they can view the spec without needing an account, and the link self-destructs after expiration.
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="pricing" className="border-white/[0.06] px-5">
+                  <AccordionTrigger className="text-left text-base">What&apos;s included in the free tier?</AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground leading-relaxed">
+                    Free accounts get 5 AI spec generations per day with full confidence scoring and encrypted sharing. The Pro plan unlocks unlimited daily generations, priority processing, and upcoming integrations like Slack sync. No credit card required to start.
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="data" className="border-white/[0.06] px-5">
+                  <AccordionTrigger className="text-left text-base">Is my data safe?</AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground leading-relaxed">
+                    Your briefs and specs are stored securely with row-level security policies. Shared links use client-side AES-GCM encryption — we never store the decryption key. Your product ideas stay yours.
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </div>
           </FadeSection>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-white/[0.06] py-12">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 px-6 md:flex-row">
+      {/* Footer — Immersive */}
+      <footer className="relative py-12 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-t from-primary/[0.04] via-background to-transparent" />
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-40 w-[600px] rounded-full bg-primary/[0.03] blur-3xl" />
+
+        <div className="relative z-10 mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 px-6 md:flex-row">
           <div className="flex items-center gap-2.5">
-            <Search className="h-5 w-5 text-primary" />
+            <Search className="h-5 w-5 text-primary" style={{ filter: "drop-shadow(0 0 6px hsl(226 70% 55.5% / 0.4))" }} />
             <span className="text-lg font-semibold">SpecMirror</span>
           </div>
           <div className="flex gap-8 text-sm text-muted-foreground">
             <a href="https://github.com/engineeredbyangelo/SpecMirror---Official-Build" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">GitHub</a>
             <a href="/roadmap" className="hover:text-foreground transition-colors">Roadmap</a>
           </div>
-          <p className="text-xs text-muted-foreground/50">
+          <p className="font-mono text-[10px] text-muted-foreground/50 uppercase tracking-[0.15em]">
             © 2026 SpecMirror. Made with love for builders who ship.
           </p>
         </div>
