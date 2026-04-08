@@ -1,45 +1,44 @@
 
 
-## Smooth Mobile UI: Move Selector & Generate to Bottom Bar
+## Update Landing Page: How It Works + Features Bento Grid
 
-### Current Problem
+### 1. How It Works — Add Step for Choosing Document Type
 
-On mobile (390px), the top bar crams too many controls into a wrapping flex layout — the spec-type selector, generate button, copy, share, and approve all compete for space. This makes the UI feel cluttered and hard to use with one hand.
+**File: `src/pages/Landing.tsx` (lines 150-232)**
 
-### Plan
+Insert a new step between Step 01 (Write your brief) and the current Step 02 (AI mirrors your intent). Renumber existing steps to 01→01, new→02, old 02→03, old 03→04.
 
-**File: `src/pages/ProjectMirror.tsx`**
+**New Step 02: "Choose what you need"**
+- Title: "Choose your output"
+- Description: "Pick the document that fits your stage. Need user stories and acceptance criteria? Go with a Product Requirements Doc. Need architecture, APIs, and data models? Choose Technical Specification."
+- Visual: Two mini cards side by side — one labeled "PRD" with bullet icons (user stories, priorities), one labeled "Technical Spec" with code/architecture icons. Styled like a selector UI to mirror the actual in-app experience.
 
-1. **On mobile only**, remove the `Select` (spec type) and "Generate" button from the top bar
-2. **Keep** in the top bar for mobile: back arrow, title, saving indicator, confidence meter, Copy, Share, Approve
-3. **Add a fixed bottom bar** (only rendered when `isMobile`) containing:
-   - The spec-type `Select` dropdown (full width or ~60% width)
-   - The "Generate" button (prominent, primary style)
-   - Styled with `fixed bottom-0` and a top border, matching the dark theme
-4. **Add bottom padding** to the main content area on mobile so the bottom bar doesn't overlap the textarea
+**Updated Step 03 (formerly 02): "SpecAI generates your document"**
+- Retitle from "AI mirrors your intent" to "SpecAI builds your document"
+- Update description: "Trained on thousands of real-world technical documents, SpecAI generates production-grade specs or PRDs — complete with architecture diagrams, API definitions, data models, and a dedicated confidence score that tells you how well your brief was understood."
+- Keep the existing shimmer visual but add a small confidence badge (e.g., "94% confidence") in the corner.
 
-### Layout (mobile)
+### 2. Features Bento Grid — Add PRD vs Technical Spec Card
 
-```text
-┌──────────────────────────┐
-│ ← Title        Copy Share Approve │  <- top bar
-├──────────────────────────┤
-│ Brief | Mirror  (tabs)            │
-├──────────────────────────┤
-│                                   │
-│   textarea content                │
-│                                   │
-│                                   │
-├──────────────────────────┤
-│ [Select Type ▼]  [✨ Generate]   │  <- fixed bottom bar
-└──────────────────────────┘
-```
+**File: `src/pages/Landing.tsx` (lines 248-323)**
 
-### Technical Details
+Replace the current bottom-right small card ("Seamless Collaboration") or add a third small card. Better approach: convert the grid to `md:grid-cols-3 md:grid-rows-3` and add two new small cards, keeping the existing ones.
 
-- Wrap the Select and Generate button in a `div` with `fixed bottom-0 left-0 right-0 z-50 border-t border-border/50 bg-background px-3 py-2.5 flex items-center gap-2`
-- The Select gets `flex-1` so it fills available space; Generate button stays fixed width
-- Add `pb-16` to the mobile content wrapper so text isn't hidden behind the bar
-- Desktop layout is completely unchanged — all changes are gated behind `isMobile`
-- The top bar's flex-wrap items on mobile will be cleaner with two fewer controls
+**New bento card: "PRD or Technical Spec — You Decide"**
+- Placed as a new small card in the bento grid
+- Icon: `FileText` or a split icon
+- Content explains in plain language:
+  - **Product Requirements Doc**: "Best for PMs and founders. Generates user stories, feature breakdowns, acceptance criteria, and priority rankings. Perfect for aligning your team on what to build."
+  - **Technical Specification**: "Best for engineers and technical leads. Generates system architecture, API contracts, data models, and infrastructure recommendations. Perfect for knowing how to build it."
+- Visual: Two mini pill/tab elements showing "PRD" and "Tech Spec" with a brief one-liner under each.
+
+### 3. Summary of Changes
+
+| Change | Location | Lines affected |
+|--------|----------|---------------|
+| Add Step 02 "Choose your output" | How It Works section | ~30 new lines between current steps 01 and 02 |
+| Renumber steps 02→03, 03→04 | How It Works section | Update step numbers and tweak step 03 description |
+| Update step 03 description to mention SpecAI + confidence score | How It Works section | ~5 lines |
+| Add new bento card explaining PRD vs Tech Spec | Features bento grid | ~40 new lines |
+| May need to import additional icon (`ClipboardList` or similar) | Top of file | 1 line |
 
