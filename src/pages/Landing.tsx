@@ -732,9 +732,12 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Pricing */}
-      <section id="pricing" className="border-t border-white/[0.06] py-20 md:py-28">
-        <div className="mx-auto max-w-5xl px-6">
+      {/* Pricing — Immersive */}
+      <section id="pricing" className="relative py-20 md:py-28 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.04] via-background to-accent/[0.03]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[400px] w-[600px] rounded-full bg-primary/[0.03] blur-3xl" />
+
+        <div className="relative z-10 mx-auto max-w-5xl px-6">
           <FadeSection>
             <SectionHeader
               label="Pricing"
@@ -745,9 +748,8 @@ const Landing = () => {
           </FadeSection>
 
           <div className="mx-auto grid max-w-3xl gap-6 md:grid-cols-2">
-            {/* Free tier */}
             <FadeSection>
-              <div className="flex h-full flex-col rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8 backdrop-blur-xl">
+              <div className="flex h-full flex-col rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8 backdrop-blur-xl transition-all duration-500 hover:border-white/[0.12] hover:bg-white/[0.04]" style={{ boxShadow: "0 0 40px hsl(226 70% 55.5% / 0.03)" }}>
                 <div className="mb-6">
                   <h3 className="text-lg font-bold">Free</h3>
                   <div className="mt-3 flex items-baseline gap-1">
@@ -759,7 +761,7 @@ const Landing = () => {
                 <ul className="mb-8 flex-1 space-y-3 text-sm text-muted-foreground">
                   {["5 generations per day", "Full AI spec generation", "Encrypted sharing", "Confidence scoring"].map((f) => (
                     <li key={f} className="flex items-center gap-2.5">
-                      <Check className="h-4 w-4 shrink-0 text-accent" />
+                      <Check className="h-4 w-4 shrink-0 text-accent" style={{ filter: "drop-shadow(0 0 4px hsl(160 84% 39% / 0.3))" }} />
                       {f}
                     </li>
                   ))}
@@ -770,10 +772,9 @@ const Landing = () => {
               </div>
             </FadeSection>
 
-            {/* Pro tier */}
             <FadeSection delay={0.1}>
-              <div className="relative flex h-full flex-col rounded-2xl border border-primary/30 bg-white/[0.02] p-8 backdrop-blur-xl">
-                <div className="absolute -top-3 left-6 rounded-full bg-primary px-3 py-0.5 text-xs font-medium text-primary-foreground">
+              <div className="relative flex h-full flex-col rounded-2xl border border-primary/30 bg-white/[0.02] p-8 backdrop-blur-xl transition-all duration-500 hover:border-primary/50 hover:bg-white/[0.04]" style={{ boxShadow: "0 0 60px hsl(226 70% 55.5% / 0.06), inset 0 0 0 1px hsl(226 70% 55.5% / 0.05)" }}>
+                <div className="absolute -top-3 left-6 rounded-full bg-primary px-3 py-0.5 font-mono text-[10px] font-medium text-primary-foreground uppercase tracking-wider" style={{ boxShadow: "0 0 12px hsl(226 70% 55.5% / 0.4)" }}>
                   Most popular
                 </div>
                 <div className="mb-6">
@@ -787,7 +788,7 @@ const Landing = () => {
                 <ul className="mb-8 flex-1 space-y-3 text-sm text-muted-foreground">
                   {["Unlimited spec generations", "Priority AI processing", "Team sharing & collaboration", "Version history", "Slack & PM tool integrations", "Priority support"].map((f) => (
                     <li key={f} className="flex items-center gap-2.5">
-                      <Check className="h-4 w-4 shrink-0 text-accent" />
+                      <Check className="h-4 w-4 shrink-0 text-accent" style={{ filter: "drop-shadow(0 0 4px hsl(160 84% 39% / 0.3))" }} />
                       {f}
                     </li>
                   ))}
