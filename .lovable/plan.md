@@ -1,47 +1,60 @@
-## Upgrade Product Demo Video to ~28 Seconds
-
-The current video is 15 seconds (450 frames at 30fps) with 3 scenes: logo intro, a brief side-by-side mirror, and an approve/share ending. The content in Scene2Mirror uses short placeholder text that doesn't match the actual product output. We need to extend to ~28 seconds (840 frames) and align the video content with the real product experience shown on the landing page.
-
-### New Scene Structure (5 scenes, ~840 frames total)
 
 
-| Scene            | Frames | Duration | Content                                                                                                                                   |
-| ---------------- | ------ | -------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| 1. Logo Intro    | 80     | ~2.7s    | SpecMirror branding + tagline (slightly tighter)                                                                                          |
-| 2. Brief Input   | 210    | ~7s      | Human-written brief typing in — casual founder language about a fitness app (matches landing page)                                        |
-| 3. Generation    | 120    | ~4s      | "Generating..." shimmer + confidence ring animating to 94%                                                                                |
-| 4. Spec Reveal   | 270    | ~9s      | Full technical spec appearing section-by-section: Executive Summary, Architecture, Data Model, Auth, Effort Estimate, Acceptance Criteria |
-| 5. Approve + CTA | 160    | ~5.3s    | Approve button press, checkmark, encrypted sharing options, closing tagline                                                               |
+## Redesign Features Section — Linear-Inspired Immersive Layout
 
+### What Changes
 
-### Key Changes
+Replace the current bento grid features section (lines 308-442) with a premium, Linear-aesthetic immersive section built around three distinct zones.
 
-**Scene 1 (trim existing):** Reduce from 100 to 80 frames. Same content, just snappier.
+### Architecture
 
-**Scene 2 — New "Brief Input" scene:** Full-screen card showing a realistic brief being typed character-by-character. Use the same casual founder language from the landing page demo: "I want to build a fitness tracking app for personal trainers and their clients..." Show 4-5 lines typing in with a blinking cursor. No spec panel visible yet — just the brief input experience.
+**File: `src/pages/Landing.tsx` (lines 308-442)**
 
-**Scene 3 — New "Generation" scene:** The mirror interface appears (split-panel layout). Left panel shows the completed brief. Right panel shows skeleton shimmer lines + "Generating technical specification..." label + confidence ring animating from 0% to 94%. This creates anticipation.
+The entire `<section id="features">` block gets replaced with a new composition:
 
-**Scene 4 — New "Spec Reveal" scene:** Same split-panel layout. Right panel skeleton fades out and real spec content fades in section-by-section: Architecture (React Native + Expo, Supabase, Stripe Connect), Data Model (trainers, clients, workout plans), Auth (JWT, RLS policies), Effort Estimate (~12 days, 2 engineers), Acceptance Criteria (checkmark items). This mirrors what the actual product generates.
+#### Zone 1: Central Dashboard Hero
+- Large glass-morphic container (80%+ width) showing the **Live Mirror** dual-view interface
+- Deep gradient background (`bg-gradient-to-b from-primary/[0.04] via-background to-accent/[0.03]`) spanning the full section
+- The dashboard mock shows Brief (left) and Spec (right) panes with subtle animated skeleton lines
+- Confidence score badge floats in the top-right corner with a soft emerald glow ring
+- Monospaced labels (`font-mono text-[10px] uppercase tracking-widest`) for "Brief", "Spec", "Confidence"
 
-**Scene 5 (update existing Scene4Approve):** Keep the approve button animation, but update the tagline and add the "specmirror.one" branding more prominently to showcase on top of the bento dashboard.
+#### Zone 2: Floating Feature Nodes
+- Two feature cards — "Instant AI Generation" and "Seamless Collaboration" — float beside the dashboard (left and right on desktop, stacked below on mobile)
+- Each card: `glass-card` styling with subtle `box-shadow: 0 0 40px hsl(226 70% 55.5% / 0.06)` glow
+- **Cyber-line connectors**: SVG `<line>` elements with gradient strokes (`from-primary/40 to-transparent`) connecting each floating card to the central dashboard. Use `position: absolute` SVG overlay. Hidden on mobile.
+- Cards have a subtle float animation: `@keyframes float { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-6px) } }` with 6s duration
 
-### Files Modified
+#### Zone 3: PRD vs Tech Spec Toggle
+- Positioned directly below the dashboard as a contained module
+- Replace the two static side-by-side cards with an **interactive toggle** using `useState`
+- Toggle bar: two pill buttons — "Product Requirements" (indigo) and "Technical Spec" (emerald) — with animated active indicator sliding between them
+- Below the toggle, a single content panel cross-fades (framer-motion `AnimatePresence`) to show the relevant details:
+  - **PRD selected**: Icon + "Best for PMs and founders" + tag pills (User stories, Acceptance criteria, Priorities) + one-liner description
+  - **Tech Spec selected**: Icon + "Best for engineers" + tag pills (Architecture, API contracts, Data models) + one-liner description
+- The toggle container itself has a faint neon border glow matching the active selection color
 
+### Visual Details
 
-| File                                    | Change                                                                            |
-| --------------------------------------- | --------------------------------------------------------------------------------- |
-| `remotion/src/Root.tsx`                 | Update `durationInFrames` to 840                                                  |
-| `remotion/src/MainVideo.tsx`            | Wire up 5 scenes with transitions, update frame allocations                       |
-| `remotion/src/scenes/Scene1Intro.tsx`   | Minor timing tighten                                                              |
-| `remotion/src/scenes/Scene2Brief.tsx`   | Rewrite — full-screen brief typing with realistic founder language                |
-| `remotion/src/scenes/Scene3Spec.tsx`    | Rewrite — split-panel generation phase with shimmer + confidence ring             |
-| `remotion/src/scenes/Scene2Mirror.tsx`  | Remove (functionality split across Scene2Brief, Scene3Spec, and new Scene4Reveal) |
-| `remotion/src/scenes/Scene4Reveal.tsx`  | New — split-panel spec reveal with real technical content                         |
-| `remotion/src/scenes/Scene4Approve.tsx` | Rename to Scene5Approve, minor timing updates                                     |
-| `remotion/scripts/render-remotion.mjs`  | No changes needed                                                                 |
+- **Glassmorphism**: `backdrop-blur-xl bg-white/[0.02] border border-white/[0.06]` on all panels
+- **Neon glows**: Absolutely positioned blurred circles (`blur-3xl`) in primary and accent colors behind key elements
+- **Monospaced labels**: Add `font-mono` to all technical labels (Brief, Spec, PRD, Tech Spec, Confidence)
+- **Deep gradient bg**: Section gets its own gradient background, not relying on the global `glass-bg`
+- **Zero dead space**: The dashboard is tall and prominent; floating cards hug it closely; the toggle section sits flush beneath
 
+### New CSS (in `src/index.css`)
+- Add `@keyframes float` animation
+- Add `.cyber-line` utility for the SVG connector glow
 
-### After Code Changes
+### New Tailwind Config
+- Add `float` animation to `tailwind.config.ts`
 
-Re-render the video via `cd remotion && node scripts/render-remotion.mjs` and deliver the updated MP4.
+### Summary
+
+| Change | File | What |
+|--------|------|------|
+| Replace features section | `Landing.tsx` lines 308-442 | New 3-zone layout with dashboard, floating cards, toggle |
+| Add float keyframe | `tailwind.config.ts` | `float: "float 6s ease-in-out infinite"` |
+| Add cyber-line + float CSS | `src/index.css` | SVG connector glow styles |
+| Add `useState` for toggle | `Landing.tsx` | `const [activeDocType, setActiveDocType] = useState<'prd' | 'spec'>('prd')` |
+

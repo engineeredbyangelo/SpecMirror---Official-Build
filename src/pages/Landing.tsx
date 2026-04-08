@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Sparkles, Users, Layers, ArrowRight, Play, Search, FileText, Zap, Lock, GitBranch, X, Check, Loader2 } from "lucide-react";
+import { Sparkles, Users, Layers, ArrowRight, Play, Search, FileText, Zap, Lock, GitBranch, X, Check, Loader2, ClipboardList, Code2 } from "lucide-react";
 import { useAuth, STRIPE_TIERS } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -40,6 +40,7 @@ const Landing = () => {
   const navigate = useNavigate();
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [showDemo, setShowDemo] = useState(false);
+  const [activeDocType, setActiveDocType] = useState<'prd' | 'spec'>('prd');
 
   const handleProClick = async () => {
     if (!user) {
@@ -107,7 +108,7 @@ const Landing = () => {
           </FadeSection>
           <FadeSection delay={0.2}>
             <p className="mx-auto mb-10 max-w-xl text-base leading-relaxed text-muted-foreground md:text-lg">
-              Turn rough product ideas into production-ready technical specs in seconds. AI-powered, encrypted, and built for teams that ship fast.
+              Turn rough product ideas into production-ready specs and PRDs in seconds. AI-powered, encrypted, and built for teams and founders who ship fast.
             </p>
           </FadeSection>
           <FadeSection delay={0.3}>
@@ -128,9 +129,12 @@ const Landing = () => {
                 Watch 28-second demo
               </Button>
             </div>
-            <p className="mt-10 text-xs text-muted-foreground/50">
-              Trusted by 200+ product and engineering teams
-            </p>
+            <div className="mt-10 inline-flex items-center gap-2 px-4 py-2 rounded-full border border-primary/20 bg-primary/5 animate-pulse">
+              <span className="h-2 w-2 rounded-full bg-accent shadow-[0_0_8px_hsl(160_84%_39%/0.6)]" />
+              <span className="text-xs font-medium text-muted-foreground">
+                Join our Beta cohort and be the first to ship deploy-ready architecture.
+              </span>
+            </div>
           </FadeSection>
         </div>
       </section>
@@ -152,6 +156,7 @@ const Landing = () => {
             <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-primary/40 via-accent/30 to-transparent hidden md:block" />
 
             <div className="space-y-12 md:space-y-20">
+              {/* Step 01 — Write your brief */}
               <FadeSection>
                 <StepRow
                   step="01"
@@ -172,16 +177,78 @@ const Landing = () => {
                   align="left"
                 />
               </FadeSection>
+
+              {/* Step 02 — Choose your output */}
               <FadeSection>
                 <StepRow
                   step="02"
+                  icon={<ClipboardList className="h-5 w-5" />}
+                  title="Choose your output"
+                  description="Pick the document that fits your stage. Need user stories and acceptance criteria? Go with a Product Requirements Doc. Need architecture, APIs, and data models? Choose Technical Specification."
+                  visual={
+                    <div className="glass-card rounded-xl p-5">
+                      <div className="mb-3 text-xs font-medium uppercase tracking-widest text-muted-foreground">Select Output</div>
+                      <div className="grid grid-cols-2 gap-3">
+                        {/* PRD card */}
+                        <div className="rounded-lg border border-primary/30 bg-primary/[0.06] p-3 space-y-2">
+                          <div className="flex items-center gap-2">
+                            <FileText className="h-4 w-4 text-primary" />
+                            <span className="text-xs font-semibold text-primary">PRD</span>
+                          </div>
+                          <div className="space-y-1.5">
+                            <div className="flex items-center gap-1.5">
+                              <div className="h-1 w-1 rounded-full bg-primary/50" />
+                              <span className="text-[10px] text-muted-foreground">User stories</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              <div className="h-1 w-1 rounded-full bg-primary/50" />
+                              <span className="text-[10px] text-muted-foreground">Acceptance criteria</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              <div className="h-1 w-1 rounded-full bg-primary/50" />
+                              <span className="text-[10px] text-muted-foreground">Priority rankings</span>
+                            </div>
+                          </div>
+                        </div>
+                        {/* Tech Spec card */}
+                        <div className="rounded-lg border border-accent/30 bg-accent/[0.06] p-3 space-y-2">
+                          <div className="flex items-center gap-2">
+                            <Code2 className="h-4 w-4 text-accent" />
+                            <span className="text-xs font-semibold text-accent">Tech Spec</span>
+                          </div>
+                          <div className="space-y-1.5">
+                            <div className="flex items-center gap-1.5">
+                              <div className="h-1 w-1 rounded-full bg-accent/50" />
+                              <span className="text-[10px] text-muted-foreground">Architecture</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              <div className="h-1 w-1 rounded-full bg-accent/50" />
+                              <span className="text-[10px] text-muted-foreground">API contracts</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              <div className="h-1 w-1 rounded-full bg-accent/50" />
+                              <span className="text-[10px] text-muted-foreground">Data models</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  }
+                  align="right"
+                />
+              </FadeSection>
+
+              {/* Step 03 — SpecAI generates */}
+              <FadeSection>
+                <StepRow
+                  step="03"
                   icon={<Zap className="h-5 w-5" />}
-                  title="AI mirrors your intent"
-                  description="Trained on thousands of technical docs, our AI generates production-grade specs with architecture, APIs, and acceptance criteria in seconds."
+                  title="SpecAI builds your document"
+                  description="Trained on thousands of real-world technical documents, SpecAI generates production-grade specs or PRDs — complete with architecture, API definitions, data models, and a dedicated confidence score that tells you how well your brief was understood."
                   visual={
                     <div className="glass-card rounded-xl p-5 border-primary/20">
                       <div className="mb-3 flex items-center justify-between">
-                        <span className="text-xs font-medium uppercase tracking-widest text-primary">Technical Mirror</span>
+                        <span className="text-xs font-medium uppercase tracking-widest text-primary">SpecAI</span>
                         <span className="text-xs font-medium text-accent" style={{ animation: "pulse-glow 2s ease-in-out infinite" }}>Generating…</span>
                       </div>
                       <div className="shimmer rounded-lg p-0.5">
@@ -193,14 +260,23 @@ const Landing = () => {
                           <div className="spec-line h-2.5 rounded-sm" style={{ width: "85%", animationDelay: "1.7s", background: "hsl(0 0% 100% / 0.08)" }} />
                         </div>
                       </div>
+                      {/* Confidence badge */}
+                      <div className="mt-3 flex justify-end">
+                        <div className="inline-flex items-center gap-1.5 rounded-full border border-accent/30 bg-accent/10 px-2.5 py-1 text-[10px] font-semibold text-accent">
+                          <div className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse" />
+                          94% confidence
+                        </div>
+                      </div>
                     </div>
                   }
-                  align="right"
+                  align="left"
                 />
               </FadeSection>
+
+              {/* Step 04 — Collaborate and ship */}
               <FadeSection>
                 <StepRow
-                  step="03"
+                  step="04"
                   icon={<GitBranch className="h-5 w-5" />}
                   title="Collaborate and ship"
                   description="Share encrypted specs with your team. Track versions, review diffs, and sync approved specs to your favorite project management tools."
@@ -225,7 +301,7 @@ const Landing = () => {
                       </div>
                     </div>
                   }
-                  align="left"
+                  align="right"
                 />
               </FadeSection>
             </div>
@@ -233,9 +309,15 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Features — Bento Grid */}
-      <section id="features" className="py-20 md:py-28">
-        <div className="mx-auto max-w-6xl px-6">
+      {/* Features — Immersive Linear-Inspired Section */}
+      <section id="features" className="relative py-20 md:py-28 overflow-hidden">
+        {/* Deep gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.04] via-background to-accent/[0.03]" />
+        {/* Ambient glow orbs */}
+        <div className="absolute top-1/4 left-1/4 h-96 w-96 rounded-full bg-primary/[0.04] blur-3xl" />
+        <div className="absolute bottom-1/4 right-1/4 h-96 w-96 rounded-full bg-accent/[0.03] blur-3xl" />
+
+        <div className="relative z-10 mx-auto max-w-6xl px-6">
           <FadeSection>
             <SectionHeader
               label="Features"
@@ -245,91 +327,197 @@ const Landing = () => {
             />
           </FadeSection>
 
-          <div className="grid gap-4 md:grid-cols-3 md:grid-rows-2">
-            {/* Large feature — spans 2 cols */}
-            <FadeSection className="md:col-span-2 md:row-span-2">
-              <div className="group relative h-full overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8 backdrop-blur-xl transition-all duration-500 hover:border-primary/30 hover:bg-white/[0.04]">
-                <div className="absolute -top-24 -right-24 h-48 w-48 rounded-full bg-primary/[0.06] blur-3xl transition-opacity duration-500 group-hover:opacity-100 opacity-0" />
-                <div className="relative z-10">
-                  <div className="mb-5 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                    <Layers className="h-5 w-5" />
+          {/* Zone 1 + Zone 2: Dashboard Hero with Floating Nodes */}
+          <div className="relative">
+            {/* SVG Cyber-line connectors — desktop only */}
+            <svg className="absolute inset-0 w-full h-full pointer-events-none hidden md:block" style={{ zIndex: 1 }}>
+              <defs>
+                <linearGradient id="cyber-gradient-left" x1="0%" y1="50%" x2="100%" y2="50%">
+                  <stop offset="0%" stopColor="hsl(226 70% 55.5% / 0)" />
+                  <stop offset="50%" stopColor="hsl(226 70% 55.5% / 0.3)" />
+                  <stop offset="100%" stopColor="hsl(226 70% 55.5% / 0.1)" />
+                </linearGradient>
+                <linearGradient id="cyber-gradient-right" x1="0%" y1="50%" x2="100%" y2="50%">
+                  <stop offset="0%" stopColor="hsl(160 84% 39% / 0.1)" />
+                  <stop offset="50%" stopColor="hsl(160 84% 39% / 0.3)" />
+                  <stop offset="100%" stopColor="hsl(160 84% 39% / 0)" />
+                </linearGradient>
+              </defs>
+              {/* Left connector */}
+              <line x1="0%" y1="35%" x2="18%" y2="45%" stroke="url(#cyber-gradient-left)" strokeWidth="1" filter="drop-shadow(0 0 6px hsl(226 70% 55.5% / 0.2))" />
+              {/* Right connector */}
+              <line x1="82%" y1="45%" x2="100%" y2="35%" stroke="url(#cyber-gradient-right)" strokeWidth="1" filter="drop-shadow(0 0 6px hsl(160 84% 39% / 0.2))" />
+            </svg>
+
+            <div className="flex flex-col md:flex-row items-stretch gap-4 md:gap-5">
+              {/* Left floating node */}
+              <FadeSection delay={0.2} className="md:w-52 shrink-0 self-center">
+                <div className="animate-float rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5 backdrop-blur-xl" style={{ boxShadow: "0 0 40px hsl(226 70% 55.5% / 0.06)" }}>
+                  <div className="mb-3 inline-flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                    <Sparkles className="h-4 w-4" />
                   </div>
-                  <h3 className="mb-2 text-xl font-bold tracking-tight md:text-2xl">Live Mirror View</h3>
-                  <p className="mb-8 max-w-md text-sm leading-relaxed text-muted-foreground md:text-base">
-                    Side-by-side product brief + technical spec with real-time streaming and confidence scoring.
-                  </p>
-                  {/* Mini split-screen visual */}
-                  <div className="grid grid-cols-2 gap-3 rounded-xl border border-white/[0.06] bg-background/40 p-4">
-                    <div className="space-y-2">
-                      <div className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground/60">Brief</div>
-                      <div className="h-2 rounded-sm bg-primary/20 w-2/3" />
-                      <div className="h-2 rounded-sm bg-white/[0.06] w-full" />
-                      <div className="h-2 rounded-sm bg-white/[0.06] w-4/5" />
-                      <div className="h-2 rounded-sm bg-white/[0.06] w-3/5" />
+                  <h3 className="mb-1 text-sm font-bold tracking-tight">Instant AI Generation</h3>
+                  <p className="text-xs leading-relaxed text-muted-foreground">One click transforms briefs into production specs.</p>
+                  <div className="mt-3 flex items-center gap-1.5">
+                    <div className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse" />
+                    <span className="font-mono text-[9px] uppercase tracking-widest text-accent/70">Streaming</span>
+                  </div>
+                </div>
+              </FadeSection>
+
+              {/* Central Dashboard Hero */}
+              <FadeSection className="flex-1 min-w-0">
+                <div className="relative rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 md:p-8 backdrop-blur-xl overflow-hidden" style={{ boxShadow: "0 0 80px hsl(226 70% 55.5% / 0.04), 0 0 40px hsl(160 84% 39% / 0.02)" }}>
+                  {/* Neon glow behind */}
+                  <div className="absolute -top-20 left-1/2 -translate-x-1/2 h-40 w-80 rounded-full bg-primary/[0.06] blur-3xl" />
+
+                  <div className="relative z-10">
+                    <div className="mb-5 flex items-center justify-between">
+                      <div className="flex items-center gap-2.5">
+                        <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                          <Layers className="h-5 w-5" />
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-bold tracking-tight md:text-xl">Live Mirror View</h3>
+                          <p className="text-xs text-muted-foreground">Real-time brief → spec transformation</p>
+                        </div>
+                      </div>
+                      {/* Confidence badge */}
+                      <div className="hidden sm:flex items-center gap-1.5 rounded-full border border-accent/30 bg-accent/10 px-3 py-1.5" style={{ boxShadow: "0 0 20px hsl(160 84% 39% / 0.15)" }}>
+                        <div className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse" />
+                        <span className="font-mono text-[10px] font-semibold text-accent">94%</span>
+                        <span className="font-mono text-[9px] uppercase tracking-widest text-accent/60">confidence</span>
+                      </div>
                     </div>
-                    <div className="space-y-2 border-l border-white/[0.06] pl-3">
-                      <div className="text-[10px] font-medium uppercase tracking-widest text-primary/60">Spec</div>
-                      <div className="h-2 rounded-sm bg-accent/25 w-1/2" />
-                      <div className="h-2 rounded-sm bg-white/[0.06] w-full" />
-                      <div className="h-2 rounded-sm bg-white/[0.06] w-3/4" />
-                      <div className="h-2 rounded-sm bg-accent/25 w-2/5" />
+
+                    {/* Dual-view interface */}
+                    <div className="grid grid-cols-2 gap-px rounded-xl border border-white/[0.06] bg-white/[0.04] overflow-hidden">
+                      {/* Brief pane */}
+                      <div className="p-4 md:p-5 space-y-2.5 bg-background/40">
+                        <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground/60">Brief</span>
+                        <div className="space-y-2">
+                          <div className="typing-line h-2 rounded-sm" style={{ ["--target-width" as string]: "80%", animationDelay: "0s", background: "hsl(226 70% 55.5% / 0.25)" }} />
+                          <div className="typing-line h-2 rounded-sm" style={{ ["--target-width" as string]: "95%", animationDelay: "0.3s", background: "hsl(0 0% 100% / 0.07)" }} />
+                          <div className="typing-line h-2 rounded-sm" style={{ ["--target-width" as string]: "60%", animationDelay: "0.6s", background: "hsl(0 0% 100% / 0.07)" }} />
+                          <div className="typing-line h-2 rounded-sm" style={{ ["--target-width" as string]: "75%", animationDelay: "0.9s", background: "hsl(0 0% 100% / 0.07)" }} />
+                          <div className="typing-line h-2 rounded-sm" style={{ ["--target-width" as string]: "50%", animationDelay: "1.2s", background: "hsl(0 0% 100% / 0.05)" }} />
+                        </div>
+                      </div>
+                      {/* Spec pane */}
+                      <div className="p-4 md:p-5 space-y-2.5 bg-background/60 border-l border-white/[0.06]">
+                        <span className="font-mono text-[10px] uppercase tracking-widest text-primary/60">Spec</span>
+                        <div className="space-y-2">
+                          <div className="spec-line h-2 rounded-sm" style={{ width: "45%", animationDelay: "0.5s", background: "hsl(160 84% 39% / 0.3)" }} />
+                          <div className="spec-line h-2 rounded-sm" style={{ width: "85%", animationDelay: "0.8s", background: "hsl(0 0% 100% / 0.07)" }} />
+                          <div className="spec-line h-2 rounded-sm" style={{ width: "70%", animationDelay: "1.1s", background: "hsl(0 0% 100% / 0.07)" }} />
+                          <div className="spec-line h-2 rounded-sm" style={{ width: "55%", animationDelay: "1.4s", background: "hsl(160 84% 39% / 0.25)" }} />
+                          <div className="spec-line h-2 rounded-sm" style={{ width: "90%", animationDelay: "1.7s", background: "hsl(0 0% 100% / 0.05)" }} />
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </FadeSection>
+              </FadeSection>
 
-            {/* Top-right small card */}
-            <FadeSection delay={0.1}>
-              <div className="group relative overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 backdrop-blur-xl transition-all duration-500 hover:border-accent/30 hover:bg-white/[0.04] h-full">
-                <div className="absolute -bottom-12 -left-12 h-32 w-32 rounded-full bg-accent/[0.06] blur-2xl transition-opacity duration-500 group-hover:opacity-100 opacity-0" />
-                <div className="relative z-10">
-                  <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent">
-                    <Sparkles className="h-5 w-5" />
+              {/* Right floating node */}
+              <FadeSection delay={0.3} className="md:w-52 shrink-0 self-center">
+                <div className="animate-float-delayed rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5 backdrop-blur-xl" style={{ boxShadow: "0 0 40px hsl(160 84% 39% / 0.06)" }}>
+                  <div className="mb-3 inline-flex h-9 w-9 items-center justify-center rounded-xl bg-accent/10 text-accent">
+                    <Users className="h-4 w-4" />
                   </div>
-                  <h3 className="mb-1.5 text-lg font-bold tracking-tight">Instant AI Generation</h3>
-                  <p className="text-sm leading-relaxed text-muted-foreground">
-                    One click transforms any brief into architecture, effort estimates, and acceptance criteria.
-                  </p>
-                  <div className="mt-4 flex items-center gap-2">
-                    <div className="h-2 w-2 rounded-full bg-accent animate-pulse" />
-                    <span className="text-[10px] font-medium uppercase tracking-widest text-accent/70">Streaming</span>
-                  </div>
-                </div>
-              </div>
-            </FadeSection>
-
-            {/* Bottom-right small card */}
-            <FadeSection delay={0.2}>
-              <div className="group relative overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 backdrop-blur-xl transition-all duration-500 hover:border-primary/30 hover:bg-white/[0.04] h-full">
-                <div className="absolute -top-12 -right-12 h-32 w-32 rounded-full bg-primary/[0.06] blur-2xl transition-opacity duration-500 group-hover:opacity-100 opacity-0" />
-                <div className="relative z-10">
-                  <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                    <Users className="h-5 w-5" />
-                  </div>
-                  <h3 className="mb-1.5 text-lg font-bold tracking-tight">Seamless Collaboration</h3>
-                  <p className="text-sm leading-relaxed text-muted-foreground">
-                    Encrypted sharing, version history, and team presence. All built in.
-                  </p>
-                  <div className="mt-4 flex gap-1">
+                  <h3 className="mb-1 text-sm font-bold tracking-tight">Seamless Collaboration</h3>
+                  <p className="text-xs leading-relaxed text-muted-foreground">Encrypted sharing, version history, team presence.</p>
+                  <div className="mt-3 flex gap-0.5">
                     {[...Array(3)].map((_, i) => (
-                      <div key={i} className="h-6 w-6 rounded-full border-2 border-background bg-gradient-to-br from-primary/40 to-accent/30" style={{ marginLeft: i > 0 ? "-6px" : 0 }} />
+                      <div key={i} className="h-5 w-5 rounded-full border-2 border-background bg-gradient-to-br from-primary/40 to-accent/30" style={{ marginLeft: i > 0 ? "-4px" : 0 }} />
                     ))}
-                    <span className="ml-1 self-center text-[10px] text-muted-foreground/60">+4</span>
+                    <span className="ml-1 self-center text-[9px] text-muted-foreground/60">+4</span>
                   </div>
                 </div>
-              </div>
-            </FadeSection>
+              </FadeSection>
+            </div>
           </div>
+
+          {/* Zone 3: PRD vs Tech Spec Interactive Toggle */}
+          <FadeSection delay={0.4}>
+            <div className="mt-6 mx-auto max-w-2xl">
+              <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 backdrop-blur-xl transition-all duration-500" style={{ boxShadow: activeDocType === 'prd' ? "0 0 30px hsl(226 70% 55.5% / 0.06), inset 0 0 0 1px hsl(226 70% 55.5% / 0.08)" : "0 0 30px hsl(160 84% 39% / 0.06), inset 0 0 0 1px hsl(160 84% 39% / 0.08)" }}>
+                {/* Toggle bar */}
+                <div className="mb-5 flex items-center justify-center">
+                  <div className="inline-flex items-center rounded-full border border-white/[0.08] bg-white/[0.03] p-1">
+                    <button
+                      onClick={() => setActiveDocType('prd')}
+                      className={`relative rounded-full px-5 py-2 text-xs font-semibold transition-all duration-300 ${activeDocType === 'prd' ? 'bg-primary text-primary-foreground shadow-lg' : 'text-muted-foreground hover:text-foreground'}`}
+                      style={activeDocType === 'prd' ? { boxShadow: "0 0 16px hsl(226 70% 55.5% / 0.3)" } : {}}
+                    >
+                      Product Requirements
+                    </button>
+                    <button
+                      onClick={() => setActiveDocType('spec')}
+                      className={`relative rounded-full px-5 py-2 text-xs font-semibold transition-all duration-300 ${activeDocType === 'spec' ? 'bg-accent text-accent-foreground shadow-lg' : 'text-muted-foreground hover:text-foreground'}`}
+                      style={activeDocType === 'spec' ? { boxShadow: "0 0 16px hsl(160 84% 39% / 0.3)" } : {}}
+                    >
+                      Technical Spec
+                    </button>
+                  </div>
+                </div>
+
+                {/* Content panel */}
+                <motion.div
+                  key={activeDocType}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
+                >
+                  {activeDocType === 'prd' ? (
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2.5">
+                        <FileText className="h-5 w-5 text-primary" />
+                        <span className="text-base font-bold text-foreground">Product Requirements Doc</span>
+                      </div>
+                      <p className="text-sm leading-relaxed text-muted-foreground">
+                        Best for <span className="text-foreground/80 font-medium">PMs and founders</span>. Align your team on <span className="text-foreground/80 font-medium">what</span> to build with structured user stories, acceptance criteria, and priority rankings.
+                      </p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {["User stories", "Acceptance criteria", "Priorities", "Feature breakdown", "Success metrics"].map(tag => (
+                          <span key={tag} className="rounded-full border border-primary/20 bg-primary/[0.06] px-2.5 py-0.5 font-mono text-[10px] font-medium text-primary/80">{tag}</span>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2.5">
+                        <Code2 className="h-5 w-5 text-accent" />
+                        <span className="text-base font-bold text-foreground">Technical Specification</span>
+                      </div>
+                      <p className="text-sm leading-relaxed text-muted-foreground">
+                        Best for <span className="text-foreground/80 font-medium">engineers and tech leads</span>. Know exactly <span className="text-foreground/80 font-medium">how</span> to build it with system architecture, API contracts, and data models.
+                      </p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {["Architecture", "API contracts", "Data models", "Infrastructure", "Security"].map(tag => (
+                          <span key={tag} className="rounded-full border border-accent/20 bg-accent/[0.06] px-2.5 py-0.5 font-mono text-[10px] font-medium text-accent/80">{tag}</span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </motion.div>
+              </div>
+            </div>
+          </FadeSection>
         </div>
       </section>
 
-      {/* Why Not ChatGPT — Competitive Differentiation */}
-      <section className="border-y border-white/[0.06] py-20 md:py-28">
-        <div className="mx-auto max-w-5xl px-6">
+      {/* Why Not ChatGPT — Competitive Differentiation (Immersive) */}
+      <section className="relative py-20 md:py-28 overflow-hidden">
+        {/* Deep gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.03] via-background to-primary/[0.04]" />
+        <div className="absolute top-1/3 right-1/4 h-80 w-80 rounded-full bg-accent/[0.04] blur-3xl" />
+        <div className="absolute bottom-1/3 left-1/4 h-80 w-80 rounded-full bg-primary/[0.04] blur-3xl" />
+
+        <div className="relative z-10 mx-auto max-w-5xl px-6">
           <FadeSection>
             <div className="mb-14 text-center">
-              <p className="mb-4 text-sm font-medium uppercase tracking-widest text-primary">Built different</p>
+              <p className="mb-4 font-mono text-[11px] font-medium uppercase tracking-[0.2em] text-primary">Built different</p>
               <h2 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl">
                 Not another{" "}
                 <span className="bg-gradient-to-r from-accent to-accent/70 bg-clip-text text-transparent">chatbot.</span>
@@ -340,14 +528,14 @@ const Landing = () => {
             </div>
           </FadeSection>
 
-          {/* Comparison table */}
-          <div className="mb-16 overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-xl">
+          {/* Comparison table — glassmorphic */}
+          <div className="mb-16 overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-xl" style={{ boxShadow: "0 0 60px hsl(226 70% 55.5% / 0.04), 0 0 30px hsl(160 84% 39% / 0.02)" }}>
             {/* Desktop: 3-column table */}
             <div className="hidden md:block">
               <div className="grid grid-cols-[1fr,1fr,1fr] border-b border-white/[0.06]">
-                <div className="p-5 text-xs font-medium uppercase tracking-widest text-muted-foreground/60">Capability</div>
-                <div className="p-5 text-xs font-medium uppercase tracking-widest text-muted-foreground/60 border-l border-white/[0.06]">Generic AI</div>
-                <div className="p-5 text-xs font-medium uppercase tracking-widest text-primary border-l border-white/[0.06]">SpecMirror</div>
+                <div className="p-5 font-mono text-[10px] font-medium uppercase tracking-[0.2em] text-muted-foreground/60">Capability</div>
+                <div className="p-5 font-mono text-[10px] font-medium uppercase tracking-[0.2em] text-muted-foreground/60 border-l border-white/[0.06]">Generic AI</div>
+                <div className="p-5 font-mono text-[10px] font-medium uppercase tracking-[0.2em] text-primary border-l border-white/[0.06]">SpecMirror</div>
               </div>
               {[
                 { capability: "Output format", generic: "Freeform chat, copy-paste", spec: "Structured production spec" },
@@ -360,11 +548,11 @@ const Landing = () => {
                   <div className={`grid grid-cols-[1fr,1fr,1fr] ${i < 4 ? "border-b border-white/[0.06]" : ""}`}>
                     <div className="p-5 text-sm font-medium text-foreground/80">{row.capability}</div>
                     <div className="p-5 flex items-start gap-2.5 border-l border-white/[0.06]">
-                      <X className="h-4 w-4 shrink-0 mt-0.5 text-red-400/50" />
+                      <X className="h-4 w-4 shrink-0 mt-0.5 text-destructive/50" />
                       <span className="text-sm text-muted-foreground/60">{row.generic}</span>
                     </div>
                     <div className="p-5 flex items-start gap-2.5 border-l border-white/[0.06] bg-accent/[0.03]">
-                      <Check className="h-4 w-4 shrink-0 mt-0.5 text-accent drop-shadow-[0_0_6px_hsl(160_84%_39%/0.4)]" />
+                      <Check className="h-4 w-4 shrink-0 mt-0.5 text-accent" style={{ filter: "drop-shadow(0 0 6px hsl(160 84% 39% / 0.4))" }} />
                       <span className="text-sm text-foreground/90">{row.spec}</span>
                     </div>
                   </div>
@@ -383,18 +571,18 @@ const Landing = () => {
               ].map((row, i) => (
                 <FadeSection key={row.capability} delay={i * 0.07}>
                   <div className="p-4 space-y-3">
-                    <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground/60">{row.capability}</p>
+                    <p className="font-mono text-[10px] font-medium uppercase tracking-[0.2em] text-muted-foreground/60">{row.capability}</p>
                     <div className="flex items-start gap-2">
-                      <X className="h-4 w-4 shrink-0 mt-0.5 text-red-400/50" />
+                      <X className="h-4 w-4 shrink-0 mt-0.5 text-destructive/50" />
                       <div>
-                        <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground/40">Generic AI</span>
+                        <span className="font-mono text-[9px] font-medium uppercase tracking-wider text-muted-foreground/40">Generic AI</span>
                         <p className="text-sm text-muted-foreground/60">{row.generic}</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-2 rounded-lg bg-accent/[0.05] p-2.5 -mx-1">
-                      <Check className="h-4 w-4 shrink-0 mt-0.5 text-accent drop-shadow-[0_0_6px_hsl(160_84%_39%/0.4)]" />
+                      <Check className="h-4 w-4 shrink-0 mt-0.5 text-accent" style={{ filter: "drop-shadow(0 0 6px hsl(160 84% 39% / 0.4))" }} />
                       <div>
-                        <span className="text-[11px] font-medium uppercase tracking-wider text-primary">SpecMirror</span>
+                        <span className="font-mono text-[9px] font-medium uppercase tracking-wider text-primary">SpecMirror</span>
                         <p className="text-sm text-foreground/90">{row.spec}</p>
                       </div>
                     </div>
@@ -404,10 +592,10 @@ const Landing = () => {
             </div>
           </div>
 
-          {/* Training depth visual */}
+          {/* Training depth visual — floating pills */}
           <FadeSection>
             <div className="text-center mb-8">
-              <p className="text-sm font-medium uppercase tracking-widest text-primary mb-2">Training depth</p>
+              <p className="font-mono text-[11px] font-medium uppercase tracking-[0.2em] text-primary mb-2">Training depth</p>
               <p className="text-muted-foreground text-sm">Purpose-built on real engineering knowledge</p>
             </div>
           </FadeSection>
@@ -417,7 +605,7 @@ const Landing = () => {
               "Database Schemas", "CI/CD Pipelines", "System Design Docs", "Architecture Patterns",
             ].map((label, i) => (
               <FadeSection key={label} delay={0.05 * i}>
-                <div className="rounded-full border border-white/[0.08] bg-white/[0.03] px-4 py-2 text-sm text-foreground/70 backdrop-blur-sm transition-colors hover:border-primary/30 hover:text-foreground/90">
+                <div className="rounded-full border border-white/[0.08] bg-white/[0.03] px-4 py-2 font-mono text-xs text-foreground/70 backdrop-blur-sm transition-all duration-300 hover:border-primary/30 hover:text-foreground/90 hover:bg-white/[0.05]" style={{ boxShadow: "0 0 20px hsl(226 70% 55.5% / 0.03)" }}>
                   {label}
                 </div>
               </FadeSection>
@@ -426,26 +614,45 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Preview — Animated Mirror Demo */}
-      <section id="preview" className="border-y border-white/[0.06] py-20 md:py-28">
-        <div className="mx-auto max-w-6xl px-6">
+      {/* Preview — Animated Mirror Demo (Immersive) */}
+      <section id="preview" className="relative py-20 md:py-28 overflow-hidden">
+        {/* Deep gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.03] via-background to-accent/[0.03]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[500px] w-[500px] rounded-full bg-primary/[0.03] blur-3xl" />
+
+        <div className="relative z-10 mx-auto max-w-6xl px-6">
           <FadeSection>
             <SectionHeader
               label="Live preview"
               title="See SpecMirror"
               highlight="in action"
-              description="Dark mode. Instant generation. Zero friction."
+              description="Watch your brief transform into a production-ready spec — streamed in real time with live confidence scoring."
             />
           </FadeSection>
           <FadeSection delay={0.15}>
-            <MirrorDemo />
+            <div className="relative rounded-2xl border border-white/[0.06] bg-white/[0.02] p-1 backdrop-blur-xl" style={{ boxShadow: "0 0 80px hsl(226 70% 55.5% / 0.05), 0 0 40px hsl(160 84% 39% / 0.03)" }}>
+              {/* Top bar accent */}
+              <div className="flex items-center gap-2 px-4 py-2.5 border-b border-white/[0.06]">
+                <div className="h-2.5 w-2.5 rounded-full bg-destructive/40" />
+                <div className="h-2.5 w-2.5 rounded-full bg-primary/30" />
+                <div className="h-2.5 w-2.5 rounded-full bg-accent/30" />
+                <span className="ml-3 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground/40">specmirror.app</span>
+              </div>
+              <div className="p-1">
+                <MirrorDemo />
+              </div>
+            </div>
           </FadeSection>
         </div>
       </section>
 
-      {/* For Every Team — Horizontal role cards */}
-      <section id="how-it-helps" className="py-20 md:py-28">
-        <div className="mx-auto max-w-6xl px-6">
+      {/* For Every Team — Immersive */}
+      <section id="how-it-helps" className="relative py-20 md:py-28 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.03] via-background to-primary/[0.03]" />
+        <div className="absolute top-1/4 left-1/3 h-72 w-72 rounded-full bg-primary/[0.04] blur-3xl" />
+        <div className="absolute bottom-1/4 right-1/3 h-72 w-72 rounded-full bg-accent/[0.03] blur-3xl" />
+
+        <div className="relative z-10 mx-auto max-w-6xl px-6">
           <FadeSection>
             <SectionHeader
               label="For every team"
@@ -495,15 +702,13 @@ const Landing = () => {
                   item.accentColor === "accent"
                     ? "border-accent/20 hover:border-accent/40"
                     : "border-white/[0.06] hover:border-primary/30"
-                }`}>
-                  {/* Left accent bar */}
+                }`} style={{ boxShadow: item.accentColor === "accent" ? "0 0 30px hsl(160 84% 39% / 0.03)" : "0 0 30px hsl(226 70% 55.5% / 0.03)" }}>
                   <div className={`absolute left-0 top-0 bottom-0 w-[3px] rounded-full transition-all duration-500 ${
                     item.accentColor === "accent"
                       ? "bg-accent/40 group-hover:bg-accent"
                       : "bg-primary/40 group-hover:bg-primary"
-                  }`} />
+                  }`} style={{ boxShadow: item.accentColor === "accent" ? "0 0 8px hsl(160 84% 39% / 0.3)" : "0 0 8px hsl(226 70% 55.5% / 0.3)" }} />
 
-                  {/* Icon + role */}
                   <div className="flex shrink-0 items-center gap-4 md:w-48">
                     <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${
                       item.accentColor === "accent" ? "bg-accent/10 text-accent" : "bg-primary/10 text-primary"
@@ -513,17 +718,15 @@ const Landing = () => {
                     <h3 className="text-lg font-bold tracking-tight">{item.role}</h3>
                   </div>
 
-                  {/* Quote */}
                   <p className="flex-1 text-sm leading-relaxed text-muted-foreground md:text-base md:px-6 md:border-l md:border-white/[0.06]">
                     "{item.quote}"
                   </p>
 
-                  {/* Stat */}
                   <div className="shrink-0 text-right md:w-32">
                     <div className={`text-2xl font-bold tracking-tight ${
                       item.accentColor === "accent" ? "text-accent" : "text-primary"
-                    }`}>{item.stat}</div>
-                    <div className="text-xs text-muted-foreground/60 uppercase tracking-widest">{item.statLabel}</div>
+                    }`} style={{ filter: item.accentColor === "accent" ? "drop-shadow(0 0 8px hsl(160 84% 39% / 0.3))" : "drop-shadow(0 0 8px hsl(226 70% 55.5% / 0.3))" }}>{item.stat}</div>
+                    <div className="font-mono text-[10px] text-muted-foreground/60 uppercase tracking-[0.2em]">{item.statLabel}</div>
                   </div>
                 </div>
               </FadeSection>
@@ -532,9 +735,12 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Pricing */}
-      <section id="pricing" className="border-t border-white/[0.06] py-20 md:py-28">
-        <div className="mx-auto max-w-5xl px-6">
+      {/* Pricing — Immersive */}
+      <section id="pricing" className="relative py-20 md:py-28 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.04] via-background to-accent/[0.03]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[400px] w-[600px] rounded-full bg-primary/[0.03] blur-3xl" />
+
+        <div className="relative z-10 mx-auto max-w-5xl px-6">
           <FadeSection>
             <SectionHeader
               label="Pricing"
@@ -545,9 +751,8 @@ const Landing = () => {
           </FadeSection>
 
           <div className="mx-auto grid max-w-3xl gap-6 md:grid-cols-2">
-            {/* Free tier */}
             <FadeSection>
-              <div className="flex h-full flex-col rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8 backdrop-blur-xl">
+              <div className="flex h-full flex-col rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8 backdrop-blur-xl transition-all duration-500 hover:border-white/[0.12] hover:bg-white/[0.04]" style={{ boxShadow: "0 0 40px hsl(226 70% 55.5% / 0.03)" }}>
                 <div className="mb-6">
                   <h3 className="text-lg font-bold">Free</h3>
                   <div className="mt-3 flex items-baseline gap-1">
@@ -559,7 +764,7 @@ const Landing = () => {
                 <ul className="mb-8 flex-1 space-y-3 text-sm text-muted-foreground">
                   {["5 generations per day", "Full AI spec generation", "Encrypted sharing", "Confidence scoring"].map((f) => (
                     <li key={f} className="flex items-center gap-2.5">
-                      <Check className="h-4 w-4 shrink-0 text-accent" />
+                      <Check className="h-4 w-4 shrink-0 text-accent" style={{ filter: "drop-shadow(0 0 4px hsl(160 84% 39% / 0.3))" }} />
                       {f}
                     </li>
                   ))}
@@ -570,10 +775,9 @@ const Landing = () => {
               </div>
             </FadeSection>
 
-            {/* Pro tier */}
             <FadeSection delay={0.1}>
-              <div className="relative flex h-full flex-col rounded-2xl border border-primary/30 bg-white/[0.02] p-8 backdrop-blur-xl">
-                <div className="absolute -top-3 left-6 rounded-full bg-primary px-3 py-0.5 text-xs font-medium text-primary-foreground">
+              <div className="relative flex h-full flex-col rounded-2xl border border-primary/30 bg-white/[0.02] p-8 backdrop-blur-xl transition-all duration-500 hover:border-primary/50 hover:bg-white/[0.04]" style={{ boxShadow: "0 0 60px hsl(226 70% 55.5% / 0.06), inset 0 0 0 1px hsl(226 70% 55.5% / 0.05)" }}>
+                <div className="absolute -top-3 left-6 rounded-full bg-primary px-3 py-0.5 font-mono text-[10px] font-medium text-primary-foreground uppercase tracking-wider" style={{ boxShadow: "0 0 12px hsl(226 70% 55.5% / 0.4)" }}>
                   Most popular
                 </div>
                 <div className="mb-6">
@@ -587,7 +791,7 @@ const Landing = () => {
                 <ul className="mb-8 flex-1 space-y-3 text-sm text-muted-foreground">
                   {["Unlimited spec generations", "Priority AI processing", "Team sharing & collaboration", "Version history", "Slack & PM tool integrations", "Priority support"].map((f) => (
                     <li key={f} className="flex items-center gap-2.5">
-                      <Check className="h-4 w-4 shrink-0 text-accent" />
+                      <Check className="h-4 w-4 shrink-0 text-accent" style={{ filter: "drop-shadow(0 0 4px hsl(160 84% 39% / 0.3))" }} />
                       {f}
                     </li>
                   ))}
@@ -601,67 +805,75 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* FAQ */}
-      <section id="faq" className="border-t border-white/[0.06] py-20 md:py-28">
-        <div className="mx-auto max-w-2xl px-6">
+      {/* FAQ — Immersive */}
+      <section id="faq" className="relative py-20 md:py-28 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.02] via-background to-primary/[0.03]" />
+        <div className="absolute top-1/3 right-1/4 h-64 w-64 rounded-full bg-accent/[0.03] blur-3xl" />
+
+        <div className="relative z-10 mx-auto max-w-2xl px-6">
           <FadeSection>
             <SectionHeader label="FAQ" title="Frequently asked" highlight="questions" />
           </FadeSection>
           <FadeSection delay={0.1}>
-            <Accordion type="single" collapsible className="w-full">
-              <AccordionItem value="what-is" className="border-white/[0.06]">
-                <AccordionTrigger className="text-left text-base">What exactly does SpecMirror generate?</AccordionTrigger>
-                <AccordionContent className="text-muted-foreground leading-relaxed">
-                  You write a plain-English project brief — goals, audience, key features. SpecMirror&apos;s AI mirrors it back as a structured technical spec covering architecture, auth strategy, data models, API surface, and infrastructure — ready for your engineering team to build from.
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="who-for" className="border-white/[0.06]">
-                <AccordionTrigger className="text-left text-base">Who is this built for?</AccordionTrigger>
-                <AccordionContent className="text-muted-foreground leading-relaxed">
-                  Product managers, founders, and technical leads who need to translate product thinking into engineering-ready specs without spending hours writing boilerplate. If you&apos;ve ever lost context between &ldquo;what we want&rdquo; and &ldquo;how to build it,&rdquo; SpecMirror closes that gap.
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="accuracy" className="border-white/[0.06]">
-                <AccordionTrigger className="text-left text-base">How accurate are the generated specs?</AccordionTrigger>
-                <AccordionContent className="text-muted-foreground leading-relaxed">
-                  Every spec includes a confidence score so you know where the AI is certain and where it needs your input. You review, edit, and approve before anything ships — SpecMirror is a starting point, not an autopilot.
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="sharing" className="border-white/[0.06]">
-                <AccordionTrigger className="text-left text-base">How does encrypted sharing work?</AccordionTrigger>
-                <AccordionContent className="text-muted-foreground leading-relaxed">
-                  Once you approve a spec, you can generate an AES-encrypted link with an optional expiry. Share it with your team or stakeholders — they can view the spec without needing an account, and the link self-destructs after expiration.
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="pricing" className="border-white/[0.06]">
-                <AccordionTrigger className="text-left text-base">What&apos;s included in the free tier?</AccordionTrigger>
-                <AccordionContent className="text-muted-foreground leading-relaxed">
-                  Free accounts get 5 AI spec generations per day with full confidence scoring and encrypted sharing. The Pro plan unlocks unlimited daily generations, priority processing, and upcoming integrations like Slack sync. No credit card required to start.
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="data" className="border-white/[0.06]">
-                <AccordionTrigger className="text-left text-base">Is my data safe?</AccordionTrigger>
-                <AccordionContent className="text-muted-foreground leading-relaxed">
-                  Your briefs and specs are stored securely with row-level security policies. Shared links use client-side AES-GCM encryption — we never store the decryption key. Your product ideas stay yours.
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
+            <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-1 backdrop-blur-xl" style={{ boxShadow: "0 0 40px hsl(226 70% 55.5% / 0.03)" }}>
+              <Accordion type="single" collapsible className="w-full">
+                <AccordionItem value="what-is" className="border-white/[0.06] px-5">
+                  <AccordionTrigger className="text-left text-base">What exactly does SpecMirror generate?</AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground leading-relaxed">
+                    You write a plain-English project brief — goals, audience, key features. SpecMirror&apos;s AI mirrors it back as a structured technical spec covering architecture, auth strategy, data models, API surface, and infrastructure — ready for your engineering team to build from.
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="who-for" className="border-white/[0.06] px-5">
+                  <AccordionTrigger className="text-left text-base">Who is this built for?</AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground leading-relaxed">
+                    Product managers, founders, and technical leads who need to translate product thinking into engineering-ready specs without spending hours writing boilerplate. If you&apos;ve ever lost context between &ldquo;what we want&rdquo; and &ldquo;how to build it,&rdquo; SpecMirror closes that gap.
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="accuracy" className="border-white/[0.06] px-5">
+                  <AccordionTrigger className="text-left text-base">How accurate are the generated specs?</AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground leading-relaxed">
+                    Every spec includes a confidence score so you know where the AI is certain and where it needs your input. You review, edit, and approve before anything ships — SpecMirror is a starting point, not an autopilot.
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="sharing" className="border-white/[0.06] px-5">
+                  <AccordionTrigger className="text-left text-base">How does encrypted sharing work?</AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground leading-relaxed">
+                    Once you approve a spec, you can generate an AES-encrypted link with an optional expiry. Share it with your team or stakeholders — they can view the spec without needing an account, and the link self-destructs after expiration.
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="pricing" className="border-white/[0.06] px-5">
+                  <AccordionTrigger className="text-left text-base">What&apos;s included in the free tier?</AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground leading-relaxed">
+                    Free accounts get 5 AI spec generations per day with full confidence scoring and encrypted sharing. The Pro plan unlocks unlimited daily generations, priority processing, and upcoming integrations like Slack sync. No credit card required to start.
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="data" className="border-white/[0.06] px-5">
+                  <AccordionTrigger className="text-left text-base">Is my data safe?</AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground leading-relaxed">
+                    Your briefs and specs are stored securely with row-level security policies. Shared links use client-side AES-GCM encryption — we never store the decryption key. Your product ideas stay yours.
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </div>
           </FadeSection>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-white/[0.06] py-12">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 px-6 md:flex-row">
+      {/* Footer — Immersive */}
+      <footer className="relative py-12 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-t from-primary/[0.04] via-background to-transparent" />
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-40 w-[600px] rounded-full bg-primary/[0.03] blur-3xl" />
+
+        <div className="relative z-10 mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 px-6 md:flex-row">
           <div className="flex items-center gap-2.5">
-            <Search className="h-5 w-5 text-primary" />
+            <Search className="h-5 w-5 text-primary" style={{ filter: "drop-shadow(0 0 6px hsl(226 70% 55.5% / 0.4))" }} />
             <span className="text-lg font-semibold">SpecMirror</span>
           </div>
           <div className="flex gap-8 text-sm text-muted-foreground">
             <a href="https://github.com/engineeredbyangelo/SpecMirror---Official-Build" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">GitHub</a>
             <a href="/roadmap" className="hover:text-foreground transition-colors">Roadmap</a>
           </div>
-          <p className="text-xs text-muted-foreground/50">
+          <p className="font-mono text-[10px] text-muted-foreground/50 uppercase tracking-[0.15em]">
             © 2026 SpecMirror. Made with love for builders who ship.
           </p>
         </div>
@@ -738,50 +950,50 @@ const MirrorDemo = () => {
   const [confidence, setConfidence] = useState(0);
 
   const briefLines = [
-    "I want to build a fitness tracking app for personal trainers and their clients.",
-    "Trainers should be able to create workout plans, assign them to clients, and track progress over time.",
-    "Clients need a mobile-friendly view where they can log exercises, upload progress photos, and message their trainer.",
-    "It should handle payments too — trainers charge monthly subscriptions through the app.",
-    "I'd like push notifications when a new plan is assigned or when a client completes a workout.",
+    "I want to build an AI assistant platform for small business owners who aren't technical.",
+    "Users describe what they need in plain English and the app creates AI agents that handle tasks for them.",
+    "Things like sorting emails, drafting replies, scheduling social posts, summarizing documents.",
+    "It needs a simple dashboard where they can see what their agents are doing and approve actions before they run.",
+    "Should have a free tier with basic agents and a paid plan that unlocks custom workflows and integrations.",
   ];
 
   const specSections = [
     { heading: "Executive Summary", lines: [
-      "A client-facing fitness platform enabling personal trainers to manage workout programming, client progress tracking, and recurring billing. Core value: replaces scattered spreadsheets and payment links with a single cohesive experience.",
+      "A no-code AI agent platform enabling non-technical users to automate repetitive business tasks through natural language. Core value: replaces manual busywork with supervised AI agents that users can trust and control.",
     ]},
     { heading: "Architecture Overview", lines: [
-      "React Native (Expo) mobile client + Next.js admin dashboard",
-      "Supabase (Postgres + Auth + Realtime + Storage)",
-      "Stripe Connect for trainer payouts with platform fee",
-      "Expo Push Notifications via Firebase Cloud Messaging",
+      "Next.js web app with responsive mobile-first UI",
+      "Supabase (Postgres + Auth + Edge Functions + Realtime)",
+      "OpenAI GPT-4o for agent reasoning + tool execution",
+      "Stripe billing with free tier gating + usage metering",
     ]},
     { heading: "Data Model", lines: [
-      "trainers → profiles (1:1), trainers → clients (1:many)",
-      "workout_plans: id, trainer_id, title, blocks jsonb",
-      "sessions: id, client_id, plan_id, completed_at, notes",
-      "progress_photos: id, client_id, storage_path, created_at",
+      "users → agents (1:many), agents → tasks (1:many)",
+      "agents: id, user_id, name, instructions text, tools jsonb",
+      "tasks: id, agent_id, status, input, output, approved_at",
+      "integrations: id, user_id, provider, credentials_encrypted",
     ]},
     { heading: "API Design", lines: [
-      "POST /api/plans → create workout plan (trainer auth)",
-      "GET /api/clients/:id/sessions → client progress history",
-      "POST /api/billing/subscribe → Stripe checkout session",
+      "POST /api/agents → create agent from natural language prompt",
+      "GET /api/agents/:id/tasks → task history with status filters",
+      "POST /api/tasks/:id/approve → human-in-the-loop confirmation",
     ]},
     { heading: "Auth & Authorization", lines: [
       "Supabase Auth with email + Google OAuth",
       "JWT with 15-min access / 7-day refresh rotation",
-      "RLS policies: trainers see own clients, clients see own data",
+      "RLS policies: users see only own agents, tasks, and integrations",
     ]},
     { heading: "Effort Estimate", lines: [
-      "Phase 1: Auth + data model → 3 days (1 engineer)",
-      "Phase 2: Workout builder + client UI → 5 days",
-      "Phase 3: Payments + notifications → 4 days",
-      "Total: ~12 days (2 engineers)",
+      "Phase 1: Auth + agent builder + dashboard → 4 days",
+      "Phase 2: Task execution engine + approvals → 5 days",
+      "Phase 3: Integrations + billing + usage limits → 4 days",
+      "Total: ~13 days (2 engineers)",
     ]},
     { heading: "Acceptance Criteria", lines: [
-      "✓ Trainer creates plan and assigns to client in <30s",
-      "✓ Client logs exercise with auto-saved reps/weight",
-      "✓ Stripe subscription creates with platform fee split",
-      "✓ Push notification fires within 5s of plan assignment",
+      "✓ User creates working agent from plain English in <60s",
+      "✓ Agent executes task only after user approval",
+      "✓ Free tier limits to 3 agents and 50 tasks/month",
+      "✓ Dashboard shows real-time agent activity feed",
     ]},
   ];
 
@@ -839,7 +1051,7 @@ const MirrorDemo = () => {
           <div className="h-3 w-3 rounded-full bg-white/[0.08]" />
         </div>
         <div className="mx-auto flex h-7 w-72 items-center justify-center rounded-md bg-white/[0.04] text-[11px] text-muted-foreground/50">
-          specmirror.app/project/fitness-tracker
+          specmirror.app/project/ai-agent-platform
         </div>
       </div>
 

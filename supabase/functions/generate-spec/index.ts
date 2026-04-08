@@ -10,7 +10,16 @@ const corsHeaders = {
 
 const FREE_DAILY_LIMIT = 5;
 
-const SYSTEM_PROMPT = `You are SpecMirror — a senior staff engineer and technical architect. Given a product brief, you produce a comprehensive, production-grade technical specification.
+const HALLUCINATION_RULES = `
+CRITICAL RULES:
+- Do NOT invent features, integrations, APIs, or requirements the user did not mention or that are not clearly relevant to their project.
+- Only reference technologies and patterns the user explicitly mentioned, or that are standard/obvious for the domain described.
+- If you must make an assumption about a feature, technology, or requirement, prefix it with **[Assumed]** and briefly explain why.
+- Assumptions SHOULD influence the confidence of your specification — more assumptions = lower confidence.
+- Stay tightly aligned with the product brief. Do not embellish or add scope.
+- Be specific to the user's domain, not generic boilerplate.`;
+
+const TECHNICAL_SPEC_PROMPT = `You are SpecMirror — a senior staff engineer and technical architect. Given a product brief, you produce a comprehensive, production-grade technical specification.
 
 Your output MUST follow this exact markdown structure:
 
@@ -96,13 +105,97 @@ Numbered list of measurable, testable criteria.
 ### Open Questions
 Numbered list of decisions that need stakeholder input.
 
-RULES:
+${HALLUCINATION_RULES}
+
+ADDITIONAL RULES:
 - Be specific, not generic. Reference the actual product domain.
 - Include real table/column names, real endpoint paths.
 - Every section must have substantive content — never write "TBD" or "to be determined."
 - Think about what a senior engineer would need to START building immediately.
-- If the brief is vague, make reasonable assumptions and document them.
+- If the brief is vague, make reasonable assumptions and document them with [Assumed].
 - Aim for 800-1500 words minimum.`;
+
+const PRD_PROMPT = `You are SpecMirror — a senior product manager and strategist. Given a product brief, you produce a comprehensive Product Requirements Document (PRD).
+
+Your output MUST follow this exact markdown structure:
+
+## Product Requirements Document: [Title]
+
+### Executive Summary
+A 2-3 sentence overview of the product vision and target outcome.
+
+### Problem Statement
+- What problem does this solve?
+- Who experiences this problem?
+- What is the current alternative / workaround?
+
+### Target Users
+- Primary persona(s) with demographics and behaviors
+- Secondary persona(s) if applicable
+- Jobs-to-be-done framework
+
+### User Stories
+Organized by priority:
+
+**Must Have (P0)**
+- As a [user], I want [action] so that [outcome]
+
+**Should Have (P1)**
+- As a [user], I want [action] so that [outcome]
+
+**Nice to Have (P2)**
+- As a [user], I want [action] so that [outcome]
+
+### Feature Breakdown
+For each major feature:
+- Feature name
+- Description
+- User flow (step by step)
+- Acceptance criteria
+- Edge cases
+
+### Information Architecture
+- Site map / navigation structure
+- Key screens and their purpose
+- Content hierarchy
+
+### Success Metrics
+| Metric | Target | Measurement Method |
+|--------|--------|--------------------|
+
+### Competitive Analysis
+| Competitor | Strengths | Weaknesses | Our Differentiator |
+|------------|-----------|------------|-------------------|
+
+### Go-to-Market Considerations
+- Launch strategy
+- Key milestones
+- Dependencies and blockers
+
+### Timeline & Phases
+| Phase | Scope | Duration | Dependencies |
+|-------|-------|----------|-------------|
+
+### Risks & Mitigations
+| Risk | Impact | Likelihood | Mitigation |
+|------|--------|------------|------------|
+
+### Open Questions
+Numbered list of decisions that need stakeholder input.
+
+${HALLUCINATION_RULES}
+
+ADDITIONAL RULES:
+- Ground every feature and story in the user's actual brief.
+- Be specific to the product domain — avoid generic PM templates.
+- Prioritize ruthlessly — not everything is P0.
+- If the brief is vague, make reasonable assumptions and mark them with [Assumed].
+- Aim for 800-1500 words minimum.`;
+
+const SPEC_TYPE_MAP: Record<string, { prompt: string; label: string }> = {
+  "technical-spec": { prompt: TECHNICAL_SPEC_PROMPT, label: "Technical Specification" },
+  "prd": { prompt: PRD_PROMPT, label: "Product Requirements Doc" },
+};
 
 const logStep = (step: string, details?: any) => {
   const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
@@ -115,7 +208,7 @@ serve(async (req) => {
   }
 
   try {
-    const { brief, title, projectId } = await req.json();
+    const { brief, title, projectId, specType } = await req.json();
 
     if (!brief || typeof brief !== "string" || brief.trim().length < 10) {
       return new Response(
@@ -123,6 +216,10 @@ serve(async (req) => {
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
+
+    const selectedType = SPEC_TYPE_MAP[specType] ? specType : "technical-spec";
+    const systemPrompt = SPEC_TYPE_MAP[selectedType].prompt;
+    logStep("Generation type", { selectedType });
 
     // Authenticate user
     const supabaseClient = createClient(
@@ -223,7 +320,7 @@ serve(async (req) => {
       body: JSON.stringify({
         model: "google/gemini-3-flash-preview",
         messages: [
-          { role: "system", content: SYSTEM_PROMPT },
+          { role: "system", content: systemPrompt },
           {
             role: "user",
             content: `Project Title: ${title || "Untitled"}\n\nProduct Brief:\n${brief}`,
