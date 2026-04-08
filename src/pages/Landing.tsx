@@ -504,12 +504,17 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Why Not ChatGPT — Competitive Differentiation */}
-      <section className="border-y border-white/[0.06] py-20 md:py-28">
-        <div className="mx-auto max-w-5xl px-6">
+      {/* Why Not ChatGPT — Competitive Differentiation (Immersive) */}
+      <section className="relative py-20 md:py-28 overflow-hidden">
+        {/* Deep gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.03] via-background to-primary/[0.04]" />
+        <div className="absolute top-1/3 right-1/4 h-80 w-80 rounded-full bg-accent/[0.04] blur-3xl" />
+        <div className="absolute bottom-1/3 left-1/4 h-80 w-80 rounded-full bg-primary/[0.04] blur-3xl" />
+
+        <div className="relative z-10 mx-auto max-w-5xl px-6">
           <FadeSection>
             <div className="mb-14 text-center">
-              <p className="mb-4 text-sm font-medium uppercase tracking-widest text-primary">Built different</p>
+              <p className="mb-4 font-mono text-[11px] font-medium uppercase tracking-[0.2em] text-primary">Built different</p>
               <h2 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl">
                 Not another{" "}
                 <span className="bg-gradient-to-r from-accent to-accent/70 bg-clip-text text-transparent">chatbot.</span>
@@ -520,14 +525,14 @@ const Landing = () => {
             </div>
           </FadeSection>
 
-          {/* Comparison table */}
-          <div className="mb-16 overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-xl">
+          {/* Comparison table — glassmorphic */}
+          <div className="mb-16 overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-xl" style={{ boxShadow: "0 0 60px hsl(226 70% 55.5% / 0.04), 0 0 30px hsl(160 84% 39% / 0.02)" }}>
             {/* Desktop: 3-column table */}
             <div className="hidden md:block">
               <div className="grid grid-cols-[1fr,1fr,1fr] border-b border-white/[0.06]">
-                <div className="p-5 text-xs font-medium uppercase tracking-widest text-muted-foreground/60">Capability</div>
-                <div className="p-5 text-xs font-medium uppercase tracking-widest text-muted-foreground/60 border-l border-white/[0.06]">Generic AI</div>
-                <div className="p-5 text-xs font-medium uppercase tracking-widest text-primary border-l border-white/[0.06]">SpecMirror</div>
+                <div className="p-5 font-mono text-[10px] font-medium uppercase tracking-[0.2em] text-muted-foreground/60">Capability</div>
+                <div className="p-5 font-mono text-[10px] font-medium uppercase tracking-[0.2em] text-muted-foreground/60 border-l border-white/[0.06]">Generic AI</div>
+                <div className="p-5 font-mono text-[10px] font-medium uppercase tracking-[0.2em] text-primary border-l border-white/[0.06]">SpecMirror</div>
               </div>
               {[
                 { capability: "Output format", generic: "Freeform chat, copy-paste", spec: "Structured production spec" },
@@ -540,11 +545,11 @@ const Landing = () => {
                   <div className={`grid grid-cols-[1fr,1fr,1fr] ${i < 4 ? "border-b border-white/[0.06]" : ""}`}>
                     <div className="p-5 text-sm font-medium text-foreground/80">{row.capability}</div>
                     <div className="p-5 flex items-start gap-2.5 border-l border-white/[0.06]">
-                      <X className="h-4 w-4 shrink-0 mt-0.5 text-red-400/50" />
+                      <X className="h-4 w-4 shrink-0 mt-0.5 text-destructive/50" />
                       <span className="text-sm text-muted-foreground/60">{row.generic}</span>
                     </div>
                     <div className="p-5 flex items-start gap-2.5 border-l border-white/[0.06] bg-accent/[0.03]">
-                      <Check className="h-4 w-4 shrink-0 mt-0.5 text-accent drop-shadow-[0_0_6px_hsl(160_84%_39%/0.4)]" />
+                      <Check className="h-4 w-4 shrink-0 mt-0.5 text-accent" style={{ filter: "drop-shadow(0 0 6px hsl(160 84% 39% / 0.4))" }} />
                       <span className="text-sm text-foreground/90">{row.spec}</span>
                     </div>
                   </div>
@@ -563,18 +568,18 @@ const Landing = () => {
               ].map((row, i) => (
                 <FadeSection key={row.capability} delay={i * 0.07}>
                   <div className="p-4 space-y-3">
-                    <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground/60">{row.capability}</p>
+                    <p className="font-mono text-[10px] font-medium uppercase tracking-[0.2em] text-muted-foreground/60">{row.capability}</p>
                     <div className="flex items-start gap-2">
-                      <X className="h-4 w-4 shrink-0 mt-0.5 text-red-400/50" />
+                      <X className="h-4 w-4 shrink-0 mt-0.5 text-destructive/50" />
                       <div>
-                        <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground/40">Generic AI</span>
+                        <span className="font-mono text-[9px] font-medium uppercase tracking-wider text-muted-foreground/40">Generic AI</span>
                         <p className="text-sm text-muted-foreground/60">{row.generic}</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-2 rounded-lg bg-accent/[0.05] p-2.5 -mx-1">
-                      <Check className="h-4 w-4 shrink-0 mt-0.5 text-accent drop-shadow-[0_0_6px_hsl(160_84%_39%/0.4)]" />
+                      <Check className="h-4 w-4 shrink-0 mt-0.5 text-accent" style={{ filter: "drop-shadow(0 0 6px hsl(160 84% 39% / 0.4))" }} />
                       <div>
-                        <span className="text-[11px] font-medium uppercase tracking-wider text-primary">SpecMirror</span>
+                        <span className="font-mono text-[9px] font-medium uppercase tracking-wider text-primary">SpecMirror</span>
                         <p className="text-sm text-foreground/90">{row.spec}</p>
                       </div>
                     </div>
@@ -584,10 +589,10 @@ const Landing = () => {
             </div>
           </div>
 
-          {/* Training depth visual */}
+          {/* Training depth visual — floating pills */}
           <FadeSection>
             <div className="text-center mb-8">
-              <p className="text-sm font-medium uppercase tracking-widest text-primary mb-2">Training depth</p>
+              <p className="font-mono text-[11px] font-medium uppercase tracking-[0.2em] text-primary mb-2">Training depth</p>
               <p className="text-muted-foreground text-sm">Purpose-built on real engineering knowledge</p>
             </div>
           </FadeSection>
@@ -597,7 +602,7 @@ const Landing = () => {
               "Database Schemas", "CI/CD Pipelines", "System Design Docs", "Architecture Patterns",
             ].map((label, i) => (
               <FadeSection key={label} delay={0.05 * i}>
-                <div className="rounded-full border border-white/[0.08] bg-white/[0.03] px-4 py-2 text-sm text-foreground/70 backdrop-blur-sm transition-colors hover:border-primary/30 hover:text-foreground/90">
+                <div className="rounded-full border border-white/[0.08] bg-white/[0.03] px-4 py-2 font-mono text-xs text-foreground/70 backdrop-blur-sm transition-all duration-300 hover:border-primary/30 hover:text-foreground/90 hover:bg-white/[0.05]" style={{ boxShadow: "0 0 20px hsl(226 70% 55.5% / 0.03)" }}>
                   {label}
                 </div>
               </FadeSection>
@@ -606,19 +611,34 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Preview — Animated Mirror Demo */}
-      <section id="preview" className="border-y border-white/[0.06] py-20 md:py-28">
-        <div className="mx-auto max-w-6xl px-6">
+      {/* Preview — Animated Mirror Demo (Immersive) */}
+      <section id="preview" className="relative py-20 md:py-28 overflow-hidden">
+        {/* Deep gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.03] via-background to-accent/[0.03]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[500px] w-[500px] rounded-full bg-primary/[0.03] blur-3xl" />
+
+        <div className="relative z-10 mx-auto max-w-6xl px-6">
           <FadeSection>
             <SectionHeader
               label="Live preview"
               title="See SpecMirror"
               highlight="in action"
-              description="Dark mode. Instant generation. Zero friction."
+              description="Watch your brief transform into a production-ready spec — streamed in real time with live confidence scoring."
             />
           </FadeSection>
           <FadeSection delay={0.15}>
-            <MirrorDemo />
+            <div className="relative rounded-2xl border border-white/[0.06] bg-white/[0.02] p-1 backdrop-blur-xl" style={{ boxShadow: "0 0 80px hsl(226 70% 55.5% / 0.05), 0 0 40px hsl(160 84% 39% / 0.03)" }}>
+              {/* Top bar accent */}
+              <div className="flex items-center gap-2 px-4 py-2.5 border-b border-white/[0.06]">
+                <div className="h-2.5 w-2.5 rounded-full bg-destructive/40" />
+                <div className="h-2.5 w-2.5 rounded-full bg-primary/30" />
+                <div className="h-2.5 w-2.5 rounded-full bg-accent/30" />
+                <span className="ml-3 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground/40">specmirror.app</span>
+              </div>
+              <div className="p-1">
+                <MirrorDemo />
+              </div>
+            </div>
           </FadeSection>
         </div>
       </section>
