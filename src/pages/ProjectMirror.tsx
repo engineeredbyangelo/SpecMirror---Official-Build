@@ -120,7 +120,7 @@ const ProjectMirror = () => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${accessToken}`,
           },
-          body: JSON.stringify({ brief, title, projectId: id }),
+          body: JSON.stringify({ brief, title, projectId: id, specType }),
         }
       );
 
@@ -213,7 +213,9 @@ const ProjectMirror = () => {
     <div className="flex h-full flex-col">
       {!isMobile && (
         <div className="border-b border-border/50 px-4 py-2">
-          <span className="text-xs font-medium uppercase tracking-wider text-primary">Technical Mirror</span>
+          <span className="text-xs font-medium uppercase tracking-wider text-primary">
+            {SPEC_TYPES.find(t => t.value === specType)?.label || "Technical Mirror"}
+          </span>
         </div>
       )}
       {isGenerating ? (
@@ -296,6 +298,16 @@ const ProjectMirror = () => {
             {copiedSpec ? "Copied" : "Copy"}
           </Button>
           <ShareDialog projectId={id!} specContent={spec} />
+          <Select value={specType} onValueChange={setSpecType}>
+            <SelectTrigger className="h-8 w-[160px] sm:w-[200px] text-xs sm:text-sm">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {SPEC_TYPES.map(t => (
+                <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <Button size="sm" variant="outline" className="gap-1.5 text-xs sm:text-sm" onClick={handleGenerate} disabled={isGenerating}>
             <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
             {isGenerating ? "Generating…" : isMobile ? "Generate" : "Generate Mirror"}
