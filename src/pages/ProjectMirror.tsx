@@ -1,6 +1,7 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, ArrowLeft, Sparkles, Check, Loader2, CheckCircle2, ArrowRight, Link2, Copy } from "lucide-react";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,6 +9,11 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import ShareDialog from "@/components/ShareDialog";
+
+const SPEC_TYPES = [
+  { value: "technical-spec", label: "Technical Specification" },
+  { value: "prd", label: "Product Requirements Doc" },
+] as const;
 
 const ProjectMirror = () => {
   const { id } = useParams();
@@ -27,6 +33,7 @@ const ProjectMirror = () => {
   const [approving, setApproving] = useState(false);
   const [activeTab, setActiveTab] = useState<"brief" | "mirror">("brief");
   const [copiedSpec, setCopiedSpec] = useState(false);
+  const [specType, setSpecType] = useState<string>("technical-spec");
 
   const saveTimerRef = useRef<ReturnType<typeof setTimeout>>();
 
@@ -113,7 +120,7 @@ const ProjectMirror = () => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${accessToken}`,
           },
-          body: JSON.stringify({ brief, title, projectId: id }),
+          body: JSON.stringify({ brief, title, projectId: id, specType }),
         }
       );
 
@@ -206,7 +213,9 @@ const ProjectMirror = () => {
     <div className="flex h-full flex-col">
       {!isMobile && (
         <div className="border-b border-border/50 px-4 py-2">
-          <span className="text-xs font-medium uppercase tracking-wider text-primary">Technical Mirror</span>
+          <span className="text-xs font-medium uppercase tracking-wider text-primary">
+            {SPEC_TYPES.find(t => t.value === specType)?.label || "Technical Mirror"}
+          </span>
         </div>
       )}
       {isGenerating ? (
@@ -289,6 +298,16 @@ const ProjectMirror = () => {
             {copiedSpec ? "Copied" : "Copy"}
           </Button>
           <ShareDialog projectId={id!} specContent={spec} />
+          <Select value={specType} onValueChange={setSpecType}>
+            <SelectTrigger className="h-8 w-[160px] sm:w-[200px] text-xs sm:text-sm">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {SPEC_TYPES.map(t => (
+                <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <Button size="sm" variant="outline" className="gap-1.5 text-xs sm:text-sm" onClick={handleGenerate} disabled={isGenerating}>
             <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
             {isGenerating ? "Generating…" : isMobile ? "Generate" : "Generate Mirror"}
