@@ -1,7 +1,7 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
-import { Search, ArrowLeft, Sparkles, Check, Loader2, CheckCircle2, ArrowRight, Link2 } from "lucide-react";
+import { Search, ArrowLeft, Sparkles, Check, Loader2, CheckCircle2, ArrowRight, Link2, Copy } from "lucide-react";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -26,6 +26,7 @@ const ProjectMirror = () => {
   const [approved, setApproved] = useState(false);
   const [approving, setApproving] = useState(false);
   const [activeTab, setActiveTab] = useState<"brief" | "mirror">("brief");
+  const [copiedSpec, setCopiedSpec] = useState(false);
 
   const saveTimerRef = useRef<ReturnType<typeof setTimeout>>();
 
@@ -272,6 +273,21 @@ const ProjectMirror = () => {
             </svg>
             <span className="text-xs text-muted-foreground">{confidence ? `${confidence}%` : "—"}</span>
           </div>
+          <Button
+            size="sm"
+            variant="outline"
+            className="gap-1.5 text-xs sm:text-sm"
+            disabled={!spec}
+            onClick={async () => {
+              await navigator.clipboard.writeText(spec);
+              setCopiedSpec(true);
+              toast({ title: "Copied to clipboard" });
+              setTimeout(() => setCopiedSpec(false), 2000);
+            }}
+          >
+            {copiedSpec ? <Check className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> : <Copy className="h-3 w-3 sm:h-3.5 sm:w-3.5" />}
+            {copiedSpec ? "Copied" : "Copy"}
+          </Button>
           <ShareDialog projectId={id!} specContent={spec} />
           <Button size="sm" variant="outline" className="gap-1.5 text-xs sm:text-sm" onClick={handleGenerate} disabled={isGenerating}>
             <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
