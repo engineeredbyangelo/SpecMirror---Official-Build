@@ -802,67 +802,75 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* FAQ */}
-      <section id="faq" className="border-t border-white/[0.06] py-20 md:py-28">
-        <div className="mx-auto max-w-2xl px-6">
+      {/* FAQ — Immersive */}
+      <section id="faq" className="relative py-20 md:py-28 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.02] via-background to-primary/[0.03]" />
+        <div className="absolute top-1/3 right-1/4 h-64 w-64 rounded-full bg-accent/[0.03] blur-3xl" />
+
+        <div className="relative z-10 mx-auto max-w-2xl px-6">
           <FadeSection>
             <SectionHeader label="FAQ" title="Frequently asked" highlight="questions" />
           </FadeSection>
           <FadeSection delay={0.1}>
-            <Accordion type="single" collapsible className="w-full">
-              <AccordionItem value="what-is" className="border-white/[0.06]">
-                <AccordionTrigger className="text-left text-base">What exactly does SpecMirror generate?</AccordionTrigger>
-                <AccordionContent className="text-muted-foreground leading-relaxed">
-                  You write a plain-English project brief — goals, audience, key features. SpecMirror&apos;s AI mirrors it back as a structured technical spec covering architecture, auth strategy, data models, API surface, and infrastructure — ready for your engineering team to build from.
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="who-for" className="border-white/[0.06]">
-                <AccordionTrigger className="text-left text-base">Who is this built for?</AccordionTrigger>
-                <AccordionContent className="text-muted-foreground leading-relaxed">
-                  Product managers, founders, and technical leads who need to translate product thinking into engineering-ready specs without spending hours writing boilerplate. If you&apos;ve ever lost context between &ldquo;what we want&rdquo; and &ldquo;how to build it,&rdquo; SpecMirror closes that gap.
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="accuracy" className="border-white/[0.06]">
-                <AccordionTrigger className="text-left text-base">How accurate are the generated specs?</AccordionTrigger>
-                <AccordionContent className="text-muted-foreground leading-relaxed">
-                  Every spec includes a confidence score so you know where the AI is certain and where it needs your input. You review, edit, and approve before anything ships — SpecMirror is a starting point, not an autopilot.
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="sharing" className="border-white/[0.06]">
-                <AccordionTrigger className="text-left text-base">How does encrypted sharing work?</AccordionTrigger>
-                <AccordionContent className="text-muted-foreground leading-relaxed">
-                  Once you approve a spec, you can generate an AES-encrypted link with an optional expiry. Share it with your team or stakeholders — they can view the spec without needing an account, and the link self-destructs after expiration.
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="pricing" className="border-white/[0.06]">
-                <AccordionTrigger className="text-left text-base">What&apos;s included in the free tier?</AccordionTrigger>
-                <AccordionContent className="text-muted-foreground leading-relaxed">
-                  Free accounts get 5 AI spec generations per day with full confidence scoring and encrypted sharing. The Pro plan unlocks unlimited daily generations, priority processing, and upcoming integrations like Slack sync. No credit card required to start.
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="data" className="border-white/[0.06]">
-                <AccordionTrigger className="text-left text-base">Is my data safe?</AccordionTrigger>
-                <AccordionContent className="text-muted-foreground leading-relaxed">
-                  Your briefs and specs are stored securely with row-level security policies. Shared links use client-side AES-GCM encryption — we never store the decryption key. Your product ideas stay yours.
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
+            <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-1 backdrop-blur-xl" style={{ boxShadow: "0 0 40px hsl(226 70% 55.5% / 0.03)" }}>
+              <Accordion type="single" collapsible className="w-full">
+                <AccordionItem value="what-is" className="border-white/[0.06] px-5">
+                  <AccordionTrigger className="text-left text-base">What exactly does SpecMirror generate?</AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground leading-relaxed">
+                    You write a plain-English project brief — goals, audience, key features. SpecMirror&apos;s AI mirrors it back as a structured technical spec covering architecture, auth strategy, data models, API surface, and infrastructure — ready for your engineering team to build from.
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="who-for" className="border-white/[0.06] px-5">
+                  <AccordionTrigger className="text-left text-base">Who is this built for?</AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground leading-relaxed">
+                    Product managers, founders, and technical leads who need to translate product thinking into engineering-ready specs without spending hours writing boilerplate. If you&apos;ve ever lost context between &ldquo;what we want&rdquo; and &ldquo;how to build it,&rdquo; SpecMirror closes that gap.
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="accuracy" className="border-white/[0.06] px-5">
+                  <AccordionTrigger className="text-left text-base">How accurate are the generated specs?</AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground leading-relaxed">
+                    Every spec includes a confidence score so you know where the AI is certain and where it needs your input. You review, edit, and approve before anything ships — SpecMirror is a starting point, not an autopilot.
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="sharing" className="border-white/[0.06] px-5">
+                  <AccordionTrigger className="text-left text-base">How does encrypted sharing work?</AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground leading-relaxed">
+                    Once you approve a spec, you can generate an AES-encrypted link with an optional expiry. Share it with your team or stakeholders — they can view the spec without needing an account, and the link self-destructs after expiration.
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="pricing" className="border-white/[0.06] px-5">
+                  <AccordionTrigger className="text-left text-base">What&apos;s included in the free tier?</AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground leading-relaxed">
+                    Free accounts get 5 AI spec generations per day with full confidence scoring and encrypted sharing. The Pro plan unlocks unlimited daily generations, priority processing, and upcoming integrations like Slack sync. No credit card required to start.
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="data" className="border-white/[0.06] px-5">
+                  <AccordionTrigger className="text-left text-base">Is my data safe?</AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground leading-relaxed">
+                    Your briefs and specs are stored securely with row-level security policies. Shared links use client-side AES-GCM encryption — we never store the decryption key. Your product ideas stay yours.
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </div>
           </FadeSection>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-white/[0.06] py-12">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 px-6 md:flex-row">
+      {/* Footer — Immersive */}
+      <footer className="relative py-12 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-t from-primary/[0.04] via-background to-transparent" />
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-40 w-[600px] rounded-full bg-primary/[0.03] blur-3xl" />
+
+        <div className="relative z-10 mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 px-6 md:flex-row">
           <div className="flex items-center gap-2.5">
-            <Search className="h-5 w-5 text-primary" />
+            <Search className="h-5 w-5 text-primary" style={{ filter: "drop-shadow(0 0 6px hsl(226 70% 55.5% / 0.4))" }} />
             <span className="text-lg font-semibold">SpecMirror</span>
           </div>
           <div className="flex gap-8 text-sm text-muted-foreground">
             <a href="https://github.com/engineeredbyangelo/SpecMirror---Official-Build" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">GitHub</a>
             <a href="/roadmap" className="hover:text-foreground transition-colors">Roadmap</a>
           </div>
-          <p className="text-xs text-muted-foreground/50">
+          <p className="font-mono text-[10px] text-muted-foreground/50 uppercase tracking-[0.15em]">
             © 2026 SpecMirror. Made with love for builders who ship.
           </p>
         </div>
