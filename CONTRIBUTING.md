@@ -273,6 +273,26 @@ Include:
 
 ---
 
+## Tech Stack Reference
+
+A quick reference for contributors:
+
+| Layer | Technology | Notes |
+|-------|------------|-------|
+| **Framework** | React 18 + TypeScript 5 | Strict mode, functional components only |
+| **Build** | Vite 5 | HMR, fast builds |
+| **Styling** | Tailwind CSS v3 | Semantic design tokens, dark mode only |
+| **UI Primitives** | shadcn/ui | Do not edit `src/components/ui/` directly |
+| **Animations** | Framer Motion | Used for page transitions and micro-interactions |
+| **Backend** | Lovable Cloud | Edge functions (Deno), auth, Postgres database, storage |
+| **AI** | SpecAI via Lovable AI Gateway | Spec and PRD generation with confidence scoring |
+| **Encryption** | AES-256-GCM | Web Crypto API, client-side only — keys never leave the browser |
+| **Testing** | Vitest (unit) + Playwright (e2e) | `npm test` / `npx playwright test` |
+| **Linting** | ESLint | `npm run lint` |
+| **Deployment** | Lovable Cloud | Auto-deployed on push |
+
+---
+
 ## Questions?
 
 Open a [Discussion](https://github.com/your-org/specmirror/discussions) or reach out to the maintainers. We're happy to help you find the right place to contribute.

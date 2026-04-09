@@ -1,83 +1,97 @@
 # SpecMirror
 
-**Turn product briefs into production-grade technical specifications — instantly.**
+**Turn rough product ideas into production-ready specs and PRDs in seconds.**
 
 ---
 
-## Philosophy
+## What Is SpecMirror?
 
-Great engineering starts before a single line of code is written.
+SpecMirror is an AI-powered platform that transforms plain-language product briefs into comprehensive technical specifications and product requirement documents (PRDs). Whether you're a founder sketching out a new feature or an engineering lead scoping a complex system, SpecMirror bridges the gap between *what you want to build* and *how to build it*.
 
-The gap between "what we want to build" and "how we're going to build it" is where projects fail. Vague briefs become ambiguous tickets. Ambiguous tickets become misaligned implementations. Misaligned implementations become rewrites, missed deadlines, and burned-out teams.
+Choose your output — a **Technical Specification** for engineering teams or a **PRD** for product-driven workflows — and get a production-grade document in seconds.
 
-**SpecMirror exists to close that gap.**
+## Why SpecMirror?
 
-We believe that a well-written technical specification is the highest-leverage artifact in software development. It aligns engineers, designers, and product managers on *what* is being built, *why* it matters, and *how* it will work — before anyone opens an IDE.
+The gap between product intent and engineering execution is where projects fail. Vague briefs become ambiguous tickets. Ambiguous tickets become misaligned implementations. Misaligned implementations become rewrites and missed deadlines.
 
-## The Problem
+**SpecMirror closes that gap with AI that understands architecture.**
 
-Product teams move fast. Engineers need clarity. These two realities are often in tension:
+Our engine, **SpecAI**, is trained on thousands of real-world technical documents — API designs, system architectures, database schemas, and deployment strategies. It doesn't just reformat your brief. It produces structured, opinionated, implementation-ready documentation with:
 
-- **Product managers** think in user stories, market opportunities, and business outcomes.
-- **Engineers** think in data models, API contracts, system boundaries, and edge cases.
+- **Data models** — real table names, column types, constraints, and relationships
+- **API design** — endpoints, request/response shapes, auth requirements
+- **Architecture decisions** — state management, caching, service boundaries
+- **Security considerations** — auth flows, input validation, encryption, PII handling
+- **Testing strategies** — coverage targets, test types, critical paths
+- **Effort estimates** — broken down by phase with honest timelines
+- **Confidence scores** — so you know how much of the spec is inferred vs. explicit
 
-The translation between these two worlds is manual, inconsistent, and slow. A product brief lands in a Slack channel. An engineer spends hours asking clarifying questions. A spec gets half-written in a Google Doc. Context is lost. Assumptions go undocumented. The team ships something that *almost* matches the original intent.
+## PRD vs. Technical Specification
 
-## The Solution
+| | PRD | Technical Specification |
+|---|---|---|
+| **Audience** | Product managers, stakeholders, designers | Engineers, architects, tech leads |
+| **Focus** | *What* to build and *why* | *How* to build it |
+| **Contains** | User stories, success metrics, requirements | Data models, API contracts, system design |
+| **Best for** | Aligning teams on vision and scope | Starting implementation immediately |
 
-SpecMirror takes a product brief — written in plain language — and mirrors it back as a comprehensive technical specification that a senior engineer could start building from immediately.
-
-Not a summary. Not a reformatting. A **complete architectural blueprint** covering:
-
-- **Data models** with real table names, column types, and constraints
-- **API design** with endpoints, request/response shapes, and auth requirements
-- **State management** strategies for client and server
-- **Error handling** for every edge case we can identify
-- **Security considerations** that go beyond checkbox compliance
-- **Testing strategies** with concrete coverage targets
-- **Effort estimates** broken down by phase, not hand-waved
+Not sure which one you need? Start with a PRD for stakeholder alignment, then generate a Technical Spec from the same brief when you're ready to build.
 
 ## Who This Is For
 
-### Engineering Leads & Staff Engineers
-You're tired of translating ambiguous product requests into technical plans. SpecMirror gives you a structured starting point that captures the architectural decisions you'd make anyway — so you can focus on refining, not generating from scratch.
-
-### Product Managers
-You want engineers to understand your vision without a 90-minute meeting. SpecMirror translates your brief into the language your engineering team speaks, surfacing open questions and assumptions you hadn't considered.
-
-### Startup Founders
-You're building fast with a small team. Every hour spent on alignment is an hour not spent shipping. SpecMirror compresses days of back-and-forth into minutes, giving your team a shared source of truth from day one.
-
-### Agencies & Consultancies
-You scope projects for clients who don't always know what they're asking for. SpecMirror generates professional, detailed specs that set clear expectations and reduce scope creep before a contract is signed.
-
-## Principles
-
-### 1. Specificity Over Generality
-Generic specs are useless. SpecMirror produces specifications with real table names, real endpoint paths, and real architectural decisions — not placeholder text that someone "will fill in later."
-
-### 2. Assumptions Are Features, Not Bugs
-When a brief is vague, SpecMirror makes reasonable assumptions and **documents them explicitly**. Every assumption becomes a conversation starter, not a hidden landmine.
-
-### 3. Security Is Not an Afterthought
-Every spec includes security considerations — input validation, authentication flows, data encryption, PII handling — because retrofitting security is always more expensive than designing for it.
-
-### 4. Effort Honesty
-SpecMirror provides realistic effort estimates broken down by phase. No sandbagging, no optimistic fantasies. Teams deserve to plan with accurate information.
-
-### 5. Share Freely, Share Securely
-Specs are meant to be shared. SpecMirror supports encrypted, expiring share links so teams can distribute specs across Slack, email, and other channels without compromising sensitive architectural details.
+- **Engineering Leads** — Stop translating ambiguous requests into technical plans. Get a structured starting point in seconds.
+- **Product Managers** — Communicate your vision in engineering-ready language without a 90-minute meeting.
+- **Startup Founders** — Ship faster by compressing days of alignment into minutes.
+- **Agencies & Consultancies** — Scope projects with professional, detailed specs that reduce scope creep before contracts are signed.
 
 ## How It Works
 
-1. **Write a brief** — Describe what you want to build in plain language. A few sentences or a few paragraphs. No format required.
-2. **Generate a spec** — SpecMirror's AI engine produces a comprehensive technical specification following a battle-tested structure.
-3. **Review & approve** — Read through the spec, refine if needed, and approve when it meets your standards.
-4. **Share with your team** — Create encrypted links and distribute across your engineering and product channels.
+1. **Write your brief** — Describe what you want to build in plain language. No format required.
+2. **Choose your output** — Select Technical Specification or PRD based on your needs.
+3. **SpecAI generates your document** — Our AI engine produces a comprehensive, structured document with a confidence score.
+4. **Review, approve, and share** — Refine the output, approve it, and share via encrypted links with your team.
 
-## The Name
+## Principles
 
-A mirror reflects what's in front of it — clearly, accurately, without distortion. SpecMirror reflects the *intent* behind a product brief as a precise technical specification. What you put in is what you get back — just translated into the language that gets things built.
+- **Specificity over generality** — Real table names, real endpoints, real decisions. No placeholder text.
+- **Assumptions are documented** — When your brief is vague, SpecMirror makes reasonable assumptions and calls them out explicitly.
+- **Security is built in** — Every spec includes security considerations from day one.
+- **Honest effort estimates** — No sandbagging, no optimistic fantasies.
+- **Share securely** — Encrypted, expiring share links keep your architecture details safe.
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| **Framework** | React 18 + TypeScript 5 |
+| **Build Tool** | Vite 5 |
+| **Styling** | Tailwind CSS v3 + shadcn/ui |
+| **Animations** | Framer Motion |
+| **Backend** | Lovable Cloud (edge functions, auth, database, storage) |
+| **AI Engine** | SpecAI via Lovable AI Gateway |
+| **Encryption** | AES-256-GCM (Web Crypto API, client-side) |
+| **Testing** | Vitest + Playwright |
+| **Deployment** | Lovable Cloud |
+
+## Getting Started
+
+```bash
+# Clone the repo
+git clone https://github.com/your-org/specmirror.git
+cd specmirror
+
+# Install dependencies
+npm install
+
+# Start the dev server
+npm run dev
+```
+
+The app runs at `http://localhost:5173`. See [CONTRIBUTING.md](./CONTRIBUTING.md) for development guidelines, project structure, and code style.
+
+## License
+
+MIT
 
 ---
 
