@@ -67,8 +67,8 @@ Not sure which one you need? Start with a PRD for stakeholder alignment, then ge
 | **Build Tool** | Vite 5 |
 | **Styling** | Tailwind CSS v3 + shadcn/ui |
 | **Animations** | Framer Motion |
-| **Backend** | Lovable Cloud (edge functions, auth, database, storage) |
-| **AI Engine** | SpecAI via Lovable AI Gateway |
+| **Backend** | Supabase (edge functions, auth, database, storage) |
+| **AI Engine** | SpecAI via Gemini 3 pro |
 | **Encryption** | AES-256-GCM (Web Crypto API, client-side) |
 | **Testing** | Vitest + Playwright |
 | **Deployment** | Lovable Cloud |
