@@ -9,6 +9,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import ShareDialog from "@/components/ShareDialog";
+import VersionsPanel from "@/components/VersionsPanel";
 
 const SPEC_TYPES = [
   { value: "technical-spec", label: "Technical Specification" },
@@ -18,7 +19,8 @@ const SPEC_TYPES = [
 const ProjectMirror = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, subscriptionTier } = useAuth();
+  const tier = (subscriptionTier as "basic" | "pro" | null) ?? "free";
   const { toast } = useToast();
   const isMobile = useIsMobile();
 
@@ -307,6 +309,18 @@ const ProjectMirror = () => {
             {copiedSpec ? "Copied" : "Copy"}
           </Button>
           <ShareDialog projectId={id!} specContent={spec} />
+          <VersionsPanel
+            projectId={id!}
+            tier={tier}
+            onRestore={(v) => {
+              setTitle(v.title);
+              setBrief(v.brief);
+              setSpec(v.spec);
+              setConfidence(v.confidence);
+              setApproved(false);
+              saveToDb({ title: v.title, brief: v.brief, spec: v.spec, confidence: v.confidence });
+            }}
+          />
           {!isMobile && (
             <Select value={specType} onValueChange={setSpecType}>
               <SelectTrigger className="h-8 w-[200px] text-sm">
