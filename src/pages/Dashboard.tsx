@@ -3,7 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Search, Plus, FileText, Loader2, Trash2, Share2,
-  CheckCircle2, Link2, Hash, ArrowRight, Lock, Sparkles
+  CheckCircle2, Link2, Hash, ArrowRight, Lock, Sparkles,
+  MoreHorizontal, Download, Send
 } from "lucide-react";
 import { useAuth, STRIPE_TIERS } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,6 +12,12 @@ import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import ShareDialog from "@/components/ShareDialog";
 import OnboardingDialog from "@/components/OnboardingDialog";
+import SlackPostDialog from "@/components/SlackPostDialog";
+import NotionExportDialog from "@/components/NotionExportDialog";
+import { exportSpecToPdf } from "@/lib/exportPdf";
+import {
+  DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 
 interface Project {
   id: string;
@@ -31,6 +38,9 @@ const Dashboard = () => {
   const [usage, setUsage] = useState<number>(0);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [upgrading, setUpgrading] = useState<"basic" | "pro" | null>(null);
+  const [slackProject, setSlackProject] = useState<{ id: string; title: string } | null>(null);
+  const [notionProject, setNotionProject] = useState<{ id: string; title: string } | null>(null);
+  const [exportingPdfId, setExportingPdfId] = useState<string | null>(null);
 
   const tier = (subscriptionTier ?? "free") as "free" | "basic" | "pro";
   const tierConfig = STRIPE_TIERS[tier];
@@ -126,6 +136,45 @@ const Dashboard = () => {
       .eq("id", projectId)
       .single();
     setShareProject({ id: projectId, spec: data?.spec || "" });
+  };
+
+  const handleExportPdf = async (e: React.MouseEvent, projectId: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (tier !== "pro") { startCheckout("pro"); return; }
+    setExportingPdfId(projectId);
+    const { data, error } = await supabase
+      .from("projects")
+      .select("title, brief, spec, confidence, updated_at")
+      .eq("id", projectId)
+      .single();
+    setExportingPdfId(null);
+    if (error || !data) {
+      toast({ variant: "destructive", title: "Couldn't load project" });
+      return;
+    }
+    exportSpecToPdf({
+      title: data.title,
+      brief: data.brief || "",
+      spec: data.spec || "",
+      confidence: data.confidence || 0,
+      updatedAt: data.updated_at,
+    });
+    toast({ title: "PDF exported" });
+  };
+
+  const handleNotionExport = (e: React.MouseEvent, projectId: string, title: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (tier !== "pro") { startCheckout("pro"); return; }
+    setNotionProject({ id: projectId, title });
+  };
+
+  const handleSlackPost = (e: React.MouseEvent, projectId: string, title: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!slackUnlocked) { startCheckout("basic"); return; }
+    setSlackProject({ id: projectId, title });
   };
 
   const timeAgo = (dateStr: string) => {
@@ -275,9 +324,9 @@ const Dashboard = () => {
                     </p>
                   </div>
                   {slackUnlocked ? (
-                    <Button size="sm" variant="outline" className="h-7 text-xs gap-1.5" onClick={() => toast({ title: "Slack setup", description: "Slack workspace setup will open shortly." })}>
-                      Connect
-                    </Button>
+                    <span className="inline-flex items-center gap-1 rounded-full border border-accent/30 bg-accent/10 px-2 py-0.5 text-[10px] font-medium text-accent">
+                      <CheckCircle2 className="h-2.5 w-2.5" /> Connected
+                    </span>
                   ) : (
                     <button
                       onClick={() => startCheckout("basic")}
@@ -303,9 +352,9 @@ const Dashboard = () => {
                     </p>
                   </div>
                   {tier === "pro" ? (
-                    <Button size="sm" variant="outline" className="h-7 text-xs gap-1.5" onClick={() => toast({ title: "Custom export", description: "PDF/Notion export will open shortly." })}>
-                      <Sparkles className="h-3 w-3" /> Use
-                    </Button>
+                    <span className="inline-flex items-center gap-1 rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
+                      <Sparkles className="h-2.5 w-2.5" /> Pro
+                    </span>
                   ) : (
                     <button
                       onClick={() => startCheckout("pro")}
@@ -362,6 +411,42 @@ const Dashboard = () => {
                         >
                           <Share2 className="h-3 w-3" />
                         </Button>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                              onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
+                            >
+                              {exportingPdfId === project.id
+                                ? <Loader2 className="h-3 w-3 animate-spin" />
+                                : <MoreHorizontal className="h-3 w-3" />}
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="w-52">
+                            <DropdownMenuItem onClick={(e) => handleExportPdf(e as any, project.id)}>
+                              <Download className="h-3.5 w-3.5" />
+                              <span className="flex-1">Export PDF</span>
+                              {tier !== "pro" && <Lock className="h-3 w-3 text-muted-foreground" />}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={(e) => handleNotionExport(e as any, project.id, project.title)}>
+                              <Sparkles className="h-3.5 w-3.5" />
+                              <span className="flex-1">Export to Notion</span>
+                              {tier !== "pro" && <Lock className="h-3 w-3 text-muted-foreground" />}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={(e) => handleSlackPost(e as any, project.id, project.title)}>
+                              <Send className="h-3.5 w-3.5" />
+                              <span className="flex-1">Post to Slack</span>
+                              {!slackUnlocked && <Lock className="h-3 w-3 text-muted-foreground" />}
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onClick={(e) => handleShare(e as any, project.id)}>
+                              <Share2 className="h-3.5 w-3.5" />
+                              <span className="flex-1">Share encrypted link</span>
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                         <Button
                           size="icon"
                           variant="ghost"
@@ -425,6 +510,24 @@ const Dashboard = () => {
       )}
 
       <OnboardingDialog open={showOnboarding} onClose={() => setShowOnboarding(false)} />
+
+      {slackProject && (
+        <SlackPostDialog
+          projectId={slackProject.id}
+          projectTitle={slackProject.title}
+          open={!!slackProject}
+          onOpenChange={(o) => !o && setSlackProject(null)}
+        />
+      )}
+
+      {notionProject && (
+        <NotionExportDialog
+          projectId={notionProject.id}
+          projectTitle={notionProject.title}
+          open={!!notionProject}
+          onOpenChange={(o) => !o && setNotionProject(null)}
+        />
+      )}
     </div>
   );
 };
