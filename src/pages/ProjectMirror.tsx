@@ -341,6 +341,22 @@ const ProjectMirror = () => {
                 return;
               }
               setApproved(true);
+              // Snapshot a version on approve (best-effort, non-blocking)
+              if (user && id) {
+                const { count } = await supabase
+                  .from("project_versions" as any)
+                  .select("*", { count: "exact", head: true })
+                  .eq("project_id", id);
+                await supabase.from("project_versions" as any).insert({
+                  project_id: id,
+                  user_id: user.id,
+                  title,
+                  brief,
+                  spec,
+                  confidence,
+                  version_number: (count ?? 0) + 1,
+                });
+              }
               toast({ title: "Spec approved", description: "Your spec brief has been approved." });
             }}
           >

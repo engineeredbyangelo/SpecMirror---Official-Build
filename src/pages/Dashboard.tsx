@@ -3,13 +3,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Search, Plus, FileText, Loader2, Trash2, Share2,
-  CheckCircle2, Link2, Hash, ArrowRight
+  CheckCircle2, Link2, Hash, ArrowRight, Lock, Sparkles
 } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth, STRIPE_TIERS } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import ShareDialog from "@/components/ShareDialog";
+import OnboardingDialog from "@/components/OnboardingDialog";
 
 interface Project {
   id: string;
@@ -20,13 +21,21 @@ interface Project {
 }
 
 const Dashboard = () => {
-  const { user, signOut } = useAuth();
+  const { user, signOut, subscriptionTier } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
   const [shareProject, setShareProject] = useState<{ id: string; spec: string } | null>(null);
+  const [usage, setUsage] = useState<number>(0);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  const tier = (subscriptionTier ?? "free") as "free" | "basic" | "pro";
+  const tierConfig = STRIPE_TIERS[tier];
+  const monthlyLimit = tierConfig.monthly_limit;
+  const tierLabel = tierConfig.name;
+  const slackUnlocked = tier === "basic" || tier === "pro";
 
   const fetchProjects = async () => {
     const { data } = await supabase
@@ -40,6 +49,29 @@ const Dashboard = () => {
   useEffect(() => {
     fetchProjects();
   }, []);
+
+  // Load monthly usage + onboarding flag
+  useEffect(() => {
+    if (!user) return;
+    (async () => {
+      const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+      const { count } = await supabase
+        .from("generation_logs")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", user.id)
+        .gte("created_at", monthStart.toISOString());
+      setUsage(count ?? 0);
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("onboarding_completed")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      if (profile && (profile as any).onboarding_completed === false) {
+        setShowOnboarding(true);
+      }
+    })();
+  }, [user]);
 
   const handleSignOut = async () => {
     await signOut();
