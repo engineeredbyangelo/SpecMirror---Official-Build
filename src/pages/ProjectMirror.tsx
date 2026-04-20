@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import ShareDialog from "@/components/ShareDialog";
 import VersionsPanel from "@/components/VersionsPanel";
+import { ToastAction } from "@/components/ui/toast";
 
 const SPEC_TYPES = [
   { value: "technical-spec", label: "Technical Specification" },
@@ -149,8 +150,8 @@ const ProjectMirror = () => {
             : "Generation failed",
           description: err.error || "Please try again.",
           action: upgradeTarget ? (
-            <button
-              className="rounded-md border border-border/40 bg-background/80 px-2.5 py-1 text-xs font-medium hover:bg-background"
+            <ToastAction
+              altText={`Upgrade to ${upgradeTarget === "basic" ? "Basic" : "Pro"}`}
               onClick={async () => {
                 const { data, error } = await supabase.functions.invoke("create-checkout", {
                   body: { priceId: STRIPE_TIERS[upgradeTarget].price_id },
@@ -163,7 +164,7 @@ const ProjectMirror = () => {
               }}
             >
               Upgrade to {upgradeTarget === "basic" ? "Basic" : "Pro"}
-            </button>
+            </ToastAction>
           ) : undefined,
         });
         setIsGenerating(false);
