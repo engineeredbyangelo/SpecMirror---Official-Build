@@ -19,8 +19,7 @@ const SPEC_TYPES = [
 const ProjectMirror = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const { subscriptionTier } = useAuth();
+  const { user, subscriptionTier } = useAuth();
   const tier = (subscriptionTier as "basic" | "pro" | null) ?? "free";
   const { toast } = useToast();
   const isMobile = useIsMobile();
