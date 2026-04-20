@@ -1,117 +1,44 @@
-## Pricing Tiers + Onboarding + Feature Gating
-
-Three-tier pricing (Free / Basic / Pro), wire Stripe checkout for both paid tiers, gate gated features by tier, and add a first-login onboarding walkthrough with example briefs.
-
-### 1. Stripe products & pricing
-
-Create two new Stripe products via the Stripe MCP:
-
-- **Basic** — $12/month (recurring) → produces a new `price_id` and `product_id`
-- **Pro** — keep existing $19/month (Pro stays as-is)
-
-Free tier requires no Stripe object.
-
-I'll ask you to confirm the Basic price before creating it.
-
-### 2. Tier configuration (single source of truth)
-
-Update `STRIPE_TIERS` in `src/contexts/AuthContext.tsx`:
-
-```
-free  → { limit: 6,  model: "google/gemini-3-flash-preview" }
-basic → { price_id, product_id, limit: 16, model: "google/gemini-2.5-pro" }
-pro   → { price_id, product_id, limit: 30, model: "openai/gpt-5" }
-```
-
-Limits are **monthly** (calendar month), not daily. `subscriptionTier` resolves to `"free" | "basic" | "pro"` based on the active Stripe `product_id`.
-
-### 3. Pricing section redesign (`src/pages/Landing.tsx`)
-
-Replace the 2-card grid with a 3-card grid keeping the existing dark/glass aesthetic:
 
 
-| &nbsp;                     | Free      | Basic                | Pro (Most Popular)     |
-| -------------------------- | --------- | -------------------- | ---------------------- |
-| Price                      | $0        | $12/mo               | $19/mo                 |
-| Generations                | 6 / month | 16 / month           | 30 / month             |
-| AI model                   | SpecAI    | SpecAI v2 (stronger) | SpecAI Pro (strongest) |
-| Encrypted sharing          | ✓         | ✓                    | ✓                      |
-| Version history            | ✓         | ✓                    | ✓                      |
-| Team collaboration         | —         | ✓                    | ✓                      |
-| Slack integration          | —         | ✓                    | ✓                      |
-| Priority support           | —         | ✓                    | ✓                      |
-| Custom export (PDF/Notion) | —         | —                    | ✓                      |
-| Premium templates library  | —         | —                    | ✓                      |
+## Post-auth redirect + Basic upgrade checkout wiring
 
+Two small fixes.
 
-Pro card keeps the "Most popular" glow badge. Each paid card calls `create-checkout` with its own `priceId`. Free card → `/signup`.
+### 1. Redirect to /dashboard after login/signup (incl. Google OAuth)
 
-### 4. Backend changes
+Currently after Google OAuth, `redirect_uri` is set to `window.location.origin` — which lands users on `/` (Landing). Fix in three places:
 
-`**supabase/functions/check-subscription/index.ts**` (also fixes the current build error)
+- **`src/pages/Login.tsx`** — change OAuth `redirect_uri` to `${window.location.origin}/dashboard`.
+- **`src/pages/Signup.tsx`** — same change for the Google button + ensure email/password signup navigates to `/dashboard` on success (not `/`).
+- **`src/contexts/AuthContext.tsx`** — no behavior change needed; the `useEffect` in `Login.tsx` already pushes to `/dashboard` when a session exists, so email/password login is already correct. The fix is purely OAuth + signup.
 
-- Replace `npm:@supabase/supabase-js@2.57.2` import with `https://esm.sh/@supabase/supabase-js@2.57.2` (matches other functions and resolves the deno error).
-- Map returned `product_id` to tier name; client already handles this.
+Result: every auth path (email login, email signup, Google login, Google signup) lands on `/dashboard`, where the `OnboardingDialog` then runs for first-time users.
 
-`**supabase/functions/generate-spec/index.ts**`
+### 2. Wire all "Upgrade to Basic" CTAs to Stripe checkout
 
-- Replace `FREE_DAILY_LIMIT = 5` with monthly limits per tier: `{free: 6, basic: 16, pro: 30}`.
-- Determine tier from active Stripe subscription's product_id.
-- Count generations from start of current calendar month (not day).
-- Pick AI model based on tier (`google/gemini-3-flash-preview`, `google/gemini-2.5-pro`, `openai/gpt-5`).
-- Return `{tier, used, limit}` in the rate-limit error so UI can prompt upgrade.
+Audit every place an upgrade prompt currently exists and ensure it calls `create-checkout` with the correct `priceId`:
 
-`**supabase/functions/create-checkout/index.ts**`
+- **`src/pages/Dashboard.tsx`** — Slack/Notion gating cards: replace any link/toast with a handler that invokes `create-checkout` using the **Basic** `priceId` from `STRIPE_TIERS.basic` in `AuthContext`. Open returned URL in a new tab.
+- **`src/pages/ProjectMirror.tsx`** — 429 upgrade toast: add a toast action button "Upgrade to Basic" → same `create-checkout` invoke. Pro users hitting the limit get an "Upgrade to Pro" action instead.
+- **`src/components/VersionsPanel.tsx`** — Free-tier lock screen: the existing "Upgrade" button should call `create-checkout` with the Basic `priceId` (currently a static CTA).
+- **`src/components/OnboardingDialog.tsx`** — if any upgrade hint exists, same treatment.
 
-- Already accepts arbitrary `priceId` — no changes needed. Confirm both Basic and Pro IDs flow through.
+### 3. Basic checkout page also offers Pro
 
-### 5. Feature gating in UI
+Stripe's hosted Checkout doesn't natively show "and here's a more expensive plan too" UI. The cleanest pattern: keep Stripe Checkout single-line-item (Basic), but **before** redirecting to Stripe, show a small confirmation step. Two options — I'll go with B unless you say otherwise:
 
-- `**Dashboard.tsx**`: Slack integration card — show "Connect" CTA for Basic/Pro, "Upgrade to Basic" lock for Free. Add a small tier badge near user email ("Free · 4/6 used this month") fed by a new `getUsage()` helper.
-- `**ProjectMirror.tsx**`: surface upgrade toast when `429` returns with `tier === "free"` or `"basic"`.
-- **Version history** (already implied via `updated_at`) — no change for Free, add a "Versions" panel stub for Basic/Pro on ProjectMirror (lightweight: list past saves from a new `project_versions` table, deferred unless you want it now — I'll just snapshot on each approve).
+- **A.** Inline mini-modal "You're upgrading to Basic ($12/mo). Want Pro instead ($24/mo, stronger AI + PDF/Notion export)?" with two buttons → routes to the matching `create-checkout` call.
+- **B.** (Chosen) Direct to Basic checkout immediately, but inject a small banner above every "Upgrade to Basic" CTA: *"Need more? See Pro →"* that scrolls to `/#pricing`. Less friction, keeps Stripe flow clean.
 
-### 6. Onboarding flow (first login after signup)
+If you'd rather have option A (the upsell modal), say so before I build.
 
-New file `src/components/OnboardingDialog.tsx` — full-screen modal walkthrough, 4 steps:
+### Files touched
 
-1. **Welcome** — "From idea to deploy-ready spec in seconds."
-2. **Pick a starting point** — 3 example cards + "Start blank":
-  - 📱 *Mobile fitness tracker app*
-  - 🧪 *AR-powered home interior previewer* (conceptual tech)
-  - 🛒 *Multi-vendor marketplace platform*
-  - ✍️ *Start with my own brief*
-3. **How it works** — 3 quick illustrated steps (Brief → Mirror → Approve & Share).
-4. **You're ready** — CTA "Create my first brief" → routes to `/project/:id` with the chosen example pre-filled.
+- `src/pages/Login.tsx` — OAuth redirect
+- `src/pages/Signup.tsx` — OAuth redirect + post-signup nav
+- `src/pages/Dashboard.tsx` — wire Slack/Notion upgrade buttons
+- `src/pages/ProjectMirror.tsx` — toast action for 429
+- `src/components/VersionsPanel.tsx` — wire Free lock CTA
+- `src/components/OnboardingDialog.tsx` — wire any upgrade hint
+- (No backend or migration changes.)
 
-**Trigger logic**: add `onboarding_completed boolean default false` column to `profiles`. After login, if `false`, show dialog. Completing step 4 sets it `true`.
-
-Picking an example creates a project with the example brief pre-populated; "Start blank" creates an empty project.
-
-### 7. Database migration
-
-```sql
-alter table public.profiles
-  add column onboarding_completed boolean not null default false;
-```
-
-(Optional — version history table; flag if you want it included now.)
-
-### 8. Files touched
-
-- `src/contexts/AuthContext.tsx` — tier config + tier resolution
-- `src/pages/Landing.tsx` — 3-tier pricing UI + checkout handlers
-- `src/pages/Dashboard.tsx` — usage badge, Slack gating, onboarding mount
-- `src/pages/ProjectMirror.tsx` — tier-aware upgrade messaging
-- `src/components/OnboardingDialog.tsx` — new
-- `src/lib/exampleBriefs.ts` — new (example brief content)
-- `supabase/functions/check-subscription/index.ts` — fix import + tier mapping
-- `supabase/functions/generate-spec/index.ts` — tier-based monthly limits + model selection
-- 1 migration (profiles column)
-- 1 Stripe product/price creation (Basic)
-
-### Confirm before I build
-
-1. **Basic price = $12/month** OK, or different? Pro Pricing $24
-2. **Pro extras** — confirmed: custom export (PDF/Notion) + premium templates library. Swap either? Just add the custom export (PDF/Notion) 
-3. **Version history table** — add a real `project_versions` snapshot table now, or defer? - Add now
