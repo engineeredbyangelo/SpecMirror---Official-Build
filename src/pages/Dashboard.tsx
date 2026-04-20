@@ -30,12 +30,27 @@ const Dashboard = () => {
   const [shareProject, setShareProject] = useState<{ id: string; spec: string } | null>(null);
   const [usage, setUsage] = useState<number>(0);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [upgrading, setUpgrading] = useState<"basic" | "pro" | null>(null);
 
   const tier = (subscriptionTier ?? "free") as "free" | "basic" | "pro";
   const tierConfig = STRIPE_TIERS[tier];
   const monthlyLimit = tierConfig.monthly_limit;
   const tierLabel = tierConfig.name;
   const slackUnlocked = tier === "basic" || tier === "pro";
+
+  const startCheckout = async (target: "basic" | "pro") => {
+    setUpgrading(target);
+    const priceId = STRIPE_TIERS[target].price_id;
+    const { data, error } = await supabase.functions.invoke("create-checkout", {
+      body: { priceId },
+    });
+    setUpgrading(null);
+    if (error || !data?.url) {
+      toast({ variant: "destructive", title: "Couldn't start checkout", description: error?.message });
+      return;
+    }
+    window.open(data.url, "_blank");
+  };
 
   const fetchProjects = async () => {
     const { data } = await supabase
