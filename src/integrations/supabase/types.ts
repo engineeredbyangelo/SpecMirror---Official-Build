@@ -49,6 +49,7 @@ export type Database = {
           created_at: string
           full_name: string | null
           id: string
+          onboarding_completed: boolean
           updated_at: string
           user_id: string
         }
@@ -57,6 +58,7 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id?: string
+          onboarding_completed?: boolean
           updated_at?: string
           user_id: string
         }
@@ -65,10 +67,55 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id?: string
+          onboarding_completed?: boolean
           updated_at?: string
           user_id?: string
         }
         Relationships: []
+      }
+      project_versions: {
+        Row: {
+          brief: string | null
+          confidence: number | null
+          created_at: string
+          id: string
+          project_id: string
+          spec: string | null
+          title: string
+          user_id: string
+          version_number: number
+        }
+        Insert: {
+          brief?: string | null
+          confidence?: number | null
+          created_at?: string
+          id?: string
+          project_id: string
+          spec?: string | null
+          title: string
+          user_id: string
+          version_number?: number
+        }
+        Update: {
+          brief?: string | null
+          confidence?: number | null
+          created_at?: string
+          id?: string
+          project_id?: string
+          spec?: string | null
+          title?: string
+          user_id?: string
+          version_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_versions_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       projects: {
         Row: {
