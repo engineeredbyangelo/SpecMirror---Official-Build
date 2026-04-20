@@ -3,7 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Search, Plus, FileText, Loader2, Trash2, Share2,
-  CheckCircle2, Link2, Hash, ArrowRight, Lock, Sparkles
+  CheckCircle2, Link2, Hash, ArrowRight, Lock, Sparkles,
+  MoreHorizontal, Download, Send
 } from "lucide-react";
 import { useAuth, STRIPE_TIERS } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,6 +12,12 @@ import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import ShareDialog from "@/components/ShareDialog";
 import OnboardingDialog from "@/components/OnboardingDialog";
+import SlackPostDialog from "@/components/SlackPostDialog";
+import NotionExportDialog from "@/components/NotionExportDialog";
+import { exportSpecToPdf } from "@/lib/exportPdf";
+import {
+  DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 
 interface Project {
   id: string;
@@ -31,6 +38,9 @@ const Dashboard = () => {
   const [usage, setUsage] = useState<number>(0);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [upgrading, setUpgrading] = useState<"basic" | "pro" | null>(null);
+  const [slackProject, setSlackProject] = useState<{ id: string; title: string } | null>(null);
+  const [notionProject, setNotionProject] = useState<{ id: string; title: string } | null>(null);
+  const [exportingPdfId, setExportingPdfId] = useState<string | null>(null);
 
   const tier = (subscriptionTier ?? "free") as "free" | "basic" | "pro";
   const tierConfig = STRIPE_TIERS[tier];
@@ -126,6 +136,45 @@ const Dashboard = () => {
       .eq("id", projectId)
       .single();
     setShareProject({ id: projectId, spec: data?.spec || "" });
+  };
+
+  const handleExportPdf = async (e: React.MouseEvent, projectId: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (tier !== "pro") { startCheckout("pro"); return; }
+    setExportingPdfId(projectId);
+    const { data, error } = await supabase
+      .from("projects")
+      .select("title, brief, spec, confidence, updated_at")
+      .eq("id", projectId)
+      .single();
+    setExportingPdfId(null);
+    if (error || !data) {
+      toast({ variant: "destructive", title: "Couldn't load project" });
+      return;
+    }
+    exportSpecToPdf({
+      title: data.title,
+      brief: data.brief || "",
+      spec: data.spec || "",
+      confidence: data.confidence || 0,
+      updatedAt: data.updated_at,
+    });
+    toast({ title: "PDF exported" });
+  };
+
+  const handleNotionExport = (e: React.MouseEvent, projectId: string, title: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (tier !== "pro") { startCheckout("pro"); return; }
+    setNotionProject({ id: projectId, title });
+  };
+
+  const handleSlackPost = (e: React.MouseEvent, projectId: string, title: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!slackUnlocked) { startCheckout("basic"); return; }
+    setSlackProject({ id: projectId, title });
   };
 
   const timeAgo = (dateStr: string) => {
