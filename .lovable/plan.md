@@ -1,60 +1,117 @@
+## Pricing Tiers + Onboarding + Feature Gating
+
+Three-tier pricing (Free / Basic / Pro), wire Stripe checkout for both paid tiers, gate gated features by tier, and add a first-login onboarding walkthrough with example briefs.
+
+### 1. Stripe products & pricing
+
+Create two new Stripe products via the Stripe MCP:
+
+- **Basic** — $12/month (recurring) → produces a new `price_id` and `product_id`
+- **Pro** — keep existing $19/month (Pro stays as-is)
+
+Free tier requires no Stripe object.
+
+I'll ask you to confirm the Basic price before creating it.
+
+### 2. Tier configuration (single source of truth)
+
+Update `STRIPE_TIERS` in `src/contexts/AuthContext.tsx`:
+
+```
+free  → { limit: 6,  model: "google/gemini-3-flash-preview" }
+basic → { price_id, product_id, limit: 16, model: "google/gemini-2.5-pro" }
+pro   → { price_id, product_id, limit: 30, model: "openai/gpt-5" }
+```
+
+Limits are **monthly** (calendar month), not daily. `subscriptionTier` resolves to `"free" | "basic" | "pro"` based on the active Stripe `product_id`.
+
+### 3. Pricing section redesign (`src/pages/Landing.tsx`)
+
+Replace the 2-card grid with a 3-card grid keeping the existing dark/glass aesthetic:
 
 
-## Redesign Features Section — Linear-Inspired Immersive Layout
+| &nbsp;                     | Free      | Basic                | Pro (Most Popular)     |
+| -------------------------- | --------- | -------------------- | ---------------------- |
+| Price                      | $0        | $12/mo               | $19/mo                 |
+| Generations                | 6 / month | 16 / month           | 30 / month             |
+| AI model                   | SpecAI    | SpecAI v2 (stronger) | SpecAI Pro (strongest) |
+| Encrypted sharing          | ✓         | ✓                    | ✓                      |
+| Version history            | ✓         | ✓                    | ✓                      |
+| Team collaboration         | —         | ✓                    | ✓                      |
+| Slack integration          | —         | ✓                    | ✓                      |
+| Priority support           | —         | ✓                    | ✓                      |
+| Custom export (PDF/Notion) | —         | —                    | ✓                      |
+| Premium templates library  | —         | —                    | ✓                      |
 
-### What Changes
 
-Replace the current bento grid features section (lines 308-442) with a premium, Linear-aesthetic immersive section built around three distinct zones.
+Pro card keeps the "Most popular" glow badge. Each paid card calls `create-checkout` with its own `priceId`. Free card → `/signup`.
 
-### Architecture
+### 4. Backend changes
 
-**File: `src/pages/Landing.tsx` (lines 308-442)**
+`**supabase/functions/check-subscription/index.ts**` (also fixes the current build error)
 
-The entire `<section id="features">` block gets replaced with a new composition:
+- Replace `npm:@supabase/supabase-js@2.57.2` import with `https://esm.sh/@supabase/supabase-js@2.57.2` (matches other functions and resolves the deno error).
+- Map returned `product_id` to tier name; client already handles this.
 
-#### Zone 1: Central Dashboard Hero
-- Large glass-morphic container (80%+ width) showing the **Live Mirror** dual-view interface
-- Deep gradient background (`bg-gradient-to-b from-primary/[0.04] via-background to-accent/[0.03]`) spanning the full section
-- The dashboard mock shows Brief (left) and Spec (right) panes with subtle animated skeleton lines
-- Confidence score badge floats in the top-right corner with a soft emerald glow ring
-- Monospaced labels (`font-mono text-[10px] uppercase tracking-widest`) for "Brief", "Spec", "Confidence"
+`**supabase/functions/generate-spec/index.ts**`
 
-#### Zone 2: Floating Feature Nodes
-- Two feature cards — "Instant AI Generation" and "Seamless Collaboration" — float beside the dashboard (left and right on desktop, stacked below on mobile)
-- Each card: `glass-card` styling with subtle `box-shadow: 0 0 40px hsl(226 70% 55.5% / 0.06)` glow
-- **Cyber-line connectors**: SVG `<line>` elements with gradient strokes (`from-primary/40 to-transparent`) connecting each floating card to the central dashboard. Use `position: absolute` SVG overlay. Hidden on mobile.
-- Cards have a subtle float animation: `@keyframes float { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-6px) } }` with 6s duration
+- Replace `FREE_DAILY_LIMIT = 5` with monthly limits per tier: `{free: 6, basic: 16, pro: 30}`.
+- Determine tier from active Stripe subscription's product_id.
+- Count generations from start of current calendar month (not day).
+- Pick AI model based on tier (`google/gemini-3-flash-preview`, `google/gemini-2.5-pro`, `openai/gpt-5`).
+- Return `{tier, used, limit}` in the rate-limit error so UI can prompt upgrade.
 
-#### Zone 3: PRD vs Tech Spec Toggle
-- Positioned directly below the dashboard as a contained module
-- Replace the two static side-by-side cards with an **interactive toggle** using `useState`
-- Toggle bar: two pill buttons — "Product Requirements" (indigo) and "Technical Spec" (emerald) — with animated active indicator sliding between them
-- Below the toggle, a single content panel cross-fades (framer-motion `AnimatePresence`) to show the relevant details:
-  - **PRD selected**: Icon + "Best for PMs and founders" + tag pills (User stories, Acceptance criteria, Priorities) + one-liner description
-  - **Tech Spec selected**: Icon + "Best for engineers" + tag pills (Architecture, API contracts, Data models) + one-liner description
-- The toggle container itself has a faint neon border glow matching the active selection color
+`**supabase/functions/create-checkout/index.ts**`
 
-### Visual Details
+- Already accepts arbitrary `priceId` — no changes needed. Confirm both Basic and Pro IDs flow through.
 
-- **Glassmorphism**: `backdrop-blur-xl bg-white/[0.02] border border-white/[0.06]` on all panels
-- **Neon glows**: Absolutely positioned blurred circles (`blur-3xl`) in primary and accent colors behind key elements
-- **Monospaced labels**: Add `font-mono` to all technical labels (Brief, Spec, PRD, Tech Spec, Confidence)
-- **Deep gradient bg**: Section gets its own gradient background, not relying on the global `glass-bg`
-- **Zero dead space**: The dashboard is tall and prominent; floating cards hug it closely; the toggle section sits flush beneath
+### 5. Feature gating in UI
 
-### New CSS (in `src/index.css`)
-- Add `@keyframes float` animation
-- Add `.cyber-line` utility for the SVG connector glow
+- `**Dashboard.tsx**`: Slack integration card — show "Connect" CTA for Basic/Pro, "Upgrade to Basic" lock for Free. Add a small tier badge near user email ("Free · 4/6 used this month") fed by a new `getUsage()` helper.
+- `**ProjectMirror.tsx**`: surface upgrade toast when `429` returns with `tier === "free"` or `"basic"`.
+- **Version history** (already implied via `updated_at`) — no change for Free, add a "Versions" panel stub for Basic/Pro on ProjectMirror (lightweight: list past saves from a new `project_versions` table, deferred unless you want it now — I'll just snapshot on each approve).
 
-### New Tailwind Config
-- Add `float` animation to `tailwind.config.ts`
+### 6. Onboarding flow (first login after signup)
 
-### Summary
+New file `src/components/OnboardingDialog.tsx` — full-screen modal walkthrough, 4 steps:
 
-| Change | File | What |
-|--------|------|------|
-| Replace features section | `Landing.tsx` lines 308-442 | New 3-zone layout with dashboard, floating cards, toggle |
-| Add float keyframe | `tailwind.config.ts` | `float: "float 6s ease-in-out infinite"` |
-| Add cyber-line + float CSS | `src/index.css` | SVG connector glow styles |
-| Add `useState` for toggle | `Landing.tsx` | `const [activeDocType, setActiveDocType] = useState<'prd' | 'spec'>('prd')` |
+1. **Welcome** — "From idea to deploy-ready spec in seconds."
+2. **Pick a starting point** — 3 example cards + "Start blank":
+  - 📱 *Mobile fitness tracker app*
+  - 🧪 *AR-powered home interior previewer* (conceptual tech)
+  - 🛒 *Multi-vendor marketplace platform*
+  - ✍️ *Start with my own brief*
+3. **How it works** — 3 quick illustrated steps (Brief → Mirror → Approve & Share).
+4. **You're ready** — CTA "Create my first brief" → routes to `/project/:id` with the chosen example pre-filled.
 
+**Trigger logic**: add `onboarding_completed boolean default false` column to `profiles`. After login, if `false`, show dialog. Completing step 4 sets it `true`.
+
+Picking an example creates a project with the example brief pre-populated; "Start blank" creates an empty project.
+
+### 7. Database migration
+
+```sql
+alter table public.profiles
+  add column onboarding_completed boolean not null default false;
+```
+
+(Optional — version history table; flag if you want it included now.)
+
+### 8. Files touched
+
+- `src/contexts/AuthContext.tsx` — tier config + tier resolution
+- `src/pages/Landing.tsx` — 3-tier pricing UI + checkout handlers
+- `src/pages/Dashboard.tsx` — usage badge, Slack gating, onboarding mount
+- `src/pages/ProjectMirror.tsx` — tier-aware upgrade messaging
+- `src/components/OnboardingDialog.tsx` — new
+- `src/lib/exampleBriefs.ts` — new (example brief content)
+- `supabase/functions/check-subscription/index.ts` — fix import + tier mapping
+- `supabase/functions/generate-spec/index.ts` — tier-based monthly limits + model selection
+- 1 migration (profiles column)
+- 1 Stripe product/price creation (Basic)
+
+### Confirm before I build
+
+1. **Basic price = $12/month** OK, or different? Pro Pricing $24
+2. **Pro extras** — confirmed: custom export (PDF/Notion) + premium templates library. Swap either? Just add the custom export (PDF/Notion) 
+3. **Version history table** — add a real `project_versions` snapshot table now, or defer? - Add now
