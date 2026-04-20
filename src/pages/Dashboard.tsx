@@ -30,12 +30,27 @@ const Dashboard = () => {
   const [shareProject, setShareProject] = useState<{ id: string; spec: string } | null>(null);
   const [usage, setUsage] = useState<number>(0);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [upgrading, setUpgrading] = useState<"basic" | "pro" | null>(null);
 
   const tier = (subscriptionTier ?? "free") as "free" | "basic" | "pro";
   const tierConfig = STRIPE_TIERS[tier];
   const monthlyLimit = tierConfig.monthly_limit;
   const tierLabel = tierConfig.name;
   const slackUnlocked = tier === "basic" || tier === "pro";
+
+  const startCheckout = async (target: "basic" | "pro") => {
+    setUpgrading(target);
+    const priceId = STRIPE_TIERS[target].price_id;
+    const { data, error } = await supabase.functions.invoke("create-checkout", {
+      body: { priceId },
+    });
+    setUpgrading(null);
+    if (error || !data?.url) {
+      toast({ variant: "destructive", title: "Couldn't start checkout", description: error?.message });
+      return;
+    }
+    window.open(data.url, "_blank");
+  };
 
   const fetchProjects = async () => {
     const { data } = await supabase
@@ -264,10 +279,14 @@ const Dashboard = () => {
                       Connect
                     </Button>
                   ) : (
-                    <a href="/#pricing" className="inline-flex items-center gap-1 rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary hover:bg-primary/15 transition-colors">
-                      <Lock className="h-2.5 w-2.5" />
+                    <button
+                      onClick={() => startCheckout("basic")}
+                      disabled={upgrading === "basic"}
+                      className="inline-flex items-center gap-1 rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary hover:bg-primary/15 transition-colors disabled:opacity-60"
+                    >
+                      {upgrading === "basic" ? <Loader2 className="h-2.5 w-2.5 animate-spin" /> : <Lock className="h-2.5 w-2.5" />}
                       Upgrade to Basic
-                    </a>
+                    </button>
                   )}
                 </div>
                 <div className="flex items-center gap-3 rounded-md border border-border/30 bg-background/50 px-4 py-3">
@@ -288,10 +307,14 @@ const Dashboard = () => {
                       <Sparkles className="h-3 w-3" /> Use
                     </Button>
                   ) : (
-                    <a href="/#pricing" className="inline-flex items-center gap-1 rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary hover:bg-primary/15 transition-colors">
-                      <Lock className="h-2.5 w-2.5" />
+                    <button
+                      onClick={() => startCheckout("pro")}
+                      disabled={upgrading === "pro"}
+                      className="inline-flex items-center gap-1 rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary hover:bg-primary/15 transition-colors disabled:opacity-60"
+                    >
+                      {upgrading === "pro" ? <Loader2 className="h-2.5 w-2.5 animate-spin" /> : <Lock className="h-2.5 w-2.5" />}
                       Upgrade to Pro
-                    </a>
+                    </button>
                   )}
                 </div>
               </CardContent>

@@ -148,7 +148,7 @@ const Signup = () => {
             disabled={isDisabled}
             onClick={async () => {
               await lovable.auth.signInWithOAuth("google", {
-                redirect_uri: window.location.origin,
+                redirect_uri: `${window.location.origin}/dashboard`,
               });
             }}
           >

@@ -4,9 +4,8 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetDescri
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { History, RotateCcw, Lock, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth, type TierName } from "@/contexts/AuthContext";
+import { useAuth, type TierName, STRIPE_TIERS } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import { Link } from "react-router-dom";
 
 interface VersionRow {
   id: string;
@@ -30,8 +29,22 @@ const VersionsPanel = ({ projectId, tier, onRestore }: VersionsPanelProps) => {
   const [loading, setLoading] = useState(false);
   const [versions, setVersions] = useState<VersionRow[]>([]);
   const [restoringId, setRestoringId] = useState<string | null>(null);
+  const [upgrading, setUpgrading] = useState(false);
 
   const isLocked = tier === "free";
+
+  const startBasicCheckout = async () => {
+    setUpgrading(true);
+    const { data, error } = await supabase.functions.invoke("create-checkout", {
+      body: { priceId: STRIPE_TIERS.basic.price_id },
+    });
+    setUpgrading(false);
+    if (error || !data?.url) {
+      toast({ variant: "destructive", title: "Couldn't start checkout", description: error?.message });
+      return;
+    }
+    window.open(data.url, "_blank");
+  };
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -82,9 +95,12 @@ const VersionsPanel = ({ projectId, tier, onRestore }: VersionsPanelProps) => {
                 Upgrade to Basic or Pro to restore past snapshots of your briefs and specs.
               </p>
             </div>
-            <Link to="/#pricing" onClick={() => setOpen(false)}>
-              <Button size="sm">Upgrade</Button>
-            </Link>
+            <Button size="sm" onClick={startBasicCheckout} disabled={upgrading}>
+              {upgrading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : "Upgrade to Basic"}
+            </Button>
+            <a href="/#pricing" onClick={() => setOpen(false)} className="text-[11px] text-muted-foreground hover:text-foreground">
+              Need more? See Pro →
+            </a>
           </div>
         ) : loading ? (
           <div className="flex flex-1 items-center justify-center">
