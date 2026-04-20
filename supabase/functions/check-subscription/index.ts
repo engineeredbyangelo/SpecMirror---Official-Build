@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
-import { createClient } from "npm:@supabase/supabase-js@2.57.2";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -51,13 +51,13 @@ serve(async (req) => {
     const customerId = customers.data[0].id;
     const subscriptions = await stripe.subscriptions.list({ customer: customerId, status: "active", limit: 1 });
     const hasActiveSub = subscriptions.data.length > 0;
-    let productId = null;
-    let subscriptionEnd = null;
+    let productId: string | null = null;
+    let subscriptionEnd: string | null = null;
 
     if (hasActiveSub) {
       const sub = subscriptions.data[0];
       subscriptionEnd = new Date(sub.current_period_end * 1000).toISOString();
-      productId = sub.items.data[0].price.product;
+      productId = sub.items.data[0].price.product as string;
       logStep("Active subscription found", { productId, subscriptionEnd });
     }
 

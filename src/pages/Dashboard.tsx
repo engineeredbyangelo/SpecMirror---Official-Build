@@ -3,13 +3,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Search, Plus, FileText, Loader2, Trash2, Share2,
-  CheckCircle2, Link2, Hash, ArrowRight
+  CheckCircle2, Link2, Hash, ArrowRight, Lock, Sparkles
 } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth, STRIPE_TIERS } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import ShareDialog from "@/components/ShareDialog";
+import OnboardingDialog from "@/components/OnboardingDialog";
 
 interface Project {
   id: string;
@@ -20,13 +21,21 @@ interface Project {
 }
 
 const Dashboard = () => {
-  const { user, signOut } = useAuth();
+  const { user, signOut, subscriptionTier } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
   const [shareProject, setShareProject] = useState<{ id: string; spec: string } | null>(null);
+  const [usage, setUsage] = useState<number>(0);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  const tier = (subscriptionTier ?? "free") as "free" | "basic" | "pro";
+  const tierConfig = STRIPE_TIERS[tier];
+  const monthlyLimit = tierConfig.monthly_limit;
+  const tierLabel = tierConfig.name;
+  const slackUnlocked = tier === "basic" || tier === "pro";
 
   const fetchProjects = async () => {
     const { data } = await supabase
@@ -40,6 +49,29 @@ const Dashboard = () => {
   useEffect(() => {
     fetchProjects();
   }, []);
+
+  // Load monthly usage + onboarding flag
+  useEffect(() => {
+    if (!user) return;
+    (async () => {
+      const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+      const { count } = await supabase
+        .from("generation_logs")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", user.id)
+        .gte("created_at", monthStart.toISOString());
+      setUsage(count ?? 0);
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("onboarding_completed")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      if (profile && (profile as any).onboarding_completed === false) {
+        setShowOnboarding(true);
+      }
+    })();
+  }, [user]);
 
   const handleSignOut = async () => {
     await signOut();
@@ -105,9 +137,16 @@ const Dashboard = () => {
             <span className="text-lg font-semibold">SpecMirror</span>
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-sm text-muted-foreground">
-              {user?.user_metadata?.full_name || user?.email}
-            </span>
+            <div className="flex items-center gap-3">
+              <span className="text-sm text-muted-foreground hidden sm:inline">
+                {user?.user_metadata?.full_name || user?.email}
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-border/50 bg-background/50 px-2.5 py-1 text-[10px] font-medium">
+                <span className={`h-1.5 w-1.5 rounded-full ${tier === "pro" ? "bg-primary" : tier === "basic" ? "bg-accent" : "bg-muted-foreground"}`} />
+                <span className="text-foreground">{tierLabel}</span>
+                <span className="text-muted-foreground">· {usage}/{monthlyLimit}</span>
+              </span>
+            </div>
             <Button variant="ghost" size="sm" onClick={handleSignOut}>
               Log out
             </Button>
@@ -220,9 +259,16 @@ const Dashboard = () => {
                       Share specs to channels
                     </p>
                   </div>
-                  <span className="rounded-full border border-border/50 px-2 py-0.5 text-[10px] text-muted-foreground">
-                    Coming soon
-                  </span>
+                  {slackUnlocked ? (
+                    <Button size="sm" variant="outline" className="h-7 text-xs gap-1.5" onClick={() => toast({ title: "Slack setup", description: "Slack workspace setup will open shortly." })}>
+                      Connect
+                    </Button>
+                  ) : (
+                    <a href="/#pricing" className="inline-flex items-center gap-1 rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary hover:bg-primary/15 transition-colors">
+                      <Lock className="h-2.5 w-2.5" />
+                      Upgrade to Basic
+                    </a>
+                  )}
                 </div>
                 <div className="flex items-center gap-3 rounded-md border border-border/30 bg-background/50 px-4 py-3">
                   <div className="flex h-8 w-8 items-center justify-center rounded-md bg-muted">
@@ -234,12 +280,19 @@ const Dashboard = () => {
                   <div className="flex-1">
                     <p className="text-sm font-medium">Notion</p>
                     <p className="text-xs text-muted-foreground">
-                      Export specs to pages
+                      Export specs to pages (PDF / Notion)
                     </p>
                   </div>
-                  <span className="rounded-full border border-border/50 px-2 py-0.5 text-[10px] text-muted-foreground">
-                    Coming soon
-                  </span>
+                  {tier === "pro" ? (
+                    <Button size="sm" variant="outline" className="h-7 text-xs gap-1.5" onClick={() => toast({ title: "Custom export", description: "PDF/Notion export will open shortly." })}>
+                      <Sparkles className="h-3 w-3" /> Use
+                    </Button>
+                  ) : (
+                    <a href="/#pricing" className="inline-flex items-center gap-1 rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary hover:bg-primary/15 transition-colors">
+                      <Lock className="h-2.5 w-2.5" />
+                      Upgrade to Pro
+                    </a>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -347,6 +400,8 @@ const Dashboard = () => {
           }}
         />
       )}
+
+      <OnboardingDialog open={showOnboarding} onClose={() => setShowOnboarding(false)} />
     </div>
   );
 };

@@ -127,9 +127,16 @@ const ProjectMirror = () => {
       if (!resp.ok) {
         const err = await resp.json().catch(() => ({ error: "Generation failed" }));
         const isRateLimited = err.rateLimited === true;
+        const tier = err.tier as "free" | "basic" | "pro" | undefined;
         toast({
           variant: "destructive",
-          title: isRateLimited ? "Daily limit reached" : "Generation failed",
+          title: isRateLimited
+            ? tier === "free"
+              ? "Free monthly limit reached"
+              : tier === "basic"
+              ? "Basic monthly limit reached"
+              : "Monthly limit reached"
+            : "Generation failed",
           description: err.error || "Please try again.",
         });
         setIsGenerating(false);
@@ -334,6 +341,22 @@ const ProjectMirror = () => {
                 return;
               }
               setApproved(true);
+              // Snapshot a version on approve (best-effort, non-blocking)
+              if (user && id) {
+                const { count } = await supabase
+                  .from("project_versions" as any)
+                  .select("*", { count: "exact", head: true })
+                  .eq("project_id", id);
+                await supabase.from("project_versions" as any).insert({
+                  project_id: id,
+                  user_id: user.id,
+                  title,
+                  brief,
+                  spec,
+                  confidence,
+                  version_number: (count ?? 0) + 1,
+                });
+              }
               toast({ title: "Spec approved", description: "Your spec brief has been approved." });
             }}
           >
