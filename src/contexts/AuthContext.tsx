@@ -2,10 +2,26 @@ import { createContext, useContext, useEffect, useState, useCallback, type React
 import { supabase } from "@/integrations/supabase/client";
 import type { User, Session } from "@supabase/supabase-js";
 
+export type TierName = "free" | "basic" | "pro";
+
 export const STRIPE_TIERS = {
+  free: {
+    name: "Free",
+    price_id: null,
+    product_id: null,
+    monthly_limit: 6,
+  },
+  basic: {
+    name: "Basic",
+    price_id: "price_1TONGeL7RIZffIVhQzocYq38",
+    product_id: "prod_UN7V4fhqmvvcHg",
+    monthly_limit: 16,
+  },
   pro: {
-    price_id: "price_1TGOnTL7RIZffIVhpcaS9k92",
-    product_id: "prod_UEsYmbepT5T0iz",
+    name: "Pro",
+    price_id: "price_1TONI5L7RIZffIVhOJwwa2Wx",
+    product_id: "prod_UN7XkwywSGR7f6",
+    monthly_limit: 30,
   },
 } as const;
 
@@ -49,6 +65,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       // Map product_id to tier name
       if (data?.product_id === STRIPE_TIERS.pro.product_id) {
         setSubscriptionTier("pro");
+      } else if (data?.product_id === STRIPE_TIERS.basic.product_id) {
+        setSubscriptionTier("basic");
       } else {
         setSubscriptionTier(null);
       }
