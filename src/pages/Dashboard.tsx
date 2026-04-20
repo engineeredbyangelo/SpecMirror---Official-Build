@@ -324,9 +324,9 @@ const Dashboard = () => {
                     </p>
                   </div>
                   {slackUnlocked ? (
-                    <Button size="sm" variant="outline" className="h-7 text-xs gap-1.5" onClick={() => toast({ title: "Slack setup", description: "Slack workspace setup will open shortly." })}>
-                      Connect
-                    </Button>
+                    <span className="inline-flex items-center gap-1 rounded-full border border-accent/30 bg-accent/10 px-2 py-0.5 text-[10px] font-medium text-accent">
+                      <CheckCircle2 className="h-2.5 w-2.5" /> Connected
+                    </span>
                   ) : (
                     <button
                       onClick={() => startCheckout("basic")}
@@ -352,9 +352,9 @@ const Dashboard = () => {
                     </p>
                   </div>
                   {tier === "pro" ? (
-                    <Button size="sm" variant="outline" className="h-7 text-xs gap-1.5" onClick={() => toast({ title: "Custom export", description: "PDF/Notion export will open shortly." })}>
-                      <Sparkles className="h-3 w-3" /> Use
-                    </Button>
+                    <span className="inline-flex items-center gap-1 rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
+                      <Sparkles className="h-2.5 w-2.5" /> Pro
+                    </span>
                   ) : (
                     <button
                       onClick={() => startCheckout("pro")}
@@ -411,6 +411,42 @@ const Dashboard = () => {
                         >
                           <Share2 className="h-3 w-3" />
                         </Button>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                              onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
+                            >
+                              {exportingPdfId === project.id
+                                ? <Loader2 className="h-3 w-3 animate-spin" />
+                                : <MoreHorizontal className="h-3 w-3" />}
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="w-52">
+                            <DropdownMenuItem onClick={(e) => handleExportPdf(e as any, project.id)}>
+                              <Download className="h-3.5 w-3.5" />
+                              <span className="flex-1">Export PDF</span>
+                              {tier !== "pro" && <Lock className="h-3 w-3 text-muted-foreground" />}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={(e) => handleNotionExport(e as any, project.id, project.title)}>
+                              <Sparkles className="h-3.5 w-3.5" />
+                              <span className="flex-1">Export to Notion</span>
+                              {tier !== "pro" && <Lock className="h-3 w-3 text-muted-foreground" />}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={(e) => handleSlackPost(e as any, project.id, project.title)}>
+                              <Send className="h-3.5 w-3.5" />
+                              <span className="flex-1">Post to Slack</span>
+                              {!slackUnlocked && <Lock className="h-3 w-3 text-muted-foreground" />}
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onClick={(e) => handleShare(e as any, project.id)}>
+                              <Share2 className="h-3.5 w-3.5" />
+                              <span className="flex-1">Share encrypted link</span>
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                         <Button
                           size="icon"
                           variant="ghost"
@@ -474,6 +510,24 @@ const Dashboard = () => {
       )}
 
       <OnboardingDialog open={showOnboarding} onClose={() => setShowOnboarding(false)} />
+
+      {slackProject && (
+        <SlackPostDialog
+          projectId={slackProject.id}
+          projectTitle={slackProject.title}
+          open={!!slackProject}
+          onOpenChange={(o) => !o && setSlackProject(null)}
+        />
+      )}
+
+      {notionProject && (
+        <NotionExportDialog
+          projectId={notionProject.id}
+          projectTitle={notionProject.title}
+          open={!!notionProject}
+          onOpenChange={(o) => !o && setNotionProject(null)}
+        />
+      )}
     </div>
   );
 };
