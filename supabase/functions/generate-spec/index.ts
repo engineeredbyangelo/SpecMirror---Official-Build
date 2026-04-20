@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "npm:@supabase/supabase-js@2.57.2";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 
 const corsHeaders = {
@@ -8,7 +8,12 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const FREE_DAILY_LIMIT = 5;
+const TIERS = {
+  free:  { limit: 6,  model: "google/gemini-3-flash-preview" },
+  basic: { limit: 16, model: "google/gemini-2.5-pro",         product_id: "prod_UN7V4fhqmvvcHg" },
+  pro:   { limit: 30, model: "openai/gpt-5",                  product_id: "prod_UN7XkwywSGR7f6" },
+} as const;
+type TierName = "free" | "basic" | "pro";
 
 const HALLUCINATION_RULES = `
 CRITICAL RULES:
@@ -247,8 +252,8 @@ serve(async (req) => {
     const user = userData.user;
     logStep("User authenticated", { userId: user.id, email: user.email });
 
-    // Check subscription status via Stripe
-    let isSubscribed = false;
+    // Determine tier from active Stripe subscription's product_id
+    let tier: TierName = "free";
     try {
       const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
       if (stripeKey && user.email) {
@@ -260,44 +265,52 @@ serve(async (req) => {
             status: "active",
             limit: 1,
           });
-          isSubscribed = subscriptions.data.length > 0;
+          if (subscriptions.data.length > 0) {
+            const productId = subscriptions.data[0].items.data[0].price.product as string;
+            if (productId === TIERS.pro.product_id) tier = "pro";
+            else if (productId === TIERS.basic.product_id) tier = "basic";
+          }
         }
       }
     } catch (e) {
       logStep("Stripe check failed, defaulting to free tier", { error: String(e) });
     }
 
-    logStep("Subscription status", { isSubscribed });
+    const tierConfig = TIERS[tier];
+    logStep("Resolved tier", { tier, monthlyLimit: tierConfig.limit, model: tierConfig.model });
 
-    // Rate limit check for free users
-    if (!isSubscribed) {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
+    // Monthly rate limit (calendar month)
+    const now = new Date();
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const { count, error: countError } = await supabaseClient
+      .from("generation_logs")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .gte("created_at", monthStart.toISOString());
 
-      const { count, error: countError } = await supabaseClient
-        .from("generation_logs")
-        .select("*", { count: "exact", head: true })
-        .eq("user_id", user.id)
-        .gte("created_at", today.toISOString());
+    if (countError) {
+      logStep("Error checking generation count", { error: countError.message });
+    }
 
-      if (countError) {
-        logStep("Error checking generation count", { error: countError.message });
-      }
+    const used = count ?? 0;
+    logStep("Monthly generation count", { used, limit: tierConfig.limit });
 
-      const todayCount = count ?? 0;
-      logStep("Daily generation count", { todayCount, limit: FREE_DAILY_LIMIT });
-
-      if (todayCount >= FREE_DAILY_LIMIT) {
-        return new Response(
-          JSON.stringify({
-            error: `You've reached your daily limit of ${FREE_DAILY_LIMIT} generations. Upgrade to Pro for unlimited spec generations.`,
-            rateLimited: true,
-            dailyLimit: FREE_DAILY_LIMIT,
-            used: todayCount,
-          }),
-          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
+    if (used >= tierConfig.limit) {
+      const upgradeMsg = tier === "free"
+        ? "Upgrade to Basic ($12/mo) for 16 generations or Pro ($24/mo) for 30 generations with stronger AI."
+        : tier === "basic"
+        ? "Upgrade to Pro ($24/mo) for 30 generations with our strongest AI model."
+        : "You've reached your monthly limit. Resets on the 1st.";
+      return new Response(
+        JSON.stringify({
+          error: `You've reached your monthly limit of ${tierConfig.limit} generations on the ${tier} plan. ${upgradeMsg}`,
+          rateLimited: true,
+          tier,
+          limit: tierConfig.limit,
+          used,
+        }),
+        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
     // Log this generation
@@ -318,7 +331,7 @@ serve(async (req) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
+        model: tierConfig.model,
         messages: [
           { role: "system", content: systemPrompt },
           {
