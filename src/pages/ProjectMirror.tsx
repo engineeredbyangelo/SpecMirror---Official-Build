@@ -127,9 +127,16 @@ const ProjectMirror = () => {
       if (!resp.ok) {
         const err = await resp.json().catch(() => ({ error: "Generation failed" }));
         const isRateLimited = err.rateLimited === true;
+        const tier = err.tier as "free" | "basic" | "pro" | undefined;
         toast({
           variant: "destructive",
-          title: isRateLimited ? "Daily limit reached" : "Generation failed",
+          title: isRateLimited
+            ? tier === "free"
+              ? "Free monthly limit reached"
+              : tier === "basic"
+              ? "Basic monthly limit reached"
+              : "Monthly limit reached"
+            : "Generation failed",
           description: err.error || "Please try again.",
         });
         setIsGenerating(false);

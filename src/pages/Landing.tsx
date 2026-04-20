@@ -38,26 +38,26 @@ const SectionHeader = ({ label, title, highlight, description }: { label: string
 const Landing = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [checkoutLoading, setCheckoutLoading] = useState<null | "basic" | "pro">(null);
   const [showDemo, setShowDemo] = useState(false);
   const [activeDocType, setActiveDocType] = useState<'prd' | 'spec'>('prd');
 
-  const handleProClick = async () => {
+  const handleCheckout = async (tier: "basic" | "pro") => {
     if (!user) {
       navigate("/signup");
       return;
     }
-    setCheckoutLoading(true);
+    setCheckoutLoading(tier);
     try {
       const { data, error } = await supabase.functions.invoke("create-checkout", {
-        body: { priceId: STRIPE_TIERS.pro.price_id },
+        body: { priceId: STRIPE_TIERS[tier].price_id },
       });
       if (error) throw error;
       if (data?.url) window.location.href = data.url;
-    } catch (e: any) {
+    } catch {
       toast.error("Could not start checkout. Please try again.");
     } finally {
-      setCheckoutLoading(false);
+      setCheckoutLoading(null);
     }
   };
 
@@ -750,22 +750,29 @@ const Landing = () => {
             />
           </FadeSection>
 
-          <div className="mx-auto grid max-w-3xl gap-6 md:grid-cols-2">
+          <div className="mx-auto grid max-w-5xl gap-6 md:grid-cols-3">
+            {/* Free */}
             <FadeSection>
-              <div className="flex h-full flex-col rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8 backdrop-blur-xl transition-all duration-500 hover:border-white/[0.12] hover:bg-white/[0.04]" style={{ boxShadow: "0 0 40px hsl(226 70% 55.5% / 0.03)" }}>
+              <div className="flex h-full flex-col rounded-2xl border border-white/[0.06] bg-white/[0.02] p-7 backdrop-blur-xl transition-all duration-500 hover:border-white/[0.12] hover:bg-white/[0.04]">
                 <div className="mb-6">
                   <h3 className="text-lg font-bold">Free</h3>
                   <div className="mt-3 flex items-baseline gap-1">
                     <span className="text-4xl font-bold tracking-tight">$0</span>
                     <span className="text-sm text-muted-foreground">/month</span>
                   </div>
-                  <p className="mt-3 text-sm text-muted-foreground leading-relaxed">Perfect for trying SpecMirror on personal projects.</p>
+                  <p className="mt-3 text-sm text-muted-foreground leading-relaxed">Try SpecMirror on personal projects.</p>
                 </div>
-                <ul className="mb-8 flex-1 space-y-3 text-sm text-muted-foreground">
-                  {["5 generations per day", "Full AI spec generation", "Encrypted sharing", "Confidence scoring"].map((f) => (
-                    <li key={f} className="flex items-center gap-2.5">
-                      <Check className="h-4 w-4 shrink-0 text-accent" style={{ filter: "drop-shadow(0 0 4px hsl(160 84% 39% / 0.3))" }} />
-                      {f}
+                <ul className="mb-8 flex-1 space-y-2.5 text-sm text-muted-foreground">
+                  {[
+                    "6 generations / month",
+                    "SpecAI (standard model)",
+                    "Encrypted sharing",
+                    "Version history",
+                    "Confidence scoring",
+                  ].map((f) => (
+                    <li key={f} className="flex items-start gap-2.5">
+                      <Check className="h-4 w-4 shrink-0 text-accent mt-0.5" />
+                      <span>{f}</span>
                     </li>
                   ))}
                 </ul>
@@ -775,29 +782,68 @@ const Landing = () => {
               </div>
             </FadeSection>
 
+            {/* Basic */}
+            <FadeSection delay={0.05}>
+              <div className="flex h-full flex-col rounded-2xl border border-white/[0.08] bg-white/[0.02] p-7 backdrop-blur-xl transition-all duration-500 hover:border-white/[0.16] hover:bg-white/[0.04]">
+                <div className="mb-6">
+                  <h3 className="text-lg font-bold">Basic</h3>
+                  <div className="mt-3 flex items-baseline gap-1">
+                    <span className="text-4xl font-bold tracking-tight">$12</span>
+                    <span className="text-sm text-muted-foreground">/month</span>
+                  </div>
+                  <p className="mt-3 text-sm text-muted-foreground leading-relaxed">For active builders who need more power.</p>
+                </div>
+                <ul className="mb-8 flex-1 space-y-2.5 text-sm text-muted-foreground">
+                  {[
+                    "16 generations / month",
+                    "SpecAI v2 (stronger model)",
+                    "Encrypted team sharing",
+                    "Version history",
+                    "Slack integration",
+                    "Priority support",
+                  ].map((f) => (
+                    <li key={f} className="flex items-start gap-2.5">
+                      <Check className="h-4 w-4 shrink-0 text-accent mt-0.5" />
+                      <span>{f}</span>
+                    </li>
+                  ))}
+                </ul>
+                <Button variant="outline" size="lg" className="w-full gap-2 border-white/[0.12] bg-white/[0.04] hover:bg-white/[0.08]" onClick={() => handleCheckout("basic")} disabled={checkoutLoading !== null}>
+                  {checkoutLoading === "basic" ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Start Basic <ArrowRight className="h-4 w-4" /></>}
+                </Button>
+              </div>
+            </FadeSection>
+
+            {/* Pro */}
             <FadeSection delay={0.1}>
-              <div className="relative flex h-full flex-col rounded-2xl border border-primary/30 bg-white/[0.02] p-8 backdrop-blur-xl transition-all duration-500 hover:border-primary/50 hover:bg-white/[0.04]" style={{ boxShadow: "0 0 60px hsl(226 70% 55.5% / 0.06), inset 0 0 0 1px hsl(226 70% 55.5% / 0.05)" }}>
+              <div className="relative flex h-full flex-col rounded-2xl border border-primary/30 bg-white/[0.02] p-7 backdrop-blur-xl transition-all duration-500 hover:border-primary/50 hover:bg-white/[0.04]" style={{ boxShadow: "0 0 60px hsl(226 70% 55.5% / 0.08), inset 0 0 0 1px hsl(226 70% 55.5% / 0.05)" }}>
                 <div className="absolute -top-3 left-6 rounded-full bg-primary px-3 py-0.5 font-mono text-[10px] font-medium text-primary-foreground uppercase tracking-wider" style={{ boxShadow: "0 0 12px hsl(226 70% 55.5% / 0.4)" }}>
                   Most popular
                 </div>
                 <div className="mb-6">
                   <h3 className="text-lg font-bold">Pro</h3>
                   <div className="mt-3 flex items-baseline gap-1">
-                    <span className="text-4xl font-bold tracking-tight">$19</span>
+                    <span className="text-4xl font-bold tracking-tight">$24</span>
                     <span className="text-sm text-muted-foreground">/month</span>
                   </div>
-                  <p className="mt-3 text-sm text-muted-foreground leading-relaxed">For teams that ship fast and need unlimited specs.</p>
+                  <p className="mt-3 text-sm text-muted-foreground leading-relaxed">For teams that ship fast with the strongest AI.</p>
                 </div>
-                <ul className="mb-8 flex-1 space-y-3 text-sm text-muted-foreground">
-                  {["Unlimited spec generations", "Priority AI processing", "Team sharing & collaboration", "Version history", "Slack & PM tool integrations", "Priority support"].map((f) => (
-                    <li key={f} className="flex items-center gap-2.5">
-                      <Check className="h-4 w-4 shrink-0 text-accent" style={{ filter: "drop-shadow(0 0 4px hsl(160 84% 39% / 0.3))" }} />
-                      {f}
+                <ul className="mb-8 flex-1 space-y-2.5 text-sm text-muted-foreground">
+                  {[
+                    "30 generations / month",
+                    "SpecAI Pro (strongest model)",
+                    "Everything in Basic",
+                    "Custom export (PDF / Notion)",
+                    "Priority support",
+                  ].map((f) => (
+                    <li key={f} className="flex items-start gap-2.5">
+                      <Check className="h-4 w-4 shrink-0 text-accent mt-0.5" />
+                      <span>{f}</span>
                     </li>
                   ))}
                 </ul>
-                <Button size="lg" className="w-full gap-2" onClick={handleProClick} disabled={checkoutLoading}>
-                  {checkoutLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Start Pro trial <ArrowRight className="h-4 w-4" /></>}
+                <Button size="lg" className="w-full gap-2" onClick={() => handleCheckout("pro")} disabled={checkoutLoading !== null}>
+                  {checkoutLoading === "pro" ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Start Pro <ArrowRight className="h-4 w-4" /></>}
                 </Button>
               </div>
             </FadeSection>
