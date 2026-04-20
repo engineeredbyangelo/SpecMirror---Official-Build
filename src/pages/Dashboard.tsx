@@ -137,9 +137,16 @@ const Dashboard = () => {
             <span className="text-lg font-semibold">SpecMirror</span>
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-sm text-muted-foreground">
-              {user?.user_metadata?.full_name || user?.email}
-            </span>
+            <div className="flex items-center gap-3">
+              <span className="text-sm text-muted-foreground hidden sm:inline">
+                {user?.user_metadata?.full_name || user?.email}
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-border/50 bg-background/50 px-2.5 py-1 text-[10px] font-medium">
+                <span className={`h-1.5 w-1.5 rounded-full ${tier === "pro" ? "bg-primary" : tier === "basic" ? "bg-accent" : "bg-muted-foreground"}`} />
+                <span className="text-foreground">{tierLabel}</span>
+                <span className="text-muted-foreground">· {usage}/{monthlyLimit}</span>
+              </span>
+            </div>
             <Button variant="ghost" size="sm" onClick={handleSignOut}>
               Log out
             </Button>
@@ -252,9 +259,16 @@ const Dashboard = () => {
                       Share specs to channels
                     </p>
                   </div>
-                  <span className="rounded-full border border-border/50 px-2 py-0.5 text-[10px] text-muted-foreground">
-                    Coming soon
-                  </span>
+                  {slackUnlocked ? (
+                    <Button size="sm" variant="outline" className="h-7 text-xs gap-1.5" onClick={() => toast({ title: "Slack setup", description: "Slack workspace setup will open shortly." })}>
+                      Connect
+                    </Button>
+                  ) : (
+                    <a href="/#pricing" className="inline-flex items-center gap-1 rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary hover:bg-primary/15 transition-colors">
+                      <Lock className="h-2.5 w-2.5" />
+                      Upgrade to Basic
+                    </a>
+                  )}
                 </div>
                 <div className="flex items-center gap-3 rounded-md border border-border/30 bg-background/50 px-4 py-3">
                   <div className="flex h-8 w-8 items-center justify-center rounded-md bg-muted">
@@ -266,12 +280,19 @@ const Dashboard = () => {
                   <div className="flex-1">
                     <p className="text-sm font-medium">Notion</p>
                     <p className="text-xs text-muted-foreground">
-                      Export specs to pages
+                      Export specs to pages (PDF / Notion)
                     </p>
                   </div>
-                  <span className="rounded-full border border-border/50 px-2 py-0.5 text-[10px] text-muted-foreground">
-                    Coming soon
-                  </span>
+                  {tier === "pro" ? (
+                    <Button size="sm" variant="outline" className="h-7 text-xs gap-1.5" onClick={() => toast({ title: "Custom export", description: "PDF/Notion export will open shortly." })}>
+                      <Sparkles className="h-3 w-3" /> Use
+                    </Button>
+                  ) : (
+                    <a href="/#pricing" className="inline-flex items-center gap-1 rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary hover:bg-primary/15 transition-colors">
+                      <Lock className="h-2.5 w-2.5" />
+                      Upgrade to Pro
+                    </a>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -379,6 +400,8 @@ const Dashboard = () => {
           }}
         />
       )}
+
+      <OnboardingDialog open={showOnboarding} onClose={() => setShowOnboarding(false)} />
     </div>
   );
 };
