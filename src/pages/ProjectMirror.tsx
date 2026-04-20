@@ -6,6 +6,7 @@ import { Search, ArrowLeft, Sparkles, Check, Loader2, CheckCircle2, ArrowRight, 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { STRIPE_TIERS } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import ShareDialog from "@/components/ShareDialog";
@@ -129,17 +130,41 @@ const ProjectMirror = () => {
       if (!resp.ok) {
         const err = await resp.json().catch(() => ({ error: "Generation failed" }));
         const isRateLimited = err.rateLimited === true;
-        const tier = err.tier as "free" | "basic" | "pro" | undefined;
+        const errTier = err.tier as "free" | "basic" | "pro" | undefined;
+        const upgradeTarget: "basic" | "pro" | null = isRateLimited
+          ? errTier === "pro"
+            ? null
+            : errTier === "basic"
+            ? "pro"
+            : "basic"
+          : null;
         toast({
           variant: "destructive",
           title: isRateLimited
-            ? tier === "free"
+            ? errTier === "free"
               ? "Free monthly limit reached"
-              : tier === "basic"
+              : errTier === "basic"
               ? "Basic monthly limit reached"
               : "Monthly limit reached"
             : "Generation failed",
           description: err.error || "Please try again.",
+          action: upgradeTarget ? (
+            <button
+              className="rounded-md border border-border/40 bg-background/80 px-2.5 py-1 text-xs font-medium hover:bg-background"
+              onClick={async () => {
+                const { data, error } = await supabase.functions.invoke("create-checkout", {
+                  body: { priceId: STRIPE_TIERS[upgradeTarget].price_id },
+                });
+                if (error || !data?.url) {
+                  toast({ variant: "destructive", title: "Couldn't start checkout" });
+                  return;
+                }
+                window.open(data.url, "_blank");
+              }}
+            >
+              Upgrade to {upgradeTarget === "basic" ? "Basic" : "Pro"}
+            </button>
+          ) : undefined,
         });
         setIsGenerating(false);
         return;

@@ -279,10 +279,14 @@ const Dashboard = () => {
                       Connect
                     </Button>
                   ) : (
-                    <a href="/#pricing" className="inline-flex items-center gap-1 rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary hover:bg-primary/15 transition-colors">
-                      <Lock className="h-2.5 w-2.5" />
+                    <button
+                      onClick={() => startCheckout("basic")}
+                      disabled={upgrading === "basic"}
+                      className="inline-flex items-center gap-1 rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary hover:bg-primary/15 transition-colors disabled:opacity-60"
+                    >
+                      {upgrading === "basic" ? <Loader2 className="h-2.5 w-2.5 animate-spin" /> : <Lock className="h-2.5 w-2.5" />}
                       Upgrade to Basic
-                    </a>
+                    </button>
                   )}
                 </div>
                 <div className="flex items-center gap-3 rounded-md border border-border/30 bg-background/50 px-4 py-3">
@@ -303,10 +307,14 @@ const Dashboard = () => {
                       <Sparkles className="h-3 w-3" /> Use
                     </Button>
                   ) : (
-                    <a href="/#pricing" className="inline-flex items-center gap-1 rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary hover:bg-primary/15 transition-colors">
-                      <Lock className="h-2.5 w-2.5" />
+                    <button
+                      onClick={() => startCheckout("pro")}
+                      disabled={upgrading === "pro"}
+                      className="inline-flex items-center gap-1 rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary hover:bg-primary/15 transition-colors disabled:opacity-60"
+                    >
+                      {upgrading === "pro" ? <Loader2 className="h-2.5 w-2.5 animate-spin" /> : <Lock className="h-2.5 w-2.5" />}
                       Upgrade to Pro
-                    </a>
+                    </button>
                   )}
                 </div>
               </CardContent>
