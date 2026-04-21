@@ -509,6 +509,149 @@ const Landing = () => {
       </section>
 
       {/* Why Not ChatGPT — Competitive Differentiation (Immersive) */}
+      {/* Integrations — Ship-anywhere export grid */}
+      <section id="integrations" className="relative py-20 md:py-28 overflow-hidden border-t border-white/[0.06]">
+        <div className="absolute inset-0 bg-gradient-to-b from-background via-primary/[0.03] to-background" />
+        <div className="absolute top-1/3 left-1/4 h-72 w-72 rounded-full bg-primary/[0.05] blur-3xl" />
+        <div className="absolute bottom-1/3 right-1/4 h-72 w-72 rounded-full bg-accent/[0.04] blur-3xl" />
+
+        <div className="relative z-10 mx-auto max-w-5xl px-6">
+          <FadeSection>
+            <SectionHeader
+              label="Integrations"
+              title="Ship your spec"
+              highlight="anywhere."
+              description="Approved specs don't sit in a tab. Export as a branded PDF, push to Notion, or post straight to a Slack channel — all from one menu on your dashboard."
+            />
+          </FadeSection>
+
+          <div className="grid gap-5 md:grid-cols-3">
+            {/* PDF Export */}
+            <FadeSection delay={0.05}>
+              <div className="group relative h-full overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 backdrop-blur-xl transition-all duration-500 hover:border-primary/30 hover:bg-white/[0.04]" style={{ boxShadow: "0 0 40px hsl(226 70% 55.5% / 0.04)" }}>
+                <div className="absolute -top-12 -right-12 h-32 w-32 rounded-full bg-primary/[0.08] blur-2xl transition-opacity duration-500 group-hover:opacity-150" />
+                <div className="relative">
+                  <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                    <Download className="h-5 w-5" />
+                  </div>
+                  <div className="mb-1 flex items-center gap-2">
+                    <h3 className="text-base font-bold tracking-tight">PDF Export</h3>
+                    <span className="rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-wider text-primary">Pro</span>
+                  </div>
+                  <p className="mb-5 text-sm leading-relaxed text-muted-foreground">Branded, print-ready PDF with cover page, sectioned spec, and confidence score. One click.</p>
+                  <div className="rounded-lg border border-white/[0.06] bg-background/60 p-3">
+                    <div className="aspect-[3/4] rounded-md bg-zinc-950 border border-white/[0.04] p-3 flex flex-col">
+                      <div className="font-mono text-[8px] font-bold tracking-widest text-primary mb-1.5">SPECMIRROR</div>
+                      <div className="h-px w-8 bg-primary mb-2" />
+                      <div className="space-y-1 flex-1">
+                        <div className="h-1.5 w-3/4 rounded-sm bg-white/[0.1]" />
+                        <div className="h-1.5 w-1/2 rounded-sm bg-white/[0.06]" />
+                        <div className="h-px w-full bg-white/[0.04] my-1.5" />
+                        <div className="h-1.5 w-2/3 rounded-sm bg-white/[0.06]" />
+                        <div className="h-1.5 w-4/5 rounded-sm bg-white/[0.06]" />
+                        <div className="h-1.5 w-3/5 rounded-sm bg-white/[0.06]" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </FadeSection>
+
+            {/* Notion Export */}
+            <FadeSection delay={0.1}>
+              <div className="group relative h-full overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 backdrop-blur-xl transition-all duration-500 hover:border-accent/30 hover:bg-white/[0.04]" style={{ boxShadow: "0 0 40px hsl(160 84% 39% / 0.04)" }}>
+                <div className="absolute -top-12 -right-12 h-32 w-32 rounded-full bg-accent/[0.08] blur-2xl transition-opacity duration-500" />
+                <div className="relative">
+                  <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-accent/10 text-accent">
+                    <BookOpen className="h-5 w-5" />
+                  </div>
+                  <div className="mb-1 flex items-center gap-2">
+                    <h3 className="text-base font-bold tracking-tight">Notion Export</h3>
+                    <span className="rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-wider text-primary">Pro</span>
+                  </div>
+                  <p className="mb-5 text-sm leading-relaxed text-muted-foreground">Push the full spec into any parent Notion page as structured blocks — headings, paragraphs, code.</p>
+                  <div className="rounded-lg border border-white/[0.06] bg-background/60 p-3">
+                    <div className="aspect-[3/4] rounded-md bg-zinc-950 border border-white/[0.04] p-3 flex flex-col gap-1.5">
+                      <div className="flex items-center gap-1.5 mb-1">
+                        <div className="h-3 w-3 rounded-sm bg-accent/30" />
+                        <div className="h-1.5 flex-1 rounded-sm bg-white/[0.1]" />
+                      </div>
+                      <div className="h-2 w-2/3 rounded-sm bg-white/[0.12]" />
+                      <div className="h-1 w-full rounded-sm bg-white/[0.05]" />
+                      <div className="h-1 w-5/6 rounded-sm bg-white/[0.05]" />
+                      <div className="mt-1 rounded-sm border-l-2 border-accent/40 bg-white/[0.03] p-1.5 space-y-1">
+                        <div className="h-1 w-3/4 rounded-sm bg-accent/20" />
+                        <div className="h-1 w-1/2 rounded-sm bg-accent/15" />
+                      </div>
+                      <div className="h-1 w-2/3 rounded-sm bg-white/[0.05]" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </FadeSection>
+
+            {/* Slack Integration */}
+            <FadeSection delay={0.15}>
+              <div className="group relative h-full overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 backdrop-blur-xl transition-all duration-500 hover:border-primary/30 hover:bg-white/[0.04]" style={{ boxShadow: "0 0 40px hsl(226 70% 55.5% / 0.04)" }}>
+                <div className="absolute -top-12 -right-12 h-32 w-32 rounded-full bg-primary/[0.08] blur-2xl transition-opacity duration-500" />
+                <div className="relative">
+                  <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                    <MessageSquare className="h-5 w-5" />
+                  </div>
+                  <div className="mb-1 flex items-center gap-2">
+                    <h3 className="text-base font-bold tracking-tight">Slack Post</h3>
+                    <span className="rounded-full border border-accent/30 bg-accent/10 px-2 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-wider text-accent">Basic + Pro</span>
+                  </div>
+                  <p className="mb-5 text-sm leading-relaxed text-muted-foreground">Connect your workspace, pick a channel, and post the approved spec with rich Block Kit formatting.</p>
+                  <div className="rounded-lg border border-white/[0.06] bg-background/60 p-3">
+                    <div className="aspect-[3/4] rounded-md bg-zinc-950 border border-white/[0.04] p-3 flex flex-col gap-2">
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-mono text-[9px] text-muted-foreground/60">#</span>
+                        <div className="h-1.5 w-16 rounded-sm bg-white/[0.1]" />
+                      </div>
+                      <div className="flex items-start gap-1.5">
+                        <div className="h-4 w-4 rounded-sm bg-gradient-to-br from-primary/40 to-accent/30 shrink-0" />
+                        <div className="flex-1 space-y-1">
+                          <div className="flex items-center gap-1">
+                            <div className="h-1.5 w-12 rounded-sm bg-white/[0.15]" />
+                            <div className="h-1 w-6 rounded-sm bg-white/[0.05]" />
+                          </div>
+                          <div className="h-1 w-full rounded-sm bg-white/[0.06]" />
+                          <div className="h-1 w-4/5 rounded-sm bg-white/[0.06]" />
+                          <div className="mt-1.5 rounded-sm border-l-2 border-primary/40 bg-white/[0.03] p-1.5 space-y-1">
+                            <div className="h-1 w-2/3 rounded-sm bg-primary/20" />
+                            <div className="h-1 w-3/4 rounded-sm bg-white/[0.05]" />
+                            <div className="h-1 w-1/2 rounded-sm bg-white/[0.05]" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </FadeSection>
+          </div>
+
+          <FadeSection delay={0.2}>
+            <div className="mt-8 flex flex-col items-center justify-between gap-4 rounded-2xl border border-white/[0.06] bg-white/[0.02] px-6 py-5 backdrop-blur-xl md:flex-row">
+              <div className="flex items-center gap-3">
+                <Lock className="h-4 w-4 text-accent shrink-0" />
+                <p className="text-sm text-muted-foreground">
+                  All exports stay <span className="text-foreground/90 font-medium">end-to-end encrypted</span> until they reach your destination. No middleman storage.
+                </p>
+              </div>
+              <Button size="sm" variant="outline" className="gap-2 border-white/[0.1] bg-white/[0.03] hover:bg-white/[0.06] shrink-0" asChild>
+                <a href="#pricing">
+                  See plans
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </a>
+              </Button>
+            </div>
+          </FadeSection>
+        </div>
+      </section>
+
+      {/* Why Not ChatGPT — Competitive Differentiation (Immersive) */}
       <section className="relative py-20 md:py-28 overflow-hidden">
         {/* Deep gradient background */}
         <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.03] via-background to-primary/[0.04]" />
