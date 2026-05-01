@@ -134,7 +134,7 @@ const Landing = () => {
               <h1 className="mb-6 text-[36px] font-bold leading-[1.02] tracking-tight sm:text-6xl sm:leading-[0.95] sm:tracking-tighter lg:text-[72px]">
                 From idea to{" "}
                 <span className="liquid-text">production-ready spec.</span>
-                <br className="hidden sm:block" />
+                <br />
                 <span className="text-foreground/85">In 30 seconds.</span>
               </h1>
             </FadeSection>
