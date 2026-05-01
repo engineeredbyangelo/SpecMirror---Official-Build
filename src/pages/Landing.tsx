@@ -1223,7 +1223,7 @@ const MirrorDemo = () => {
           <div className="h-3 w-3 rounded-full bg-white/[0.08]" />
           <div className="h-3 w-3 rounded-full bg-white/[0.08]" />
         </div>
-        <div className="mx-auto flex h-7 w-72 items-center justify-center rounded-md bg-white/[0.04] text-[11px] text-muted-foreground/50">
+        <div className="mx-auto flex h-7 w-full max-w-[18rem] items-center justify-center truncate rounded-md bg-white/[0.04] px-2 text-[10px] text-muted-foreground/50 sm:text-[11px]">
           specmirror.app/project/ai-agent-platform
         </div>
       </div>
