@@ -55,6 +55,8 @@
   body {
     @apply bg-background text-foreground font-sans antialiased;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-feature-settings: 'ss01', 'cv11', 'cv02';
+    text-rendering: optimizeLegibility;
   }
 }
 
@@ -135,12 +137,6 @@
   animation: shimmer-sweep 2s ease-in-out infinite;
 }
 
-.confidence-ring {
-  animation: confidence-fill 3s ease-out 2s forwards;
-  stroke-dasharray: 157;
-  stroke-dashoffset: 157;
-}
-
 /* Float animation for feature nodes */
 @keyframes float {
   0%, 100% { transform: translateY(0); }
@@ -155,9 +151,78 @@
   animation: float 6s ease-in-out 3s infinite;
 }
 
-/* Cyber-line connector glow */
-.cyber-line {
-  stroke: url(#cyber-gradient);
-  stroke-width: 1;
-  filter: drop-shadow(0 0 4px hsl(226 70% 55.5% / 0.3));
+/* ── Premium landing utilities ── */
+
+/* Hairline gradient section divider */
+.section-divider {
+  height: 1px;
+  width: 100%;
+  background: linear-gradient(
+    to right,
+    transparent,
+    hsl(0 0% 100% / 0.09),
+    transparent
+  );
+}
+
+/* Unified premium card surface (luxury feel) */
+.premium-card {
+  position: relative;
+  background: hsl(0 0% 100% / 0.025);
+  border: 1px solid hsl(0 0% 100% / 0.06);
+  border-radius: 1rem;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  transition: border-color 0.4s ease, background 0.4s ease, box-shadow 0.4s ease, transform 0.4s ease;
+}
+.premium-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(to bottom, hsl(0 0% 100% / 0.06), transparent 30%);
+  opacity: 0.6;
+}
+.premium-card:hover {
+  border-color: hsl(226 70% 55.5% / 0.25);
+  background: hsl(0 0% 100% / 0.035);
+  box-shadow:
+    0 0 0 1px hsl(226 70% 55.5% / 0.12),
+    0 24px 60px -28px hsl(226 70% 55.5% / 0.35);
+}
+
+/* Magnetic CTA hover lift */
+@media (prefers-reduced-motion: no-preference) {
+  .magnetic {
+    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s ease;
+  }
+  .magnetic:hover {
+    transform: translateY(-1px);
+  }
+}
+
+/* Liquid metal gradient text (animates slowly) */
+.liquid-text {
+  background: linear-gradient(
+    100deg,
+    hsl(226 70% 65%) 0%,
+    hsl(245 80% 70%) 35%,
+    hsl(226 70% 60%) 60%,
+    hsl(160 84% 50%) 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .liquid-text {
+    animation: liquid-shift 8s ease-in-out infinite;
+  }
+}
+@keyframes liquid-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
 }

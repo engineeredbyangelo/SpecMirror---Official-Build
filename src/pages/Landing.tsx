@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Sparkles, Users, Layers, ArrowRight, Play, Search, FileText, Zap, Lock, GitBranch, X, Check, Loader2, ClipboardList, Code2, Download, MessageSquare, BookOpen } from "lucide-react";
+import { Sparkles, Users, Layers, ArrowRight, Play, Search, FileText, Zap, Lock, GitBranch, X, Check, Loader2, ClipboardList, Code2, Download, MessageSquare, BookOpen, Star } from "lucide-react";
 import { useAuth, STRIPE_TIERS } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -41,6 +41,13 @@ const Landing = () => {
   const [checkoutLoading, setCheckoutLoading] = useState<null | "basic" | "pro">(null);
   const [showDemo, setShowDemo] = useState(false);
   const [activeDocType, setActiveDocType] = useState<'prd' | 'spec'>('prd');
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 600);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const handleCheckout = async (tier: "basic" | "pro") => {
     if (!user) {
@@ -81,64 +88,124 @@ const Landing = () => {
             <Button variant="ghost" size="sm" asChild>
               <Link to="/login">Log in</Link>
             </Button>
-            <Button size="sm" asChild>
+            <Button size="sm" className="magnetic" asChild>
               <Link to="/signup">Start for free</Link>
             </Button>
           </div>
         </div>
       </nav>
 
-      {/* Hero */}
-      <section className="relative flex flex-col items-center justify-center px-6 pt-32 pb-20 md:pt-40 md:pb-28 text-center">
+      {/* Sticky mini-nav after scroll */}
+      <div
+        className={`fixed left-1/2 top-3 z-40 hidden -translate-x-1/2 transition-all duration-500 md:block ${
+          scrolled ? "translate-y-12 opacity-100" : "-translate-y-4 pointer-events-none opacity-0"
+        }`}
+      >
+        <div className="flex items-center gap-1 rounded-full border border-white/[0.08] bg-background/80 px-2 py-1.5 text-xs text-muted-foreground backdrop-blur-2xl shadow-[0_8px_32px_-8px_hsl(226_70%_55%_/_0.25)]">
+          <a href="#how-it-works" className="rounded-full px-3 py-1 transition-colors hover:bg-white/[0.04] hover:text-foreground">How</a>
+          <a href="#features" className="rounded-full px-3 py-1 transition-colors hover:bg-white/[0.04] hover:text-foreground">Features</a>
+          <a href="#integrations" className="rounded-full px-3 py-1 transition-colors hover:bg-white/[0.04] hover:text-foreground">Integrations</a>
+          <a href="#pricing" className="rounded-full px-3 py-1 transition-colors hover:bg-white/[0.04] hover:text-foreground">Pricing</a>
+          <Button size="sm" className="magnetic ml-1 h-7 rounded-full px-3 text-xs" asChild>
+            <Link to="/signup">Try free</Link>
+          </Button>
+        </div>
+      </div>
+
+      {/* Hero — premium two-column */}
+      <section className="relative px-6 pt-28 pb-16 md:pt-36 md:pb-24">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.07] via-transparent to-transparent" />
-        <div className="relative z-10 mx-auto max-w-4xl">
-          <FadeSection>
-            <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-sm text-primary backdrop-blur-sm">
-              <Sparkles className="h-3.5 w-3.5" />
-              Now in public beta
-            </div>
-          </FadeSection>
-          <FadeSection delay={0.1}>
-            <h1 className="mb-6 text-4xl font-bold leading-[1.08] tracking-tighter sm:text-5xl md:text-7xl">
-              Your vision to{" "}
-              <br className="hidden sm:block" />
-              <span className="bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">blueprint.</span>
-              <br className="hidden sm:block" />
-              In seconds.
-            </h1>
-          </FadeSection>
-          <FadeSection delay={0.2}>
-            <p className="mx-auto mb-10 max-w-xl text-base leading-relaxed text-muted-foreground md:text-lg">
-              Turn rough product ideas into production-ready specs and PRDs in seconds. AI-powered, encrypted, and built for teams and founders who ship fast.
-            </p>
-          </FadeSection>
-          <FadeSection delay={0.3}>
-            <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <Button size="lg" className="gap-2 px-8 text-base" asChild>
-                <Link to="/signup">
-                  Try it free
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="gap-2 border-white/[0.1] bg-white/[0.03] text-base backdrop-blur-sm hover:bg-white/[0.06]"
-                onClick={() => setShowDemo(true)}
-              >
-                <Play className="h-4 w-4" />
-                Watch 28-second demo
-              </Button>
-            </div>
-            <div className="mt-10 inline-flex items-center gap-2 px-4 py-2 rounded-full border border-primary/20 bg-primary/5 animate-pulse">
-              <span className="h-2 w-2 rounded-full bg-accent shadow-[0_0_8px_hsl(160_84%_39%/0.6)]" />
-              <span className="text-xs font-medium text-muted-foreground">
-                Join our Beta cohort and be the first to ship deploy-ready architecture.
-              </span>
+        <div className="absolute top-1/3 left-1/4 h-[480px] w-[480px] rounded-full bg-primary/[0.035] blur-3xl" />
+        <div className="absolute top-1/2 right-1/4 h-[420px] w-[420px] rounded-full bg-accent/[0.025] blur-3xl" />
+
+        <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-[1.05fr_1fr] lg:gap-10">
+          {/* Left: copy + CTAs */}
+          <div className="text-center lg:text-left">
+            <FadeSection>
+              <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs font-medium text-primary backdrop-blur-sm">
+                <Sparkles className="h-3.5 w-3.5" />
+                AI Spec Generator for product teams
+              </div>
+            </FadeSection>
+            <FadeSection delay={0.08}>
+              <h1 className="mb-6 text-[44px] font-bold leading-[0.95] tracking-tighter sm:text-6xl lg:text-[72px]">
+                From idea to{" "}
+                <span className="liquid-text">production-ready spec.</span>
+                <br className="hidden sm:block" />
+                <span className="text-foreground/85">In 30 seconds.</span>
+              </h1>
+            </FadeSection>
+            <FadeSection delay={0.16}>
+              <p className="mx-auto mb-9 max-w-xl text-[15px] leading-relaxed text-muted-foreground md:text-base lg:mx-0">
+                Stop writing PRDs. Start shipping. SpecMirror turns rough product briefs into structured, engineering-ready specs — encrypted, versioned, and exportable to PDF, Notion, and Slack.
+              </p>
+            </FadeSection>
+            <FadeSection delay={0.22}>
+              <div className="flex flex-col items-center justify-center gap-3 sm:flex-row lg:justify-start">
+                <Button size="lg" className="magnetic gap-2 px-7 text-base shadow-[0_8px_24px_-8px_hsl(226_70%_55%_/_0.55)]" asChild>
+                  <Link to="/signup">
+                    Try free — no card
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="magnetic gap-2 border-white/[0.1] bg-white/[0.03] text-base backdrop-blur-sm hover:bg-white/[0.06]"
+                  onClick={() => setShowDemo(true)}
+                >
+                  <Play className="h-4 w-4" />
+                  Watch 60-sec demo
+                </Button>
+              </div>
+              <p className="mt-4 text-xs text-muted-foreground/70 lg:text-left">
+                Free forever for 6 specs/month · No credit card · Cancel anytime
+              </p>
+            </FadeSection>
+          </div>
+
+          {/* Right: live demo card */}
+          <FadeSection delay={0.28}>
+            <div className="premium-card relative overflow-hidden p-1.5">
+              <div className="absolute -inset-1 -z-10 rounded-2xl bg-gradient-to-br from-primary/20 via-transparent to-accent/15 blur-2xl" />
+              <MirrorDemo />
             </div>
           </FadeSection>
         </div>
       </section>
+
+      {/* Trust strip */}
+      <FadeSection>
+        <div className="relative z-10 mx-auto max-w-5xl px-6 pb-8">
+          <div className="premium-card flex flex-wrap items-center justify-center gap-x-10 gap-y-4 px-6 py-5 text-sm">
+            <div className="flex items-center gap-2">
+              <Zap className="h-4 w-4 text-primary" />
+              <span className="text-foreground/85"><span className="font-semibold text-foreground">10,000+</span> specs generated</span>
+            </div>
+            <div className="hidden h-3 w-px bg-white/[0.08] md:block" />
+            <div className="flex items-center gap-2">
+              <Check className="h-4 w-4 text-accent" />
+              <span className="text-foreground/85"><span className="font-semibold text-foreground">94%</span> avg confidence</span>
+            </div>
+            <div className="hidden h-3 w-px bg-white/[0.08] md:block" />
+            <div className="flex items-center gap-1.5">
+              <div className="flex">
+                {[0, 1, 2, 3, 4].map((i) => (
+                  <Star key={i} className="h-3.5 w-3.5 fill-accent text-accent" />
+                ))}
+              </div>
+              <span className="text-foreground/85"><span className="font-semibold text-foreground">4.9</span> from beta users</span>
+            </div>
+            <div className="hidden h-3 w-px bg-white/[0.08] md:block" />
+            <div className="flex items-center gap-2">
+              <Lock className="h-4 w-4 text-accent" />
+              <span className="text-foreground/85">End-to-end encrypted</span>
+            </div>
+          </div>
+        </div>
+      </FadeSection>
+
+      <div className="section-divider mx-auto max-w-5xl" />
 
       {/* Visual Explainer — How it works */}
       <section id="how-it-works" className="border-y border-white/[0.06] py-20 md:py-28">
@@ -508,7 +575,6 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Why Not ChatGPT — Competitive Differentiation (Immersive) */}
       {/* Integrations — Ship-anywhere export grid */}
       <section id="integrations" className="relative py-20 md:py-28 overflow-hidden border-t border-white/[0.06]">
         <div className="absolute inset-0 bg-gradient-to-b from-background via-primary/[0.03] to-background" />
@@ -758,127 +824,6 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Preview — Animated Mirror Demo (Immersive) */}
-      <section id="preview" className="relative py-20 md:py-28 overflow-hidden">
-        {/* Deep gradient background */}
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.03] via-background to-accent/[0.03]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[500px] w-[500px] rounded-full bg-primary/[0.03] blur-3xl" />
-
-        <div className="relative z-10 mx-auto max-w-6xl px-6">
-          <FadeSection>
-            <SectionHeader
-              label="Live preview"
-              title="See SpecMirror"
-              highlight="in action"
-              description="Watch your brief transform into a production-ready spec — streamed in real time with live confidence scoring."
-            />
-          </FadeSection>
-          <FadeSection delay={0.15}>
-            <div className="relative rounded-2xl border border-white/[0.06] bg-white/[0.02] p-1 backdrop-blur-xl" style={{ boxShadow: "0 0 80px hsl(226 70% 55.5% / 0.05), 0 0 40px hsl(160 84% 39% / 0.03)" }}>
-              {/* Top bar accent */}
-              <div className="flex items-center gap-2 px-4 py-2.5 border-b border-white/[0.06]">
-                <div className="h-2.5 w-2.5 rounded-full bg-destructive/40" />
-                <div className="h-2.5 w-2.5 rounded-full bg-primary/30" />
-                <div className="h-2.5 w-2.5 rounded-full bg-accent/30" />
-                <span className="ml-3 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground/40">specmirror.app</span>
-              </div>
-              <div className="p-1">
-                <MirrorDemo />
-              </div>
-            </div>
-          </FadeSection>
-        </div>
-      </section>
-
-      {/* For Every Team — Immersive */}
-      <section id="how-it-helps" className="relative py-20 md:py-28 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.03] via-background to-primary/[0.03]" />
-        <div className="absolute top-1/4 left-1/3 h-72 w-72 rounded-full bg-primary/[0.04] blur-3xl" />
-        <div className="absolute bottom-1/4 right-1/3 h-72 w-72 rounded-full bg-accent/[0.03] blur-3xl" />
-
-        <div className="relative z-10 mx-auto max-w-6xl px-6">
-          <FadeSection>
-            <SectionHeader
-              label="For every team"
-              title="How SpecMirror helps"
-              highlight="your workflow"
-              description="Whether you ship product, write code, or set direction, SpecMirror meets you where you are."
-            />
-          </FadeSection>
-
-          <div className="space-y-4">
-            {[
-              {
-                role: "Product Managers",
-                quote: "Stop rewriting the same idea 17 times. Get engineering feedback before it's too late.",
-                icon: <FileText className="h-5 w-5" />,
-                accentColor: "primary" as const,
-                stat: "94%",
-                statLabel: "Spec confidence",
-              },
-              {
-                role: "Technical & Non-Tech Founders",
-                quote: "Translate your vision into buildable specs from day one. Avoid costly technical debt before writing a single line of code.",
-                icon: <Layers className="h-5 w-5" />,
-                accentColor: "accent" as const,
-                stat: "60%",
-                statLabel: "Less rework",
-              },
-              {
-                role: "Engineers",
-                quote: 'Influence scope on day zero instead of week three. No more "this is impossible" surprises.',
-                icon: <Zap className="h-5 w-5" />,
-                accentColor: "primary" as const,
-                stat: "3×",
-                statLabel: "Faster alignment",
-              },
-              {
-                role: "Leadership",
-                quote: "See alignment scores and confidence metrics across every feature in one place.",
-                icon: <Users className="h-5 w-5" />,
-                accentColor: "primary" as const,
-                stat: "100%",
-                statLabel: "Visibility",
-              },
-            ].map((item, i) => (
-              <FadeSection key={item.role} delay={i * 0.1}>
-                <div className={`group relative flex flex-col gap-6 overflow-hidden rounded-2xl border bg-white/[0.02] p-6 backdrop-blur-xl transition-all duration-500 hover:bg-white/[0.04] md:flex-row md:items-center md:p-8 ${
-                  item.accentColor === "accent"
-                    ? "border-accent/20 hover:border-accent/40"
-                    : "border-white/[0.06] hover:border-primary/30"
-                }`} style={{ boxShadow: item.accentColor === "accent" ? "0 0 30px hsl(160 84% 39% / 0.03)" : "0 0 30px hsl(226 70% 55.5% / 0.03)" }}>
-                  <div className={`absolute left-0 top-0 bottom-0 w-[3px] rounded-full transition-all duration-500 ${
-                    item.accentColor === "accent"
-                      ? "bg-accent/40 group-hover:bg-accent"
-                      : "bg-primary/40 group-hover:bg-primary"
-                  }`} style={{ boxShadow: item.accentColor === "accent" ? "0 0 8px hsl(160 84% 39% / 0.3)" : "0 0 8px hsl(226 70% 55.5% / 0.3)" }} />
-
-                  <div className="flex shrink-0 items-center gap-4 md:w-48">
-                    <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${
-                      item.accentColor === "accent" ? "bg-accent/10 text-accent" : "bg-primary/10 text-primary"
-                    }`}>
-                      {item.icon}
-                    </div>
-                    <h3 className="text-lg font-bold tracking-tight">{item.role}</h3>
-                  </div>
-
-                  <p className="flex-1 text-sm leading-relaxed text-muted-foreground md:text-base md:px-6 md:border-l md:border-white/[0.06]">
-                    "{item.quote}"
-                  </p>
-
-                  <div className="shrink-0 text-right md:w-32">
-                    <div className={`text-2xl font-bold tracking-tight ${
-                      item.accentColor === "accent" ? "text-accent" : "text-primary"
-                    }`} style={{ filter: item.accentColor === "accent" ? "drop-shadow(0 0 8px hsl(160 84% 39% / 0.3))" : "drop-shadow(0 0 8px hsl(226 70% 55.5% / 0.3))" }}>{item.stat}</div>
-                    <div className="font-mono text-[10px] text-muted-foreground/60 uppercase tracking-[0.2em]">{item.statLabel}</div>
-                  </div>
-                </div>
-              </FadeSection>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Pricing — Immersive */}
       <section id="pricing" className="relative py-20 md:py-28 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.04] via-background to-accent/[0.03]" />
@@ -986,16 +931,17 @@ const Landing = () => {
                     </li>
                   ))}
                 </ul>
-                <Button size="lg" className="w-full gap-2" onClick={() => handleCheckout("pro")} disabled={checkoutLoading !== null}>
+                <Button size="lg" className="magnetic w-full gap-2" onClick={() => handleCheckout("pro")} disabled={checkoutLoading !== null}>
                   {checkoutLoading === "pro" ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Start Pro <ArrowRight className="h-4 w-4" /></>}
                 </Button>
+                <p className="mt-3 text-center text-[11px] text-muted-foreground/70">Cancel anytime · 7-day money-back</p>
               </div>
             </FadeSection>
           </div>
         </div>
       </section>
 
-      {/* FAQ — Immersive */}
+      {/* FAQ + Final CTA */}
       <section id="faq" className="relative py-20 md:py-28 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.02] via-background to-primary/[0.03]" />
         <div className="absolute top-1/3 right-1/4 h-64 w-64 rounded-full bg-accent/[0.03] blur-3xl" />
@@ -1044,6 +990,40 @@ const Landing = () => {
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>
+            </div>
+          </FadeSection>
+        </div>
+
+        {/* Final CTA card */}
+        <div className="relative z-10 mx-auto mt-20 max-w-5xl px-6">
+          <FadeSection delay={0.05}>
+            <div className="premium-card relative overflow-hidden p-10 text-center md:p-14">
+              <div className="absolute -top-32 left-1/2 -translate-x-1/2 h-72 w-[600px] rounded-full bg-primary/[0.12] blur-3xl" />
+              <div className="absolute -bottom-32 left-1/2 -translate-x-1/2 h-56 w-[500px] rounded-full bg-accent/[0.08] blur-3xl" />
+              <div className="relative">
+                <p className="mb-3 font-mono text-[11px] font-medium uppercase tracking-[0.25em] text-primary">Ready when you are</p>
+                <h2 className="mb-4 text-3xl font-bold tracking-tight md:text-5xl">
+                  Ready to{" "}
+                  <span className="liquid-text">ship faster?</span>
+                </h2>
+                <p className="mx-auto mb-8 max-w-xl text-[15px] leading-relaxed text-muted-foreground">
+                  Join 1,200+ founders and product teams turning briefs into engineering-ready specs in seconds.
+                </p>
+                <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
+                  <Button size="lg" className="magnetic gap-2 px-8 text-base shadow-[0_8px_24px_-8px_hsl(226_70%_55%_/_0.55)]" asChild>
+                    <Link to="/signup">
+                      Start free
+                      <ArrowRight className="h-4 w-4" />
+                    </Link>
+                  </Button>
+                  <Button size="lg" variant="outline" className="magnetic gap-2 border-white/[0.1] bg-white/[0.03] hover:bg-white/[0.06]" asChild>
+                    <a href="#pricing">See pricing</a>
+                  </Button>
+                </div>
+                <p className="mt-5 text-xs text-muted-foreground/70">
+                  No credit card · 6 free specs / month · Cancel anytime
+                </p>
+              </div>
             </div>
           </FadeSection>
         </div>
