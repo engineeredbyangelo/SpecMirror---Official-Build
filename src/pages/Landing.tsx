@@ -84,12 +84,15 @@ const Landing = () => {
             <a href="#pricing" className="transition-colors hover:text-foreground">Pricing</a>
             <a href="#faq" className="transition-colors hover:text-foreground">FAQ</a>
           </div>
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" size="sm" asChild>
+          <div className="flex items-center gap-1.5 sm:gap-3">
+            <Button variant="ghost" size="sm" className="hidden sm:inline-flex" asChild>
               <Link to="/login">Log in</Link>
             </Button>
-            <Button size="sm" className="magnetic" asChild>
-              <Link to="/signup">Start for free</Link>
+            <Button size="sm" className="magnetic px-3 sm:px-4" asChild>
+              <Link to="/signup">
+                <span className="sm:hidden">Sign up</span>
+                <span className="hidden sm:inline">Start for free</span>
+              </Link>
             </Button>
           </div>
         </div>
@@ -113,7 +116,7 @@ const Landing = () => {
       </div>
 
       {/* Hero — premium two-column */}
-      <section className="relative px-6 pt-28 pb-16 md:pt-36 md:pb-24">
+      <section className="relative overflow-hidden px-5 pt-24 pb-14 sm:px-6 md:pt-36 md:pb-24">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.07] via-transparent to-transparent" />
         <div className="absolute top-1/3 left-1/4 h-[480px] w-[480px] rounded-full bg-primary/[0.035] blur-3xl" />
         <div className="absolute top-1/2 right-1/4 h-[420px] w-[420px] rounded-full bg-accent/[0.025] blur-3xl" />
@@ -128,10 +131,10 @@ const Landing = () => {
               </div>
             </FadeSection>
             <FadeSection delay={0.08}>
-              <h1 className="mb-6 text-[44px] font-bold leading-[0.95] tracking-tighter sm:text-6xl lg:text-[72px]">
+              <h1 className="mb-6 text-[36px] font-bold leading-[1.02] tracking-tight sm:text-6xl sm:leading-[0.95] sm:tracking-tighter lg:text-[72px]">
                 From idea to{" "}
                 <span className="liquid-text">production-ready spec.</span>
-                <br className="hidden sm:block" />
+                <br />
                 <span className="text-foreground/85">In 30 seconds.</span>
               </h1>
             </FadeSection>
@@ -177,7 +180,7 @@ const Landing = () => {
       {/* Trust strip */}
       <FadeSection>
         <div className="relative z-10 mx-auto max-w-5xl px-6 pb-8">
-          <div className="premium-card flex flex-wrap items-center justify-center gap-x-10 gap-y-4 px-6 py-5 text-sm">
+          <div className="premium-card flex flex-wrap items-center justify-center gap-x-6 gap-y-3 px-5 py-5 text-xs sm:gap-x-10 sm:gap-y-4 sm:text-sm">
             <div className="flex items-center gap-2">
               <Zap className="h-4 w-4 text-primary" />
               <span className="text-foreground/85"><span className="font-semibold text-foreground">10,000+</span> specs generated</span>
@@ -512,17 +515,17 @@ const Landing = () => {
               <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 backdrop-blur-xl transition-all duration-500" style={{ boxShadow: activeDocType === 'prd' ? "0 0 30px hsl(226 70% 55.5% / 0.06), inset 0 0 0 1px hsl(226 70% 55.5% / 0.08)" : "0 0 30px hsl(160 84% 39% / 0.06), inset 0 0 0 1px hsl(160 84% 39% / 0.08)" }}>
                 {/* Toggle bar */}
                 <div className="mb-5 flex items-center justify-center">
-                  <div className="inline-flex items-center rounded-full border border-white/[0.08] bg-white/[0.03] p-1">
+                  <div className="inline-flex w-full max-w-full items-center rounded-full border border-white/[0.08] bg-white/[0.03] p-1 sm:w-auto">
                     <button
                       onClick={() => setActiveDocType('prd')}
-                      className={`relative rounded-full px-5 py-2 text-xs font-semibold transition-all duration-300 ${activeDocType === 'prd' ? 'bg-primary text-primary-foreground shadow-lg' : 'text-muted-foreground hover:text-foreground'}`}
+                      className={`relative flex-1 whitespace-nowrap rounded-full px-3 py-2 text-[11px] font-semibold transition-all duration-300 sm:flex-none sm:px-5 sm:text-xs ${activeDocType === 'prd' ? 'bg-primary text-primary-foreground shadow-lg' : 'text-muted-foreground hover:text-foreground'}`}
                       style={activeDocType === 'prd' ? { boxShadow: "0 0 16px hsl(226 70% 55.5% / 0.3)" } : {}}
                     >
                       Product Requirements
                     </button>
                     <button
                       onClick={() => setActiveDocType('spec')}
-                      className={`relative rounded-full px-5 py-2 text-xs font-semibold transition-all duration-300 ${activeDocType === 'spec' ? 'bg-accent text-accent-foreground shadow-lg' : 'text-muted-foreground hover:text-foreground'}`}
+                      className={`relative flex-1 whitespace-nowrap rounded-full px-3 py-2 text-[11px] font-semibold transition-all duration-300 sm:flex-none sm:px-5 sm:text-xs ${activeDocType === 'spec' ? 'bg-accent text-accent-foreground shadow-lg' : 'text-muted-foreground hover:text-foreground'}`}
                       style={activeDocType === 'spec' ? { boxShadow: "0 0 16px hsl(160 84% 39% / 0.3)" } : {}}
                     >
                       Technical Spec
@@ -995,9 +998,9 @@ const Landing = () => {
         </div>
 
         {/* Final CTA card */}
-        <div className="relative z-10 mx-auto mt-20 max-w-5xl px-6">
+        <div className="relative z-10 mx-auto mt-20 max-w-5xl px-5 sm:px-6">
           <FadeSection delay={0.05}>
-            <div className="premium-card relative overflow-hidden p-10 text-center md:p-14">
+            <div className="premium-card relative overflow-hidden p-7 text-center sm:p-10 md:p-14">
               <div className="absolute -top-32 left-1/2 -translate-x-1/2 h-72 w-[600px] rounded-full bg-primary/[0.12] blur-3xl" />
               <div className="absolute -bottom-32 left-1/2 -translate-x-1/2 h-56 w-[500px] rounded-full bg-accent/[0.08] blur-3xl" />
               <div className="relative">
@@ -1220,7 +1223,7 @@ const MirrorDemo = () => {
           <div className="h-3 w-3 rounded-full bg-white/[0.08]" />
           <div className="h-3 w-3 rounded-full bg-white/[0.08]" />
         </div>
-        <div className="mx-auto flex h-7 w-72 items-center justify-center rounded-md bg-white/[0.04] text-[11px] text-muted-foreground/50">
+        <div className="mx-auto flex h-7 w-full max-w-[18rem] items-center justify-center truncate rounded-md bg-white/[0.04] px-2 text-[10px] text-muted-foreground/50 sm:text-[11px]">
           specmirror.app/project/ai-agent-platform
         </div>
       </div>
