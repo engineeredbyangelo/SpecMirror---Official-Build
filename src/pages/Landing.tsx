@@ -575,7 +575,6 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Why Not ChatGPT — Competitive Differentiation (Immersive) */}
       {/* Integrations — Ship-anywhere export grid */}
       <section id="integrations" className="relative py-20 md:py-28 overflow-hidden border-t border-white/[0.06]">
         <div className="absolute inset-0 bg-gradient-to-b from-background via-primary/[0.03] to-background" />
@@ -932,16 +931,17 @@ const Landing = () => {
                     </li>
                   ))}
                 </ul>
-                <Button size="lg" className="w-full gap-2" onClick={() => handleCheckout("pro")} disabled={checkoutLoading !== null}>
+                <Button size="lg" className="magnetic w-full gap-2" onClick={() => handleCheckout("pro")} disabled={checkoutLoading !== null}>
                   {checkoutLoading === "pro" ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Start Pro <ArrowRight className="h-4 w-4" /></>}
                 </Button>
+                <p className="mt-3 text-center text-[11px] text-muted-foreground/70">Cancel anytime · 7-day money-back</p>
               </div>
             </FadeSection>
           </div>
         </div>
       </section>
 
-      {/* FAQ — Immersive */}
+      {/* FAQ + Final CTA */}
       <section id="faq" className="relative py-20 md:py-28 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.02] via-background to-primary/[0.03]" />
         <div className="absolute top-1/3 right-1/4 h-64 w-64 rounded-full bg-accent/[0.03] blur-3xl" />
@@ -990,6 +990,40 @@ const Landing = () => {
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>
+            </div>
+          </FadeSection>
+        </div>
+
+        {/* Final CTA card */}
+        <div className="relative z-10 mx-auto mt-20 max-w-5xl px-6">
+          <FadeSection delay={0.05}>
+            <div className="premium-card relative overflow-hidden p-10 text-center md:p-14">
+              <div className="absolute -top-32 left-1/2 -translate-x-1/2 h-72 w-[600px] rounded-full bg-primary/[0.12] blur-3xl" />
+              <div className="absolute -bottom-32 left-1/2 -translate-x-1/2 h-56 w-[500px] rounded-full bg-accent/[0.08] blur-3xl" />
+              <div className="relative">
+                <p className="mb-3 font-mono text-[11px] font-medium uppercase tracking-[0.25em] text-primary">Ready when you are</p>
+                <h2 className="mb-4 text-3xl font-bold tracking-tight md:text-5xl">
+                  Ready to{" "}
+                  <span className="liquid-text">ship faster?</span>
+                </h2>
+                <p className="mx-auto mb-8 max-w-xl text-[15px] leading-relaxed text-muted-foreground">
+                  Join 1,200+ founders and product teams turning briefs into engineering-ready specs in seconds.
+                </p>
+                <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
+                  <Button size="lg" className="magnetic gap-2 px-8 text-base shadow-[0_8px_24px_-8px_hsl(226_70%_55%_/_0.55)]" asChild>
+                    <Link to="/signup">
+                      Start free
+                      <ArrowRight className="h-4 w-4" />
+                    </Link>
+                  </Button>
+                  <Button size="lg" variant="outline" className="magnetic gap-2 border-white/[0.1] bg-white/[0.03] hover:bg-white/[0.06]" asChild>
+                    <a href="#pricing">See pricing</a>
+                  </Button>
+                </div>
+                <p className="mt-5 text-xs text-muted-foreground/70">
+                  No credit card · 6 free specs / month · Cancel anytime
+                </p>
+              </div>
             </div>
           </FadeSection>
         </div>
