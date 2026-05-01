@@ -998,9 +998,9 @@ const Landing = () => {
         </div>
 
         {/* Final CTA card */}
-        <div className="relative z-10 mx-auto mt-20 max-w-5xl px-6">
+        <div className="relative z-10 mx-auto mt-20 max-w-5xl px-5 sm:px-6">
           <FadeSection delay={0.05}>
-            <div className="premium-card relative overflow-hidden p-10 text-center md:p-14">
+            <div className="premium-card relative overflow-hidden p-7 text-center sm:p-10 md:p-14">
               <div className="absolute -top-32 left-1/2 -translate-x-1/2 h-72 w-[600px] rounded-full bg-primary/[0.12] blur-3xl" />
               <div className="absolute -bottom-32 left-1/2 -translate-x-1/2 h-56 w-[500px] rounded-full bg-accent/[0.08] blur-3xl" />
               <div className="relative">
