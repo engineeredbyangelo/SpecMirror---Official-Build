@@ -116,7 +116,7 @@ const Landing = () => {
       </div>
 
       {/* Hero — premium two-column */}
-      <section className="relative px-6 pt-28 pb-16 md:pt-36 md:pb-24">
+      <section className="relative overflow-hidden px-5 pt-24 pb-14 sm:px-6 md:pt-36 md:pb-24">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.07] via-transparent to-transparent" />
         <div className="absolute top-1/3 left-1/4 h-[480px] w-[480px] rounded-full bg-primary/[0.035] blur-3xl" />
         <div className="absolute top-1/2 right-1/4 h-[420px] w-[420px] rounded-full bg-accent/[0.025] blur-3xl" />
@@ -131,7 +131,7 @@ const Landing = () => {
               </div>
             </FadeSection>
             <FadeSection delay={0.08}>
-              <h1 className="mb-6 text-[44px] font-bold leading-[0.95] tracking-tighter sm:text-6xl lg:text-[72px]">
+              <h1 className="mb-6 text-[36px] font-bold leading-[1.02] tracking-tight sm:text-6xl sm:leading-[0.95] sm:tracking-tighter lg:text-[72px]">
                 From idea to{" "}
                 <span className="liquid-text">production-ready spec.</span>
                 <br className="hidden sm:block" />
@@ -180,7 +180,7 @@ const Landing = () => {
       {/* Trust strip */}
       <FadeSection>
         <div className="relative z-10 mx-auto max-w-5xl px-6 pb-8">
-          <div className="premium-card flex flex-wrap items-center justify-center gap-x-10 gap-y-4 px-6 py-5 text-sm">
+          <div className="premium-card flex flex-wrap items-center justify-center gap-x-6 gap-y-3 px-5 py-5 text-xs sm:gap-x-10 sm:gap-y-4 sm:text-sm">
             <div className="flex items-center gap-2">
               <Zap className="h-4 w-4 text-primary" />
               <span className="text-foreground/85"><span className="font-semibold text-foreground">10,000+</span> specs generated</span>
