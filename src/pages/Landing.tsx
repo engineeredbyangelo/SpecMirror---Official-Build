@@ -515,17 +515,17 @@ const Landing = () => {
               <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 backdrop-blur-xl transition-all duration-500" style={{ boxShadow: activeDocType === 'prd' ? "0 0 30px hsl(226 70% 55.5% / 0.06), inset 0 0 0 1px hsl(226 70% 55.5% / 0.08)" : "0 0 30px hsl(160 84% 39% / 0.06), inset 0 0 0 1px hsl(160 84% 39% / 0.08)" }}>
                 {/* Toggle bar */}
                 <div className="mb-5 flex items-center justify-center">
-                  <div className="inline-flex items-center rounded-full border border-white/[0.08] bg-white/[0.03] p-1">
+                  <div className="inline-flex w-full max-w-full items-center rounded-full border border-white/[0.08] bg-white/[0.03] p-1 sm:w-auto">
                     <button
                       onClick={() => setActiveDocType('prd')}
-                      className={`relative rounded-full px-5 py-2 text-xs font-semibold transition-all duration-300 ${activeDocType === 'prd' ? 'bg-primary text-primary-foreground shadow-lg' : 'text-muted-foreground hover:text-foreground'}`}
+                      className={`relative flex-1 whitespace-nowrap rounded-full px-3 py-2 text-[11px] font-semibold transition-all duration-300 sm:flex-none sm:px-5 sm:text-xs ${activeDocType === 'prd' ? 'bg-primary text-primary-foreground shadow-lg' : 'text-muted-foreground hover:text-foreground'}`}
                       style={activeDocType === 'prd' ? { boxShadow: "0 0 16px hsl(226 70% 55.5% / 0.3)" } : {}}
                     >
                       Product Requirements
                     </button>
                     <button
                       onClick={() => setActiveDocType('spec')}
-                      className={`relative rounded-full px-5 py-2 text-xs font-semibold transition-all duration-300 ${activeDocType === 'spec' ? 'bg-accent text-accent-foreground shadow-lg' : 'text-muted-foreground hover:text-foreground'}`}
+                      className={`relative flex-1 whitespace-nowrap rounded-full px-3 py-2 text-[11px] font-semibold transition-all duration-300 sm:flex-none sm:px-5 sm:text-xs ${activeDocType === 'spec' ? 'bg-accent text-accent-foreground shadow-lg' : 'text-muted-foreground hover:text-foreground'}`}
                       style={activeDocType === 'spec' ? { boxShadow: "0 0 16px hsl(160 84% 39% / 0.3)" } : {}}
                     >
                       Technical Spec
