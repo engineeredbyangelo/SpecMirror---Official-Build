@@ -1,77 +1,105 @@
-## Pro Export (PDF + Notion) + Slack Integration
+## Cleanup + Premium Landing Page Upgrade
 
-Two large features. Here's the proposed approach — please confirm before I build.
-
----
-
-### Feature 1: PDF Export (Pro only)
-
-**Approach:** Client-side PDF rendering using `jspdf` + `jspdf-autotable` (or `html2pdf.js`).
-
-- Pro users get a "Export PDF" option in the Dashboard project card (replaces/augments current "Use" button).
-- Renders the approved spec with SpecMirror branding: dark cover page, indigo accent, monospace code blocks for sections, page numbers.
-- Free/Basic users see the option grayed out with an "Upgrade to Pro" tooltip → Stripe checkout for Pro.
-
-**Files:**
-
-- `src/lib/exportPdf.ts` — new utility
-- `src/pages/Dashboard.tsx` — wire export menu
+Two parts: (1) sweep dead CSS/code, (2) elevate the landing page to a luxury, premium-grade feel with a clearer user flow.
 
 ---
 
-### Feature 2: Notion Export (Pro only)
+### Part 1 — CSS & code cleanup
 
-**Approach:** Use the Notion connector (`standard_connectors--connect notion`).
+After auditing, the actual leftover noise comes from earlier iterations (not the deleted Integrations duplicate alone). Confirmed unused:
 
-- Pro users click "Export to Notion" → if not connected, prompts connection. Then a dialog asks which parent page to push to (uses Notion's `search` API to list user's accessible pages).
-- New edge function `export-to-notion` — takes `projectId` + `parentPageId`, fetches the spec server-side, calls Notion gateway to create a child page with the spec content as blocks (heading + paragraph + code blocks).
-- Free/Basic blocked + Stripe upsell.
+`**src/index.css**`
 
-**Files:**
+- `.confidence-ring` rule — never applied in any component
+- `@keyframes confidence-fill` — only referenced by the dead `.confidence-ring`
+- `.cyber-line` rule — references `url(#cyber-gradient)` which doesn't exist (Landing uses `#cyber-gradient-left` / `#cyber-gradient-right` inline)
 
-- `supabase/functions/export-to-notion/index.ts` — new edge function (uses connector gateway)
-- `src/components/NotionExportDialog.tsx` — page picker
-- `src/pages/Dashboard.tsx` — wire button
+`**src/App.css**` — Vite scaffold leftovers (`#root` max-width 1280px center, `.logo`, `.logo-spin`, `.card`, `.read-the-docs`). The file is not imported anywhere. The `#root { max-width: 1280px }` rule would actually constrain the app if it ever got imported — safer to delete the file entirely.
 
-**Requires:** User connects Notion via the connector flow.
+`**src/pages/Landing.tsx**`
 
----
+- Stray duplicate comment on line 511 (`{/* Why Not ChatGPT — Competitive Differentiation (Immersive) */}`) sitting above the Integrations section header
+- Audit `lucide-react` imports on line 5 and drop any that aren't used after the visual pass (e.g. `Layers`, `Zap`, `GitBranch` if they don't survive the redesign)
 
-### Feature 3: Slack OAuth + Post to Channel
-
-**Decision needed:** The Lovable Slack connector authenticates **the workspace owner's account**, not each end-user. Two options - Go with option A. 
-
-- **A. (Recommended) Use the Lovable Slack connector** — simplest. One Slack workspace per Lovable workspace. Good for solo users / single-team accounts. Setup: click "Connect Slack" → goes through Lovable connector flow → channel picker dialog → posts via gateway.
-- **B. Per-user Slack OAuth (BYO Slack app)** — each end-user authorizes their own Slack workspace. Requires you to create a Slack app in api.slack.com, store client ID/secret, implement OAuth callback, store per-user tokens in DB. Much more work — ~3 new tables, OAuth callback function, token refresh logic.
-
-**My recommendation: A.** SpecMirror users are likely small teams; the connector covers 90% of cases. If you want B later, we can add it.
-
-**Files (option A):**
-
-- `supabase/functions/post-to-slack/index.ts` — new edge function (uses connector gateway, calls `chat.postMessage`)
-- `supabase/functions/list-slack-channels/index.ts` — new edge function (calls `conversations.list`)
-- `src/components/SlackPostDialog.tsx` — channel picker + preview
-- `src/pages/Dashboard.tsx` — wire "Post to Slack" button
+No component file deletions needed — `NotionExportDialog`, `SlackPostDialog`, `exportPdf.ts` are still wired into Dashboard.
 
 ---
 
-### UI placement on Dashboard
+### Part 2 — Premium visual & flow upgrade
 
-Replace the single "Use" button on each approved-project card with a **dropdown menu**:
+Goal: SpecMirror should feel like a $99/mo enterprise tool, not a generic SaaS template. Keep the dark zinc-950 + indigo + emerald palette (per project memory) but push refinement, hierarchy, and pacing.
 
-- Copy spec (existing)
-- Export PDF (Pro)
-- Export to Notion (Pro)
-- Post to Slack (Basic + Pro)
-- Share link (existing)
+#### 2.1 Visual refinement (applies across the page)
 
-Free users see all gated items disabled with a lock icon → click → Stripe checkout.
+- **Type scale** — bump hero to a true display size (`text-6xl` → `text-7xl/8xl` desktop) with tighter `tracking-tighter` and `leading-[0.95]`. Reduce body copy size to `text-[15px]` for editorial density. Add `font-feature-settings: 'ss01','cv11'` on body for refined Inter glyphs.
+- **Gradient text** — replace flat indigo gradient on hero highlight with a subtle tri-stop (indigo → violet-tinted indigo → emerald) and animate a slow background-position shift on hover/scroll-in for a "liquid metal" feel.
+- **Section dividers** — replace abrupt `border-t border-white/[0.06]` with hairline gradient rules (`bg-gradient-to-r from-transparent via-white/[0.08] to-transparent`) so sections feel like chapters in a magazine.
+- **Glow orbs** — reduce opacity (`0.05` → `0.035`) and increase blur radius for a more refined ambient lighting; add one large emerald orb behind pricing for warmth on the conversion section.
+- **Card treatment** — unify all card surfaces on one premium recipe: `bg-white/[0.025]`, `border-white/[0.06]`, `backdrop-blur-2xl`, `rounded-2xl`, soft outer glow on hover (`box-shadow: 0 0 0 1px hsl(226 70% 55% / 0.15), 0 20px 60px -20px hsl(226 70% 55% / 0.2)`), and a faint inner top-edge highlight (`::before` with `linear-gradient(to bottom, white/[0.06], transparent)`).
+- **Buttons** — primary CTA gets a soft inner gloss (`bg-gradient-to-b from-primary to-primary/85`) plus a subtle outer ring on hover; secondary buttons stay ghost.
+- **Micro-interactions** — add a `data-magnetic` hover lift (translateY -1px, shadow grow) on every CTA; honor `prefers-reduced-motion`.
+- **Cursor / focus polish** — refine focus-visible rings to indigo with low opacity for a calmer feel.
+
+#### 2.2 Flow & narrative restructure
+
+Today's order: Hero → How it works → Features → Integrations → Why-not-ChatGPT → Preview → How it helps → Pricing → FAQ. That's 9 sections and the value prop is buried.
+
+Proposed flow (8 sections, sharper arc):
+
+```text
+1. Hero                      WHO + WHAT in 5 seconds
+2. Trust strip (NEW)         logos / "trusted by 1,200+ founders" / metric badges
+3. How it works              1-2-3-4 visual (kept, tightened)
+4. Features                  3-zone immersive grid (kept)
+5. Integrations              ship-anywhere PDF/Notion/Slack (kept, repositioned)
+6. Why not ChatGPT           differentiation table (kept, condensed)
+7. Pricing                   conversion moment, with "Most popular" Pro tier
+8. FAQ + Final CTA           merged: FAQ accordion above a final dark CTA card
+```
+
+Removed/merged: standalone "Preview" and "How it helps" — their content folds into Features and the final CTA card respectively. This shortens scroll length by ~25% and front-loads the integrations story (a major reason a buyer says yes).
+
+Add at the top of Hero, below the badge:
+
+- **Above-the-fold proof line**: small horizontal strip with 3 metrics (e.g. "10k+ specs generated · 99.2% confidence avg · 4.9★ from beta users"). Builds credibility before scroll.
+
+Add a **sticky mini-nav** that appears after scrolling past the hero — a thin pill bar with section anchors + a primary CTA. Disappears on mobile (use the existing nav instead).
+
+#### 2.3 Hero rework
+
+- Two-column hero on `lg:` breakpoint: copy + CTAs left, animated demo card right (replaces the modal-only `showDemo`). The demo card auto-plays the typing → spec reveal loop already defined in `index.css`. Single column on mobile, demo below copy.
+- New tagline structure:
+  - Eyebrow: "AI Spec Generator for product teams"
+  - H1: "From idea to **production-ready spec.** In 30 seconds."
+  - Sub: one sentence, focused on the outcome ("Stop writing PRDs. Start shipping.")
+  - CTA pair: primary "Try free — no card" + ghost "Watch 60-sec demo"
+  - Below CTA: tiny "Free forever for 5 specs/day · No credit card" reassurance line
+
+#### 2.4 Pricing polish
+
+- Highlight Pro with an indigo→emerald hairline border, a small "Most popular" pill, and a subtle inner glow.
+- Add a 4th comparison row that pulls from the integrations story ("Export to PDF/Notion/Slack: ✓ Pro").
+- Money-back / cancel-anytime micro-copy under the price.
+
+#### 2.5 Final CTA + FAQ merge
+
+Replace the standalone footer-y FAQ section with a two-part block:
+
+- FAQ accordion (kept as-is)
+- Below it, a full-width premium CTA card: dark zinc surface, large indigo orb behind, headline "Ready to ship faster?" + primary CTA + a single trust line.
 
 ---
 
-### Confirm before I build
+### Technical notes
 
-1. **Slack approach** — Option A (Lovable connector, recommended) or B (per-user OAuth, much more work)? - Option A
-2. **PDF library** — `jspdf` (lightweight, good control, what I'd pick) or `react-pdf/renderer` (nicer for complex layouts, larger bundle)?- jspdf
-3. **Notion export format** — full spec as one page with structured blocks, OR also create sub-pages per section (Overview / Requirements / etc.)? Recommend: one page, structured blocks. - the recommended option
-4. **Build all three at once or sequence?** — Recommend doing PDF first (no external dependencies), then Notion, then Slack. Or build in parallel if you want it all in one pass. Go i nthe order you recommended
+- Files touched: `src/pages/Landing.tsx` (major), `src/index.css` (cleanup + 2 new utilities for `.section-divider` and `.premium-card`), delete `src/App.css`.
+- No new dependencies — `framer-motion` is already installed and used.
+- All animations gated by `@media (prefers-reduced-motion: no-preference)`.
+- Keep all existing anchor IDs that are referenced from elsewhere (`#pricing`, `#how-it-works`, `#features`, `#integrations`, `#faq`); update nav links if any section is removed.
+- No backend, schema, or auth changes.
+
+### Out of scope
+
+- No copywriting overhaul beyond the hero + final CTA (existing feature/integration copy stays).
+- No new logos/illustrations sourced — visual polish comes from CSS + existing Lucide icons.
+- Dashboard, Login, Signup pages needs to adapt to the same branding changes
