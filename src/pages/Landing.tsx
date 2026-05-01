@@ -84,12 +84,15 @@ const Landing = () => {
             <a href="#pricing" className="transition-colors hover:text-foreground">Pricing</a>
             <a href="#faq" className="transition-colors hover:text-foreground">FAQ</a>
           </div>
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" size="sm" asChild>
+          <div className="flex items-center gap-1.5 sm:gap-3">
+            <Button variant="ghost" size="sm" className="hidden sm:inline-flex" asChild>
               <Link to="/login">Log in</Link>
             </Button>
-            <Button size="sm" className="magnetic" asChild>
-              <Link to="/signup">Start for free</Link>
+            <Button size="sm" className="magnetic px-3 sm:px-4" asChild>
+              <Link to="/signup">
+                <span className="sm:hidden">Sign up</span>
+                <span className="hidden sm:inline">Start for free</span>
+              </Link>
             </Button>
           </div>
         </div>
