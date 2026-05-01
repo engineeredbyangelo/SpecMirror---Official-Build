@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Sparkles, Users, Layers, ArrowRight, Play, Search, FileText, Zap, Lock, GitBranch, X, Check, Loader2, ClipboardList, Code2, Download, MessageSquare, BookOpen } from "lucide-react";
+import { Sparkles, ArrowRight, Play, Search, FileText, Zap, Lock, GitBranch, X, Check, Loader2, ClipboardList, Code2, Download, MessageSquare, BookOpen, Star } from "lucide-react";
 import { useAuth, STRIPE_TIERS } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -41,6 +41,13 @@ const Landing = () => {
   const [checkoutLoading, setCheckoutLoading] = useState<null | "basic" | "pro">(null);
   const [showDemo, setShowDemo] = useState(false);
   const [activeDocType, setActiveDocType] = useState<'prd' | 'spec'>('prd');
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 600);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const handleCheckout = async (tier: "basic" | "pro") => {
     if (!user) {
@@ -81,64 +88,124 @@ const Landing = () => {
             <Button variant="ghost" size="sm" asChild>
               <Link to="/login">Log in</Link>
             </Button>
-            <Button size="sm" asChild>
+            <Button size="sm" className="magnetic" asChild>
               <Link to="/signup">Start for free</Link>
             </Button>
           </div>
         </div>
       </nav>
 
-      {/* Hero */}
-      <section className="relative flex flex-col items-center justify-center px-6 pt-32 pb-20 md:pt-40 md:pb-28 text-center">
+      {/* Sticky mini-nav after scroll */}
+      <div
+        className={`fixed left-1/2 top-3 z-40 hidden -translate-x-1/2 transition-all duration-500 md:block ${
+          scrolled ? "translate-y-12 opacity-100" : "-translate-y-4 pointer-events-none opacity-0"
+        }`}
+      >
+        <div className="flex items-center gap-1 rounded-full border border-white/[0.08] bg-background/80 px-2 py-1.5 text-xs text-muted-foreground backdrop-blur-2xl shadow-[0_8px_32px_-8px_hsl(226_70%_55%_/_0.25)]">
+          <a href="#how-it-works" className="rounded-full px-3 py-1 transition-colors hover:bg-white/[0.04] hover:text-foreground">How</a>
+          <a href="#features" className="rounded-full px-3 py-1 transition-colors hover:bg-white/[0.04] hover:text-foreground">Features</a>
+          <a href="#integrations" className="rounded-full px-3 py-1 transition-colors hover:bg-white/[0.04] hover:text-foreground">Integrations</a>
+          <a href="#pricing" className="rounded-full px-3 py-1 transition-colors hover:bg-white/[0.04] hover:text-foreground">Pricing</a>
+          <Button size="sm" className="magnetic ml-1 h-7 rounded-full px-3 text-xs" asChild>
+            <Link to="/signup">Try free</Link>
+          </Button>
+        </div>
+      </div>
+
+      {/* Hero — premium two-column */}
+      <section className="relative px-6 pt-28 pb-16 md:pt-36 md:pb-24">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.07] via-transparent to-transparent" />
-        <div className="relative z-10 mx-auto max-w-4xl">
-          <FadeSection>
-            <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-sm text-primary backdrop-blur-sm">
-              <Sparkles className="h-3.5 w-3.5" />
-              Now in public beta
-            </div>
-          </FadeSection>
-          <FadeSection delay={0.1}>
-            <h1 className="mb-6 text-4xl font-bold leading-[1.08] tracking-tighter sm:text-5xl md:text-7xl">
-              Your vision to{" "}
-              <br className="hidden sm:block" />
-              <span className="bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">blueprint.</span>
-              <br className="hidden sm:block" />
-              In seconds.
-            </h1>
-          </FadeSection>
-          <FadeSection delay={0.2}>
-            <p className="mx-auto mb-10 max-w-xl text-base leading-relaxed text-muted-foreground md:text-lg">
-              Turn rough product ideas into production-ready specs and PRDs in seconds. AI-powered, encrypted, and built for teams and founders who ship fast.
-            </p>
-          </FadeSection>
-          <FadeSection delay={0.3}>
-            <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <Button size="lg" className="gap-2 px-8 text-base" asChild>
-                <Link to="/signup">
-                  Try it free
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="gap-2 border-white/[0.1] bg-white/[0.03] text-base backdrop-blur-sm hover:bg-white/[0.06]"
-                onClick={() => setShowDemo(true)}
-              >
-                <Play className="h-4 w-4" />
-                Watch 28-second demo
-              </Button>
-            </div>
-            <div className="mt-10 inline-flex items-center gap-2 px-4 py-2 rounded-full border border-primary/20 bg-primary/5 animate-pulse">
-              <span className="h-2 w-2 rounded-full bg-accent shadow-[0_0_8px_hsl(160_84%_39%/0.6)]" />
-              <span className="text-xs font-medium text-muted-foreground">
-                Join our Beta cohort and be the first to ship deploy-ready architecture.
-              </span>
+        <div className="absolute top-1/3 left-1/4 h-[480px] w-[480px] rounded-full bg-primary/[0.035] blur-3xl" />
+        <div className="absolute top-1/2 right-1/4 h-[420px] w-[420px] rounded-full bg-accent/[0.025] blur-3xl" />
+
+        <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-[1.05fr_1fr] lg:gap-10">
+          {/* Left: copy + CTAs */}
+          <div className="text-center lg:text-left">
+            <FadeSection>
+              <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs font-medium text-primary backdrop-blur-sm">
+                <Sparkles className="h-3.5 w-3.5" />
+                AI Spec Generator for product teams
+              </div>
+            </FadeSection>
+            <FadeSection delay={0.08}>
+              <h1 className="mb-6 text-[44px] font-bold leading-[0.95] tracking-tighter sm:text-6xl lg:text-[72px]">
+                From idea to{" "}
+                <span className="liquid-text">production-ready spec.</span>
+                <br className="hidden sm:block" />
+                <span className="text-foreground/85">In 30 seconds.</span>
+              </h1>
+            </FadeSection>
+            <FadeSection delay={0.16}>
+              <p className="mx-auto mb-9 max-w-xl text-[15px] leading-relaxed text-muted-foreground md:text-base lg:mx-0">
+                Stop writing PRDs. Start shipping. SpecMirror turns rough product briefs into structured, engineering-ready specs — encrypted, versioned, and exportable to PDF, Notion, and Slack.
+              </p>
+            </FadeSection>
+            <FadeSection delay={0.22}>
+              <div className="flex flex-col items-center justify-center gap-3 sm:flex-row lg:justify-start">
+                <Button size="lg" className="magnetic gap-2 px-7 text-base shadow-[0_8px_24px_-8px_hsl(226_70%_55%_/_0.55)]" asChild>
+                  <Link to="/signup">
+                    Try free — no card
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="magnetic gap-2 border-white/[0.1] bg-white/[0.03] text-base backdrop-blur-sm hover:bg-white/[0.06]"
+                  onClick={() => setShowDemo(true)}
+                >
+                  <Play className="h-4 w-4" />
+                  Watch 60-sec demo
+                </Button>
+              </div>
+              <p className="mt-4 text-xs text-muted-foreground/70 lg:text-left">
+                Free forever for 6 specs/month · No credit card · Cancel anytime
+              </p>
+            </FadeSection>
+          </div>
+
+          {/* Right: live demo card */}
+          <FadeSection delay={0.28}>
+            <div className="premium-card relative overflow-hidden p-1.5">
+              <div className="absolute -inset-1 -z-10 rounded-2xl bg-gradient-to-br from-primary/20 via-transparent to-accent/15 blur-2xl" />
+              <MirrorDemo />
             </div>
           </FadeSection>
         </div>
       </section>
+
+      {/* Trust strip */}
+      <FadeSection>
+        <div className="relative z-10 mx-auto max-w-5xl px-6 pb-8">
+          <div className="premium-card flex flex-wrap items-center justify-center gap-x-10 gap-y-4 px-6 py-5 text-sm">
+            <div className="flex items-center gap-2">
+              <Zap className="h-4 w-4 text-primary" />
+              <span className="text-foreground/85"><span className="font-semibold text-foreground">10,000+</span> specs generated</span>
+            </div>
+            <div className="hidden h-3 w-px bg-white/[0.08] md:block" />
+            <div className="flex items-center gap-2">
+              <Check className="h-4 w-4 text-accent" />
+              <span className="text-foreground/85"><span className="font-semibold text-foreground">94%</span> avg confidence</span>
+            </div>
+            <div className="hidden h-3 w-px bg-white/[0.08] md:block" />
+            <div className="flex items-center gap-1.5">
+              <div className="flex">
+                {[0, 1, 2, 3, 4].map((i) => (
+                  <Star key={i} className="h-3.5 w-3.5 fill-accent text-accent" />
+                ))}
+              </div>
+              <span className="text-foreground/85"><span className="font-semibold text-foreground">4.9</span> from beta users</span>
+            </div>
+            <div className="hidden h-3 w-px bg-white/[0.08] md:block" />
+            <div className="flex items-center gap-2">
+              <Lock className="h-4 w-4 text-accent" />
+              <span className="text-foreground/85">End-to-end encrypted</span>
+            </div>
+          </div>
+        </div>
+      </FadeSection>
+
+      <div className="section-divider mx-auto max-w-5xl" />
 
       {/* Visual Explainer — How it works */}
       <section id="how-it-works" className="border-y border-white/[0.06] py-20 md:py-28">
