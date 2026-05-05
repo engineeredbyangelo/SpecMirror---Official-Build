@@ -857,7 +857,7 @@ const Landing = () => {
                 <ul className="mb-8 flex-1 space-y-2.5 text-sm text-muted-foreground">
                   {[
                     "6 generations / month",
-                    "SpecAI (standard model)",
+                    "SpecAI",
                     "Encrypted sharing",
                     "Version history",
                     "Confidence scoring",
