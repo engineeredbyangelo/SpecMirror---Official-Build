@@ -1,55 +1,114 @@
-## Goal
+# Rebuild Demo Video — 60s Marketing Cut
 
-Stop the hero `MirrorDemo` from resizing as content streams in (the source of the page-extending "glitch"), and upgrade its visual polish using our highest-quality image model.
+Replace the current 28s walkthrough with a **60-second (1800 frame @ 30fps)** marketing-style video that hooks viewers, shows the product in motion, and lands the value prop: *"Turn your idea into a production-ready spec — in seconds."*
 
-## Root cause
+## Creative Direction
 
-In `src/pages/Landing.tsx` (`MirrorDemo`, lines ~1118–1297):
+**Vibe:** Confident, kinetic, modern SaaS launch trailer — think Linear / Vercel / Arc product reveal energy. Premium but vibrant, not sterile.
 
-- The **Brief panel** uses `min-h-[180px]` and grows as each `<p>` line is appended → panel expands ~5 times during typing.
-- The **Spec panel** swaps between three different DOM trees (`typing` placeholder → `loading` shimmer → `reveal` scrollable list) with only `min-h-[180px]`, then grows up to `max-h-[320px]` as spec lines reveal.
-- Because both columns grow independently, the whole hero card (and therefore the page) expands mid-animation, pushing content below — that's the perceived glitch/jank.
+**Palette (vibrant, on-brand):**
+- Background base: `#08090f` (near-black, brand)
+- Primary indigo: `#4a6cf7` (kept)
+- Accent emerald: `#34d399` (kept)
+- NEW vibrant accents: violet `#a855f7`, cyan `#22d3ee`, amber `#fbbf24` — used sparingly as gradient stops, highlights, and per-scene accent
+- Soft gradient washes (indigo→violet, emerald→cyan) for hero moments
 
-## Fix plan
+**Typography:** Inter (already in use). Display sizes 96–140px for hero beats, 22–32px for body. Tight letter-spacing (-0.03em) on big type.
 
-### 1. Lock the demo's dimensions (no layout shift)
+**Motion system:**
+- Default entrance: spring (damping 18, stiffness 160) with 8–14 frame stagger
+- Hero entrances: blur-to-sharp (filter blur 20→0) + scale 0.92→1
+- Default transition: fade (12f) — except hero beats use a `wipe` or `slide` for punch
+- Persistent floating gradient orbs throughout (sinusoidal drift) for cohesion
+- Subtle grain overlay for texture
 
-In `MirrorDemo`:
+## Storyboard (60s / 1800 frames @ 30fps)
 
-- Wrap the two panels in a container with a **fixed height** at each breakpoint (e.g. `h-[420px] md:h-[380px]`) and `overflow-hidden`.
-- Replace `min-h-[180px]` on each panel with a fixed `h-full` and make their inner content area `h-full overflow-hidden` so panels never push outward.
-- For the **Brief panel**, render lines inside a fixed-height area; old lines stay, blinking caret stays at end. Use a true typewriter: animate **characters** of the current line (not whole-line fade) so the visible block height stays roughly constant. Once all 5 lines fit, stop — content is sized to fit the box (we'll trim copy if needed).
-- For the **Spec panel**, keep a **single persistent DOM** across all three phases (no mount/unmount swaps):
-  - Always render the scroll container at `h-full overflow-hidden` (no internal scroll on the demo loop).
-  - "Waiting…" placeholder, shimmer skeleton, and revealed lines all live in the same fixed-size box, just toggling visibility.
-  - Reveal spec lines via translate/fade in place; if total content exceeds the box, fade out the top via a CSS mask gradient instead of growing the box.
-- Ensure the outer `MirrorDemo` root has a stable aspect on mobile too (`h-[520px] sm:h-[460px] md:h-[400px]`), so the hero column never reflows.
+```text
+┌─────────────────────────────────────────────────────────────┐
+│ Scene 1 — HOOK                          0–120f   (4.0s)     │
+│ Cold open. Big type: "You have an idea."                    │
+│ Cursor blinks, words morph: "...a vision." "...a product."  │
+│ Camera "pushes in." Ends on: "But specs slow you down."     │
+├─────────────────────────────────────────────────────────────┤
+│ Scene 2 — PROBLEM                       120–270f (5.0s)     │
+│ Floating chaotic doc fragments (Notion/PRD snippets)        │
+│ swirl on screen. Stamps: "12 hrs", "47 revisions",          │
+│ "3 stakeholders". Red tint accent. Resolves to: "There's    │
+│ a faster way."                                              │
+├─────────────────────────────────────────────────────────────┤
+│ Scene 3 — BRAND REVEAL                  270–390f (4.0s)     │
+│ Whoosh wipe → SpecMirror logo + wordmark scales in with     │
+│ indigo→violet gradient sweep. Tagline:                      │
+│ "Brief → Spec in seconds."                                  │
+├─────────────────────────────────────────────────────────────┤
+│ Scene 4 — STEP 1: WRITE BRIEF           390–630f (8.0s)     │
+│ UI mock: terminal-style brief input. Char-typewriter writes │
+│ "Fitness app for personal trainers..."  Caption pill:       │
+│ "1 — Write a one-paragraph brief"                           │
+├─────────────────────────────────────────────────────────────┤
+│ Scene 5 — STEP 2: AI GENERATES          630–870f (8.0s)     │
+│ Brief shrinks left → arrow with traveling gradient particles│
+│ → mirror panel right. Loading shimmer. Caption:             │
+│ "2 — AI mirrors it into a spec"                             │
+├─────────────────────────────────────────────────────────────┤
+│ Scene 6 — STEP 3: SPEC REVEAL           870–1170f (10.0s)   │
+│ Spec sections cascade in: User Stories, Tech Stack,         │
+│ Data Model, Acceptance Criteria, Edge Cases. Each section   │
+│ pings with an emerald check. Caption:                       │
+│ "3 — Production-ready in 30 seconds"                        │
+├─────────────────────────────────────────────────────────────┤
+│ Scene 7 — BENEFITS MONTAGE              1170–1410f (8.0s)   │
+│ 3-up bento grid, staggered:                                 │
+│   • "Ship 10x faster"  (indigo)                             │
+│   • "Zero ambiguity"   (emerald)                            │
+│   • "Stakeholder-ready"(violet)                             │
+│ Each card has a tiny animated icon.                         │
+├─────────────────────────────────────────────────────────────┤
+│ Scene 8 — SOCIAL PROOF                  1410–1560f (5.0s)   │
+│ Quick cuts of 3 stylized testimonial cards floating in,     │
+│ "Saved us a sprint." — PM, fictional logo.                  │
+├─────────────────────────────────────────────────────────────┤
+│ Scene 9 — CLOSE                         1560–1800f (8.0s)   │
+│ Logo locks center on gradient bloom. Headline:              │
+│ "Your idea. Specced. Today."                                │
+│ Sub: "specmirror.one"                                       │
+│ Hold 1.5s, gentle pulse, fade.                              │
+└─────────────────────────────────────────────────────────────┘
+```
 
-### 2. Smooth out the cycle
+Total: 1800 frames = 60.0s @ 30fps (with ~12f transition overlaps absorbed).
 
-- Slightly slow the typewriter and shorten the spec list so the loop fits the locked viewport without needing to scroll.
-- Keep the existing 3-phase state machine but drive only opacity/transform, never height.
+## Files to change
 
-### 3. Upgrade the visual (AI image)
+**Replace:**
+- `remotion/src/Root.tsx` — bump `durationInFrames` to 1800
+- `remotion/src/MainVideo.tsx` — new 9-scene `TransitionSeries` with persistent background (orbs + grain), varied transitions (fade default; wipe/slide for hero beats)
 
-The user asked about "ChatGPT image 2". Our gateway doesn't expose that, but we have a top-tier equivalent:
+**New scenes (replace existing 5):**
+- `remotion/src/scenes/Scene1Hook.tsx`
+- `remotion/src/scenes/Scene2Problem.tsx`
+- `remotion/src/scenes/Scene3Reveal.tsx`
+- `remotion/src/scenes/Scene4Brief.tsx` (refactor of Scene2Brief)
+- `remotion/src/scenes/Scene5Generate.tsx`
+- `remotion/src/scenes/Scene6Spec.tsx` (refactor of Scene3Spec/Scene4Reveal)
+- `remotion/src/scenes/Scene7Benefits.tsx`
+- `remotion/src/scenes/Scene8Proof.tsx`
+- `remotion/src/scenes/Scene9Close.tsx`
 
-- Use **`google/gemini-3-pro-image-preview`** (Nano Banana Pro, highest quality) via the `lovable_ai` script to generate a premium hero **backdrop** — a subtle, dark, luxury abstract: indigo→emerald glass shards / soft volumetric light, 16:9, transparent-feeling, very low contrast so the demo card stays the focal point.
-- Save to `public/hero-backdrop.webp` and place it behind `MirrorDemo` with `opacity-40 mix-blend-screen` and a radial mask so it fades into the page background.
-- This gives a "premium grade" feel without touching the live, animated demo (which carries the product story).
+**Delete (no longer used):**
+- `remotion/src/scenes/Scene1Intro.tsx`, `Scene2Brief.tsx`, `Scene3Spec.tsx`, `Scene4Approve.tsx`, `Scene4Reveal.tsx`, `Scene5Approve.tsx`
 
-If the user prefers, we can instead generate a **static product mock** image (rendered editor screenshot) and replace the animated demo entirely — but the typing animation is on-brand for SpecMirror, so default is: keep animated demo, add AI backdrop.
+**Keep:** `remotion/scripts/render-remotion.mjs` (output already → `/mnt/documents/specmirror-demo.mp4`)
 
-### 4. Reduced motion
+## Render & QA
 
-Respect `prefers-reduced-motion`: skip the typewriter, render the final brief + spec immediately inside the locked box.
-
-## Files touched
-
-- `src/pages/Landing.tsx` — refactor `MirrorDemo` (fixed heights, persistent spec DOM, char-level typewriter, backdrop element).
-- `src/index.css` — add small utilities: `.demo-mask` (top/bottom fade mask), `.caret` (blink).
-- `public/hero-backdrop.webp` — new AI-generated asset (Nano Banana Pro).
+1. Spot-check key frames at 60, 330, 510, 900, 1290, 1700 with `bunx remotion still`
+2. Full render: `node scripts/render-remotion.mjs` (concurrency 1, ~6–10 min)
+3. Verify MP4 size + duration with `ffprobe`
+4. Deliver via `<lov-artifact path="specmirror-demo.mp4" mime_type="video/mp4">`
 
 ## Out of scope
-
-No changes to other landing sections, copy, pricing, or routing.
+- Voiceover / music (muted render — can add later if desired)
+- Embedding the new video on the landing page (separate request)
+- Changes to landing page or other app pages
