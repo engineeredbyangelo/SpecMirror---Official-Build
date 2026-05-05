@@ -7,7 +7,6 @@ import { useAuth, STRIPE_TIERS } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
-import heroBackdrop from "@/assets/hero-backdrop.jpg";
 
 /* ── Scroll-triggered section wrapper ── */
 const FadeSection = ({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) => (
