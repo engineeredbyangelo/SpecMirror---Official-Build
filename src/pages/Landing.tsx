@@ -44,7 +44,7 @@ const Landing = () => {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 600);
+    const onScroll = () => setScrolled(window.scrollY > 80);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
@@ -71,7 +71,7 @@ const Landing = () => {
   return (
     <div className="min-h-screen glass-bg noise-overlay text-foreground relative">
       {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/[0.06] bg-background/60 backdrop-blur-2xl">
+      <nav className="absolute top-0 left-0 right-0 z-50 border-b border-white/[0.06] bg-background/60 backdrop-blur-2xl">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
           <div className="flex items-center gap-2.5">
             <Search className="h-5 w-5 text-primary" />
@@ -887,8 +887,8 @@ const Landing = () => {
                 </div>
                 <ul className="mb-8 flex-1 space-y-2.5 text-sm text-muted-foreground">
                   {[
-                    "16 generations / month",
-                    "SpecAI v2 (stronger model)",
+                     "16 generations / month",
+                    "SpecAI v2",
                     "Encrypted team sharing",
                     "Version history",
                     "Slack integration",
@@ -922,8 +922,8 @@ const Landing = () => {
                 </div>
                 <ul className="mb-8 flex-1 space-y-2.5 text-sm text-muted-foreground">
                   {[
-                    "30 generations / month",
-                    "SpecAI Pro (strongest model)",
+                     "30 generations / month",
+                    "SpecAI Pro",
                     "Everything in Basic",
                     "Custom export (PDF / Notion)",
                     "Priority support",
