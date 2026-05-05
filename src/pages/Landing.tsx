@@ -41,13 +41,6 @@ const Landing = () => {
   const [checkoutLoading, setCheckoutLoading] = useState<null | "basic" | "pro">(null);
   const [showDemo, setShowDemo] = useState(false);
   const [activeDocType, setActiveDocType] = useState<'prd' | 'spec'>('prd');
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 80);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   const handleCheckout = async (tier: "basic" | "pro") => {
     if (!user) {
@@ -97,23 +90,6 @@ const Landing = () => {
           </div>
         </div>
       </nav>
-
-      {/* Sticky mini-nav after scroll */}
-      <div
-        className={`fixed left-1/2 top-3 z-40 hidden -translate-x-1/2 transition-all duration-500 md:block ${
-          scrolled ? "translate-y-12 opacity-100" : "-translate-y-4 pointer-events-none opacity-0"
-        }`}
-      >
-        <div className="flex items-center gap-1 rounded-full border border-white/[0.08] bg-background/80 px-2 py-1.5 text-xs text-muted-foreground backdrop-blur-2xl shadow-[0_8px_32px_-8px_hsl(226_70%_55%_/_0.25)]">
-          <a href="#how-it-works" className="rounded-full px-3 py-1 transition-colors hover:bg-white/[0.04] hover:text-foreground">How</a>
-          <a href="#features" className="rounded-full px-3 py-1 transition-colors hover:bg-white/[0.04] hover:text-foreground">Features</a>
-          <a href="#integrations" className="rounded-full px-3 py-1 transition-colors hover:bg-white/[0.04] hover:text-foreground">Integrations</a>
-          <a href="#pricing" className="rounded-full px-3 py-1 transition-colors hover:bg-white/[0.04] hover:text-foreground">Pricing</a>
-          <Button size="sm" className="magnetic ml-1 h-7 rounded-full px-3 text-xs" asChild>
-            <Link to="/signup">Try free</Link>
-          </Button>
-        </div>
-      </div>
 
       {/* Hero — premium two-column */}
       <section className="relative overflow-hidden px-5 pt-24 pb-14 sm:px-6 md:pt-36 md:pb-24">
