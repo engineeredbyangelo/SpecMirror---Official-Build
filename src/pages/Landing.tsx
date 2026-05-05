@@ -7,7 +7,6 @@ import { useAuth, STRIPE_TIERS } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
-import heroBackdrop from "@/assets/hero-backdrop.jpg";
 
 /* ── Scroll-triggered section wrapper ── */
 const FadeSection = ({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) => (
@@ -171,14 +170,6 @@ const Landing = () => {
           {/* Right: live demo card */}
           <FadeSection delay={0.28}>
             <div className="premium-card relative overflow-hidden p-1.5">
-              <img
-                src={heroBackdrop}
-                alt=""
-                aria-hidden
-                width={1920}
-                height={1088}
-                className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover opacity-40 mix-blend-screen [mask-image:radial-gradient(ellipse_at_center,black_40%,transparent_85%)]"
-              />
               <div className="absolute -inset-1 -z-10 rounded-2xl bg-gradient-to-br from-primary/20 via-transparent to-accent/15 blur-2xl" />
               <MirrorDemo />
             </div>
