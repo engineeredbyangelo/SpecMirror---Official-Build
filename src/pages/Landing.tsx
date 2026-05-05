@@ -64,7 +64,7 @@ const Landing = () => {
   return (
     <div className="min-h-screen glass-bg noise-overlay text-foreground relative">
       {/* Nav */}
-      <nav className="absolute top-0 left-0 right-0 z-50 border-b border-white/[0.06] bg-background/60 backdrop-blur-2xl">
+      <nav className="relative z-50 border-b border-white/[0.06] bg-background/60 backdrop-blur-2xl">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
           <div className="flex items-center gap-2.5">
             <Search className="h-5 w-5 text-primary" />
@@ -92,7 +92,7 @@ const Landing = () => {
       </nav>
 
       {/* Hero — premium two-column */}
-      <section className="relative overflow-hidden px-5 pt-24 pb-14 sm:px-6 md:pt-36 md:pb-24">
+      <section className="relative overflow-hidden px-5 pt-10 pb-14 sm:px-6 md:pt-20 md:pb-24">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.07] via-transparent to-transparent" />
         <div className="absolute top-1/3 left-1/4 h-[480px] w-[480px] rounded-full bg-primary/[0.035] blur-3xl" />
         <div className="absolute top-1/2 right-1/4 h-[420px] w-[420px] rounded-full bg-accent/[0.025] blur-3xl" />
