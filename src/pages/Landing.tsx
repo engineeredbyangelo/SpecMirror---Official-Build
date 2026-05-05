@@ -64,7 +64,7 @@ const Landing = () => {
   return (
     <div className="min-h-screen glass-bg noise-overlay text-foreground relative">
       {/* Nav */}
-      <nav className="relative z-50 border-b border-white/[0.06] bg-background/60 backdrop-blur-2xl">
+      <nav className="sticky top-0 z-50 border-b border-white/[0.06] bg-background/80 backdrop-blur-2xl">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
           <div className="flex items-center gap-2.5">
             <Search className="h-5 w-5 text-primary" />
