@@ -1127,16 +1127,16 @@ const StepRow = ({
 const MirrorDemo = () => {
   const [phase, setPhase] = useState<"typing" | "loading" | "reveal">("typing");
   const [visibleBriefLines, setVisibleBriefLines] = useState(0);
+  const [currentLineChars, setCurrentLineChars] = useState(0);
   const [visibleSpecLines, setVisibleSpecLines] = useState(0);
   const [cycle, setCycle] = useState(0);
   const [confidence, setConfidence] = useState(0);
 
   const briefLines = [
-    "I want to build an AI assistant platform for small business owners who aren't technical.",
-    "Users describe what they need in plain English and the app creates AI agents that handle tasks for them.",
-    "Things like sorting emails, drafting replies, scheduling social posts, summarizing documents.",
-    "It needs a simple dashboard where they can see what their agents are doing and approve actions before they run.",
-    "Should have a free tier with basic agents and a paid plan that unlocks custom workflows and integrations.",
+    "AI assistant platform for non-technical small business owners.",
+    "Users describe needs in plain English; the app creates agents.",
+    "Agents sort emails, draft replies, schedule posts, summarize docs.",
+    "Simple dashboard with human-in-the-loop approvals before actions.",
   ];
 
   const specSections = [
@@ -1185,38 +1185,62 @@ const MirrorDemo = () => {
   ]);
 
   useEffect(() => {
+    const prefersReduced = typeof window !== "undefined"
+      && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+
     const timers: ReturnType<typeof setTimeout>[] = [];
     setPhase("typing");
     setVisibleBriefLines(0);
+    setCurrentLineChars(0);
     setVisibleSpecLines(0);
     setConfidence(0);
 
-    // Type brief lines — 800ms each for readability
-    briefLines.forEach((_, i) => {
-      timers.push(setTimeout(() => setVisibleBriefLines(i + 1), (i + 1) * 800));
+    if (prefersReduced) {
+      // Render final state immediately
+      setVisibleBriefLines(briefLines.length);
+      setPhase("reveal");
+      setVisibleSpecLines(flatSpecLines.length);
+      setConfidence(94);
+      timers.push(setTimeout(() => setCycle(c => c + 1), 12000));
+      return () => timers.forEach(clearTimeout);
+    }
+
+    // Char-level typewriter — keeps the brief box from jumping
+    const charDelay = 22;       // ms per char
+    const linePause = 350;      // ms between lines
+    let elapsed = 0;
+    briefLines.forEach((line, i) => {
+      const start = elapsed;
+      for (let c = 1; c <= line.length; c++) {
+        timers.push(setTimeout(() => {
+          setVisibleBriefLines(i);
+          setCurrentLineChars(c);
+        }, start + c * charDelay));
+      }
+      elapsed = start + line.length * charDelay + linePause;
     });
+    // Mark all brief lines as fully visible
+    timers.push(setTimeout(() => {
+      setVisibleBriefLines(briefLines.length);
+      setCurrentLineChars(0);
+    }, elapsed));
 
-    const briefDone = (briefLines.length + 1) * 800;
-
-    // Loading shimmer phase
+    const briefDone = elapsed + 400;
     timers.push(setTimeout(() => setPhase("loading"), briefDone));
 
-    // Reveal spec lines
-    const revealStart = briefDone + 2000;
+    const revealStart = briefDone + 1600;
     timers.push(setTimeout(() => {
       setPhase("reveal");
       flatSpecLines.forEach((_, i) => {
-        timers.push(setTimeout(() => setVisibleSpecLines(i + 1), i * 200));
+        timers.push(setTimeout(() => setVisibleSpecLines(i + 1), i * 160));
       });
-      // Animate confidence counter
       const targetConfidence = 94;
       for (let c = 0; c <= targetConfidence; c++) {
         timers.push(setTimeout(() => setConfidence(c), c * 15));
       }
     }, revealStart));
 
-    // Hold on the completed spec, then restart
-    const totalDuration = revealStart + flatSpecLines.length * 200 + 5000;
+    const totalDuration = revealStart + flatSpecLines.length * 160 + 5000;
     timers.push(setTimeout(() => setCycle(c => c + 1), totalDuration));
 
     return () => timers.forEach(clearTimeout);
@@ -1238,24 +1262,34 @@ const MirrorDemo = () => {
       </div>
 
       <div className="grid gap-2 md:grid-cols-2">
-        {/* Brief Panel */}
-        <div className="rounded-xl bg-white/[0.03] p-5 border border-white/[0.06]">
-          <div className="mb-4">
+        {/* Brief Panel — fixed height, no layout shift */}
+        <div className="flex h-[320px] flex-col rounded-xl border border-white/[0.06] bg-white/[0.03] p-5">
+          <div className="mb-3 flex-shrink-0">
             <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Product Brief</p>
           </div>
-          <div className="space-y-2.5 text-sm leading-relaxed text-foreground/80 min-h-[180px]">
-            {briefLines.slice(0, visibleBriefLines).map((line, i) => (
-              <p key={i} className="animate-fade-in">{line}</p>
-            ))}
-            {phase === "typing" && visibleBriefLines < briefLines.length && (
-              <span className="inline-block h-4 w-0.5 animate-pulse bg-primary" />
-            )}
+          <div className="relative flex-1 overflow-hidden text-sm leading-relaxed text-foreground/80 [mask-image:linear-gradient(to_bottom,black_70%,transparent)]">
+            <div className="space-y-2.5">
+              {briefLines.map((line, i) => {
+                if (i < visibleBriefLines) {
+                  return <p key={i}>{line}</p>;
+                }
+                if (i === visibleBriefLines && phase === "typing") {
+                  return (
+                    <p key={i}>
+                      {line.slice(0, currentLineChars)}
+                      <span className="ml-0.5 inline-block h-3.5 w-[2px] translate-y-0.5 animate-pulse bg-primary align-middle" />
+                    </p>
+                  );
+                }
+                return null;
+              })}
+            </div>
           </div>
         </div>
 
-        {/* Spec Panel */}
-        <div className="rounded-xl bg-white/[0.03] p-5 border border-primary/20">
-          <div className="mb-4 flex items-center justify-between">
+        {/* Spec Panel — fixed height, persistent DOM */}
+        <div className="flex h-[320px] flex-col rounded-xl border border-primary/20 bg-white/[0.03] p-5">
+          <div className="mb-3 flex flex-shrink-0 items-center justify-between">
             <p className="text-xs font-medium uppercase tracking-widest text-primary">Technical Mirror</p>
             {phase === "reveal" && confidence > 0 && (
               <div className="relative flex items-center gap-2 animate-fade-in">
@@ -1273,33 +1307,40 @@ const MirrorDemo = () => {
             )}
           </div>
 
-          {phase === "typing" && (
-            <div className="flex min-h-[180px] items-center justify-center">
+          <div className="relative flex-1 overflow-hidden [mask-image:linear-gradient(to_bottom,black_75%,transparent)]">
+            {/* Waiting placeholder */}
+            <div className={`absolute inset-0 flex items-center justify-center transition-opacity duration-300 ${phase === "typing" ? "opacity-100" : "opacity-0"}`}>
               <p className="text-xs text-muted-foreground/40">Waiting for brief…</p>
             </div>
-          )}
 
-          {phase === "loading" && (
-            <div className="min-h-[180px] space-y-3">
-              {Array.from({ length: 10 }).map((_, i) => (
-                <div key={i} className="h-3 animate-pulse rounded bg-muted" style={{ width: `${35 + Math.random() * 55}%`, animationDelay: `${i * 80}ms` }} />
+            {/* Loading shimmer */}
+            <div className={`absolute inset-0 space-y-3 transition-opacity duration-300 ${phase === "loading" ? "opacity-100" : "opacity-0"}`}>
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div key={i} className="h-3 animate-pulse rounded bg-muted" style={{ width: `${40 + ((i * 53) % 50)}%`, animationDelay: `${i * 80}ms` }} />
               ))}
               <p className="mt-3 text-[10px] font-medium uppercase tracking-widest text-accent/60" style={{ animation: "pulse-glow 1.5s ease-in-out infinite" }}>Generating technical specification…</p>
             </div>
-          )}
 
-          {phase === "reveal" && (
-            <div className="space-y-1 text-xs leading-relaxed text-foreground/80 min-h-[180px] max-h-[320px] overflow-y-auto scrollbar-thin">
-              {flatSpecLines.slice(0, visibleSpecLines).map((line, i) => (
-                <p
-                  key={i}
-                  className={`animate-fade-in ${line.isSection ? "font-semibold text-accent text-[13px] mt-3 first:mt-0 border-b border-white/[0.06] pb-1" : "pl-3 text-foreground/70"}`}
-                >
-                  {line.isSection ? `### ${line.text}` : `• ${line.text}`}
-                </p>
-              ))}
+            {/* Reveal */}
+            <div className={`absolute inset-0 space-y-1 text-xs leading-relaxed text-foreground/80 transition-opacity duration-300 ${phase === "reveal" ? "opacity-100" : "opacity-0"}`}>
+              <div
+                className="space-y-1"
+                style={{
+                  transform: `translateY(${Math.max(0, (visibleSpecLines - 12) * -18)}px)`,
+                  transition: "transform 0.4s ease-out",
+                }}
+              >
+                {flatSpecLines.slice(0, visibleSpecLines).map((line, i) => (
+                  <p
+                    key={i}
+                    className={`animate-fade-in ${line.isSection ? "font-semibold text-accent text-[13px] mt-3 first:mt-0 border-b border-white/[0.06] pb-1" : "pl-3 text-foreground/70"}`}
+                  >
+                    {line.isSection ? `### ${line.text}` : `• ${line.text}`}
+                  </p>
+                ))}
+              </div>
             </div>
-          )}
+          </div>
         </div>
       </div>
     </div>
