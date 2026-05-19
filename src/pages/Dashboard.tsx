@@ -18,6 +18,7 @@ import { exportSpecToPdf } from "@/lib/exportPdf";
 import {
   DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import Seo from "@/components/Seo";
 
 interface Project {
   id: string;
@@ -193,6 +194,7 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Seo title="Dashboard — SpecMirror" description="Manage your SpecMirror projects, generated PRDs, and engineering specs." path="/dashboard" noindex />
       {/* Nav */}
       <nav className="border-b border-border/50">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
