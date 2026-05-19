@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Search, Loader2, CheckCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import Seo from "@/components/Seo";
 
 const ResetPassword = () => {
   const [email, setEmail] = useState("");
@@ -142,6 +143,7 @@ const ResetPassword = () => {
   // Default — request reset link
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
+      <Seo title="Reset password — SpecMirror" description="Reset your SpecMirror password to regain access to your specs and PRDs." path="/reset-password" noindex />
       <div className="w-full max-w-sm space-y-8">
         <div className="text-center">
           <Link to="/" className="inline-flex items-center gap-2 text-foreground">
