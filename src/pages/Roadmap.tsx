@@ -1,6 +1,7 @@
 import { ArrowLeft, Check, Clock, Sparkles, MessageSquare, FileDown, GitBranch, Users, LayoutTemplate, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
+import Seo from "@/components/Seo";
 
 interface RoadmapItem {
   title: string;
@@ -87,6 +88,12 @@ const statusConfig = {
 const Roadmap = () => {
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <Seo
+        title="SpecMirror Roadmap — what's shipped & what's next"
+        description="See what we've shipped and what's coming next for SpecMirror — AI spec generation, encrypted sharing, integrations, and more."
+        path="/roadmap"
+        ogType="article"
+      />
       {/* Header */}
       <header className="border-b border-white/[0.06] py-6">
         <div className="mx-auto flex max-w-4xl items-center gap-4 px-6">

@@ -1,0 +1,10 @@
+# SpecMirror
+
+> AI-powered side-by-side translator that turns plain-English product briefs into precise PRDs and engineering specs.
+
+SpecMirror helps product managers, founders, and technical leads convert fuzzy product ideas into structured technical specs — covering architecture, auth strategy, data models, API surface, and infrastructure — with confidence scoring and encrypted sharing.
+
+## Pages
+
+- [Home](/): Product overview, how it works, features, pricing, and FAQ.
+- [Roadmap](/roadmap): What we've shipped and what's coming next.
