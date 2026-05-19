@@ -7,6 +7,26 @@ import { useAuth, STRIPE_TIERS } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
+import Seo from "@/components/Seo";
+
+const FAQ_ITEMS: { q: string; a: string }[] = [
+  { q: "What exactly does SpecMirror generate?", a: "You write a plain-English project brief — goals, audience, key features. SpecMirror's AI mirrors it back as a structured technical spec covering architecture, auth strategy, data models, API surface, and infrastructure — ready for your engineering team to build from." },
+  { q: "Who is this built for?", a: "Product managers, founders, and technical leads who need to translate product thinking into engineering-ready specs without spending hours writing boilerplate." },
+  { q: "How accurate are the generated specs?", a: "Every spec includes a confidence score so you know where the AI is certain and where it needs your input. You review, edit, and approve before anything ships." },
+  { q: "How does encrypted sharing work?", a: "Once you approve a spec, you can generate an AES-encrypted link with an optional expiry. Recipients view the spec without an account, and the link self-destructs after expiration." },
+  { q: "What's included in the free tier?", a: "Free accounts get 5 AI spec generations per day with full confidence scoring and encrypted sharing. Pro unlocks unlimited daily generations and priority processing." },
+  { q: "Is my data safe?", a: "Briefs and specs are stored with row-level security policies. Shared links use client-side AES-GCM encryption — we never store the decryption key." },
+];
+
+const FAQ_JSONLD = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: FAQ_ITEMS.map(({ q, a }) => ({
+    "@type": "Question",
+    name: q,
+    acceptedAnswer: { "@type": "Answer", text: a },
+  })),
+};
 
 /* ── Scroll-triggered section wrapper ── */
 const FadeSection = ({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) => (
@@ -63,6 +83,12 @@ const Landing = () => {
 
   return (
     <div className="min-h-screen glass-bg noise-overlay text-foreground relative">
+      <Seo
+        title="SpecMirror: Product briefs → Tech Specs & PRDs in one click"
+        description="AI-powered side-by-side translator that turns fuzzy product briefs into precise PRDs and engineering specs — without the back-and-forth."
+        path="/"
+        jsonLd={FAQ_JSONLD}
+      />
       {/* Nav */}
       <nav className="sticky top-0 z-50 border-b border-white/[0.06] bg-background/80 backdrop-blur-2xl">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
